@@ -16,8 +16,8 @@ import axios from 'axios';
 import {ContainerFlex} from './styles/ContainerMain.styled'
 import SideMenuWrapper from "./SideMenuWrapper/SideMenuWrapper";
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
-
-
+import { SplitContainer } from "./styles/SplitContainer.styled";
+import LowerMenuWrapper from "./Menu/LowerMenu";
 const App = () => {
   const [center, setCenter] = useState(mapConfig.center);
   const [zoom, setZoom] = useState(mapConfig.zoom);
@@ -26,6 +26,7 @@ const App = () => {
   const [clusterDistance, setClusterDistance] = useState(50);
   const [minClusterDistance, setMinClusterDistance] = useState(50);
   const [styleCache, setStyleCache] = useState({});
+  const [selectedFeature, setSelectedFeature] = useState("");
 
   const [virtualStations, setVirtualStations] = useState(
     {
@@ -49,28 +50,19 @@ const App = () => {
     setShowLayer1(event.target.checked)
   }
 
+  const onclickFeature = (e) => {
+    console.log(e)
+  }
+
+
 const getStyle = (feature) => {
-    // console.log(feature)
     const river_index = feature.get('river_name');
-    // const lake_river = feature.get('lake_name');
     if(river_index){
-      // console.log(river_index)
       return LAYERstyles.River
     }
     else{
-      // console.log(lake_river)
       return LAYERstyles.Lake
     }
-
-    // if(floodindex === 2){
-    //   return FeatureStyles.SecondLevel
-    // }
-    // if(floodindex === 3){
-    //   return FeatureStyles.ThirdLevel
-    // }
-    // if(floodindex === 4){
-    //   return FeatureStyles.FourthLevel
-    // }
     
   }
   // Adding the geojson layer to the map with stations
@@ -96,6 +88,36 @@ const getStyle = (feature) => {
 
 	}, [clusterDistance]);
   
+  useEffect(() => {
+
+    const Mydata = {
+      'product': selectedFeature
+    }
+    const config = {
+      header: {
+        "Content-Type": "application/json",
+      },
+    };
+    console.log(Mydata);
+    const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
+    const fetchData= async () =>{
+      try {
+          const {data: response} = await axios.post(service_link,Mydata,config);
+
+          // const {data: response} = await axios.post(service_link);
+          console.log(response)
+
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    if(selectedFeature !== ""){
+      fetchData();
+      
+    }
+
+	}, [selectedFeature]);
+
 
   return (
     <div>
@@ -103,14 +125,11 @@ const getStyle = (feature) => {
       {!loading && (
       <ContainerFlex>
         <SideMenuWrapper 
-          style = {changeStyle}
           onLayer = { onOffLayer}
           layer = {showLayer1}
-          opacity_wms = {SetOpacityLayer}
-          wms_op_val = {opacityLayer}
         />
-
-        <Map center={fromLonLat(center)} zoom={zoom}>
+      <SplitContainer >
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} >
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}
@@ -149,13 +168,10 @@ const getStyle = (feature) => {
                   function (feature) {
                     let style;
                     const size = feature.get('features').length;
-                    console.log(size)
-                    console.log(feature.get("features"))
 
                     if(size < 2){
                       feature.get("features").forEach(function(feature) {
                         var river_index = feature.get("river_name");
-                        console.log(river_index)
                         if (river_index) {
                           style = new Style({
                             image: new CircleStyle({
@@ -169,9 +185,6 @@ const getStyle = (feature) => {
                             }),
                             text: new Text({
                               text: `River ${feature.get('river_name')}`,
-                              // fill: new Fill({
-                              //   color: '#fff',
-                              // }),
                               font: 'bold 12px "Open Sans" ',
                               placement: 'point',
                               fill: new Fill({color: '#fff'}),
@@ -196,12 +209,7 @@ const getStyle = (feature) => {
                               font: 'bold 12px "Open Sans" ',
                               placement: 'point',
                               fill: new Fill({color: '#fff'}),
-
                               stroke: new Stroke({color: '#000', width: 1}),
-                              // text: size.toString(),
-                              // fill: new Fill({
-                              //   color: '#fff',
-                              // }),
                             }),
                           });
                         }
@@ -227,19 +235,15 @@ const getStyle = (feature) => {
                               color: '#fff',
                             }),
                           }),
-                        });
-                        
-                        // styleCache[size] = style;
+                        });                        
                         setStyleCache(styleCache => ({...styleCache, size: style}))
   
                       }
                     }
-
                     return style;
                   }
                 }
                 zIndex={2}
-
               />
             )}
 
@@ -248,6 +252,10 @@ const getStyle = (feature) => {
             <FullScreenControl />
           </Controls>
         </Map>
+        <LowerMenuWrapper/>
+        
+      </SplitContainer>
+
 
 
       </ContainerFlex>

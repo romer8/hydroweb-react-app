@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
+// flex:1 1 20%;
+// order: 1;
 export const SideMenu = styled.div`
     height: fit-content;
-    flex:1 1 20%;
-    order: 1;
+
     overflow-y: hidden;
     padding:5px;
     position:absolute;
@@ -17,7 +18,7 @@ export const SideMenu = styled.div`
         background-color:rgba(12, 74, 110, 0.5);        ;
         border-color: blue;
         color:#e0f2fe;
-        font-size:1.5rem;
+        font-size:1rem;
     }
 
     .mycontainer{
@@ -44,13 +45,13 @@ export const SideMenu = styled.div`
     .dropdown-menu {
         height: 100px;
         overflow-y: scroll;
-        font-size:1.5rem;
+        font-size:1rem;
     }
     .dropdown-toggle {
-        font-size:1.5rem;
+        font-size:1rem;
     }
     .span_div{
-        font-size: 14px;
+        font-size: 10px;
         color: #666;
         font-weight: 400;
         letter-spacing: .5px;
