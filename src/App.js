@@ -23,7 +23,7 @@ const App = () => {
   const [zoom, setZoom] = useState(mapConfig.zoom);
   const [showLayer1, setShowLayer1] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [clusterDistance, setClusterDistance] = useState(20);
+  const [clusterDistance, setClusterDistance] = useState(50);
   const [minClusterDistance, setMinClusterDistance] = useState(50);
   const [styleCache, setStyleCache] = useState({});
 
@@ -147,31 +147,94 @@ const getStyle = (feature) => {
                 // }}
                 style={
                   function (feature) {
-                    
+                    let style;
                     const size = feature.get('features').length;
-                    let style = styleCache[size];
-                    if (!style) {
-                      style = new Style({
-                        image: new CircleStyle({
-                          radius: 10,
-                          stroke: new Stroke({
-                            color: '#fff',
-                          }),
-                          fill: new Fill({
-                            color: '#3399CC',
-                          }),
-                        }),
-                        text: new Text({
-                          text: size.toString(),
-                          fill: new Fill({
-                            color: '#fff',
-                          }),
-                        }),
-                      });
-                      // styleCache[size] = style;
-                      setStyleCache(styleCache => ({...styleCache, size: style}))
+                    console.log(size)
+                    console.log(feature.get("features"))
 
+                    if(size < 2){
+                      feature.get("features").forEach(function(feature) {
+                        var river_index = feature.get("river_name");
+                        console.log(river_index)
+                        if (river_index) {
+                          style = new Style({
+                            image: new CircleStyle({
+                              radius: 10,
+                              stroke: new Stroke({
+                                color: '#1C07F1',
+                              }),
+                              fill: new Fill({
+                                color: '#1C07F1',
+                              }),
+                            }),
+                            text: new Text({
+                              text: `River ${feature.get('river_name')}`,
+                              // fill: new Fill({
+                              //   color: '#fff',
+                              // }),
+                              font: 'bold 12px "Open Sans" ',
+                              placement: 'point',
+                              fill: new Fill({color: '#fff'}),
+                              stroke: new Stroke({color: '#000', width: 1}),
+
+                            }),
+                          });
+                        }
+                        else {
+                          style = new Style({
+                            image: new CircleStyle({
+                              radius: 10,
+                              stroke: new Stroke({
+                                color: '#0F4248',
+                              }),
+                              fill: new Fill({
+                                color: '#0F4248',
+                              }),
+                            }),
+                            text: new Text({
+                              text: `Lake ${feature.get('lake_name')}`,
+                              font: 'bold 12px "Open Sans" ',
+                              placement: 'point',
+                              fill: new Fill({color: '#fff'}),
+
+                              stroke: new Stroke({color: '#000', width: 1}),
+                              // text: size.toString(),
+                              // fill: new Fill({
+                              //   color: '#fff',
+                              // }),
+                            }),
+                          });
+                        }
+                      });
                     }
+
+                    else{
+                      style = styleCache[size];
+                      if (!style) {
+                        style = new Style({
+                          image: new CircleStyle({
+                            radius: 10,
+                            stroke: new Stroke({
+                              color: '#fff',
+                            }),
+                            fill: new Fill({
+                              color: '#3399CC',
+                            }),
+                          }),
+                          text: new Text({
+                            text: size.toString(),
+                            fill: new Fill({
+                              color: '#fff',
+                            }),
+                          }),
+                        });
+                        
+                        // styleCache[size] = style;
+                        setStyleCache(styleCache => ({...styleCache, size: style}))
+  
+                      }
+                    }
+
                     return style;
                   }
                 }
