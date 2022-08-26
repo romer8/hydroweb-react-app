@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import Map from "./Map";
 import { Layers, TileLayer, VectorLayer } from "./Layers";
 
-import { vector,xyz } from "./Source";
+import { vector,xyz, cluster } from "./Source";
 import { fromLonLat, get } from "ol/proj";
 import GeoJSON from "ol/format/GeoJSON";
-import TileWMS from 'ol/source/TileWMS';
 
 import { Controls, FullScreenControl } from "./Controls";
-import FeatureStyles from "./Features/Styles";
+import LAYERstyles from "./Features/Styles";
 
 import mapConfig from "./config.json";
 import "./App.css";
@@ -16,6 +15,7 @@ import axios from 'axios';
 
 import {ContainerFlex} from './styles/ContainerMain.styled'
 import SideMenuWrapper from "./SideMenuWrapper/SideMenuWrapper";
+import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 
 
 const App = () => {
@@ -23,6 +23,10 @@ const App = () => {
   const [zoom, setZoom] = useState(mapConfig.zoom);
   const [showLayer1, setShowLayer1] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [clusterDistance, setClusterDistance] = useState(20);
+  const [minClusterDistance, setMinClusterDistance] = useState(50);
+  const [styleCache, setStyleCache] = useState({});
+
   const [virtualStations, setVirtualStations] = useState(
     {
       "type": "FeatureCollection",
@@ -46,19 +50,27 @@ const App = () => {
   }
 
 const getStyle = (feature) => {
+    // console.log(feature)
     const river_index = feature.get('river_name');
-    const lake_river = feature.get('river_name');
+    // const lake_river = feature.get('lake_name');
+    if(river_index){
+      // console.log(river_index)
+      return LAYERstyles.River
+    }
+    else{
+      // console.log(lake_river)
+      return LAYERstyles.Lake
+    }
 
-
-    if(floodindex === 2){
-      return FeatureStyles.SecondLevel
-    }
-    if(floodindex === 3){
-      return FeatureStyles.ThirdLevel
-    }
-    if(floodindex === 4){
-      return FeatureStyles.FourthLevel
-    }
+    // if(floodindex === 2){
+    //   return FeatureStyles.SecondLevel
+    // }
+    // if(floodindex === 3){
+    //   return FeatureStyles.ThirdLevel
+    // }
+    // if(floodindex === 4){
+    //   return FeatureStyles.FourthLevel
+    // }
     
   }
   // Adding the geojson layer to the map with stations
@@ -82,7 +94,7 @@ const getStyle = (feature) => {
     }
     fetchStations();
 
-	}, []);
+	}, [clusterDistance]);
   
 
   return (
@@ -116,14 +128,53 @@ const getStyle = (feature) => {
 
             {showLayer1 && (
                 <VectorLayer
-                source={vector({
-                  features: new GeoJSON().readFeatures(virtualStations, {
-                    featureProjection: get("EPSG:4326"),
-                  }),
-                })}
-                style={function(feature){
-                  return getStyle(feature)
-                }}
+                source={
+                    cluster(
+                      {
+                        distance: clusterDistance,
+                        minDistance: minClusterDistance,
+                        source: vector(
+                          {
+                            features: new GeoJSON().readFeatures(virtualStations, {
+                              featureProjection: get("EPSG:3857"),
+                            }),
+                        })
+                      }
+                    )
+                }
+                // style={function(feature){
+                //   return getStyle(feature)
+                // }}
+                style={
+                  function (feature) {
+                    
+                    const size = feature.get('features').length;
+                    let style = styleCache[size];
+                    if (!style) {
+                      style = new Style({
+                        image: new CircleStyle({
+                          radius: 10,
+                          stroke: new Stroke({
+                            color: '#fff',
+                          }),
+                          fill: new Fill({
+                            color: '#3399CC',
+                          }),
+                        }),
+                        text: new Text({
+                          text: size.toString(),
+                          fill: new Fill({
+                            color: '#fff',
+                          }),
+                        }),
+                      });
+                      // styleCache[size] = style;
+                      setStyleCache(styleCache => ({...styleCache, size: style}))
+
+                    }
+                    return style;
+                  }
+                }
                 zIndex={2}
 
               />

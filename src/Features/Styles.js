@@ -1,12 +1,43 @@
-import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 
 const LAYERstyles = {
-  Point: new Style({
+  // RiverCluster: new Style({
+  //   image: new CircleStyle({
+  //     radius: 10,
+  //     stroke: new Stroke({
+  //       color: '#fff',
+  //     }),
+  //     fill: new Fill({
+  //       color: '#3399CC',
+  //     }),
+  //   }),
+  //   text: new Text({
+  //     text: size.toString(),
+  //     fill: new Fill({
+  //       color: '#fff',
+  //     }),
+  //   }),
+  // }),
+
+
+
+  River: new Style({
     image: new CircleStyle({
-      radius: 10,
+      radius: 2.5,
+      fill: new Fill({
+        color: "#1C07F1",
+      }),
+      stroke: new Stroke({
+        color: "#1C07F1",
+      }),
+    }),
+  }),
+  Lake: new Style({
+    image: new CircleStyle({
+      radius: 5,
       fill: null,
       stroke: new Stroke({
-        color: "magenta",
+        color: "#07D8F1",
       }),
     }),
   }),

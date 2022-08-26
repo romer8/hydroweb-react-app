@@ -21,13 +21,10 @@ const VectorLayerWrapper = ({ source, style, zIndex = 0 }) => {
 
 		map.addLayer(vectorLayerMap);
 		vectorLayerMap.setZIndex(zIndex);
-		console.log("adding extent",source.getExtent())
+		// console.log("adding extent",source.getExtent())
 
-		console.log("fitting",typeof(source))
+		// console.log("fitting",typeof(source))
 
-		// if(!source){
-		// 	setVectorLayerSource(source)
-		// }
 		return () => {
 			if (map) {
 				console.log("here removing vector layer")
@@ -38,20 +35,9 @@ const VectorLayerWrapper = ({ source, style, zIndex = 0 }) => {
 
 
 		};
-	}, [map,source]);
-	// useEffect(() => {
-	// 	console.log("calling it")
-	// 	if (!map) return;
-	// 	// map.getView().fit(source.getExtent());
-	// 	setVectorLayerSource(source)
+	}, [map]);
 
-	//   return () => {
-		
-	//   }
-	// }, [vectorLayerSource])
-	
-	
-	
+
 	return null;
 };
 

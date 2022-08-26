@@ -33,11 +33,11 @@ const Map = ({ children, zoom, center }) => {
 	}, [zoom]);
 
 	// center change handler
-	useEffect(() => {
-		if (!map) return;
-
-		map.getView().setCenter(center)
-	}, [center])
+	// useEffect(() => {
+	// 	if (!map) return;
+	// 	console.log("asfasf")
+	// 	map.getView().setCenter(center)
+	// }, [center])
 
 	return (
 		<MapContainer>

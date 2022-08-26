@@ -7,4 +7,4 @@ function tile(features) {
 	);
 }
 
-export default vector;
+export default tile;
