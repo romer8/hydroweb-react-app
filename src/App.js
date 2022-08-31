@@ -27,6 +27,7 @@ const App = () => {
   const [minClusterDistance, setMinClusterDistance] = useState(50);
   const [styleCache, setStyleCache] = useState({});
   const [selectedFeature, setSelectedFeature] = useState("");
+  const [dataStation, setDataStation] = useState([])
 
   const [virtualStations, setVirtualStations] = useState(
     {
@@ -106,6 +107,7 @@ const getStyle = (feature) => {
 
           // const {data: response} = await axios.post(service_link);
           console.log(response)
+          setDataStation(response['data'])
 
       } catch (error) {
         console.error(error.message);
@@ -252,7 +254,7 @@ const getStyle = (feature) => {
             <FullScreenControl />
           </Controls>
         </Map>
-        <LowerMenuWrapper/>
+        <LowerMenuWrapper xyData={ dataStation }/>
         
       </SplitContainer>
 
