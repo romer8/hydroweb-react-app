@@ -62,6 +62,18 @@ const Map = ({ children, zoom, center,setSelectedFeature }) => {
 			//   console.log();
 			}
 		  });
+		  map.on('pointermove',evt=>{
+			var hit = false;
+			const feature = map.forEachFeatureAtPixel(evt.pixel, (feature) => feature);
+			if(feature){
+				hit = true;
+				map.getViewport().style.cursor = hit ? 'pointer' : '';
+			}
+			else{
+				hit = false;
+				map.getViewport().style.cursor = hit ? 'pointer' : '';
+			}
+		  });
 	},[map])
 	// zoom change handler
 	useEffect(() => {
