@@ -24,7 +24,7 @@ import Loader_wrapper from "./Extra/Loader_wrapper";
 const App = () => {
   const [center, setCenter] = useState(mapConfig.center);
   const [zoom, setZoom] = useState(mapConfig.zoom);
-  const [showLayer1, setShowLayer1] = useState(true);
+  const [showLayer1, setShowLayer1] = useState(false);
   const [loading, setLoading] = useState(true);
   const [clusterDistance, setClusterDistance] = useState(50);
   const [minClusterDistance, setMinClusterDistance] = useState(50);
@@ -71,7 +71,6 @@ const getStyle = (feature) => {
   }
   // Adding the geojson layer to the map with stations
   useEffect(() => {
-    setLoading(true);
 
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStations/';
     const fetchStations = async () =>{
@@ -91,11 +90,10 @@ const getStyle = (feature) => {
     }
     fetchStations();
 
-	}, [clusterDistance]);
+	}, []);
   
   useEffect(() => {
     setLoading(true);
-
 
     const Mydata = {
       'product': selectedFeature
@@ -125,6 +123,9 @@ const getStyle = (feature) => {
     if(selectedFeature !== ""){
       fetchData();
       
+    }
+    else{
+      console.log("Not Requesting data")
     }
 
 	}, [selectedFeature]);
