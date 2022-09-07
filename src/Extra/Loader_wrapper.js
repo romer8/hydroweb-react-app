@@ -13,4 +13,4 @@ const Loader_wrapper = ({ loading }) => {
     );
   };
   
-  export default Loader_wrapper;
+export default Loader_wrapper;

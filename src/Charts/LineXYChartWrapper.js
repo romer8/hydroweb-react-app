@@ -6,8 +6,9 @@ import {
   AnimatedAreaSeries,
   Tooltip,
   XYChart,
-  curve
 } from "@visx/xychart";
+import { curveCardinal } from '@visx/curve';
+
 import { ParentSize } from '@visx/responsive';
 
 import { ChartContainer } from "../styles/ChartContainer.styled";
@@ -15,72 +16,6 @@ import { ColoredSquare } from "../styles/ColoredSquare.styled";
 import { TooltipContainer } from "../styles/TooltipContainer.styled";
 import { useState } from "react";
 
-const data1 = [
-  {
-    x: "2018-03-01",
-    y: 30
-  },
-  {
-    x: "2018-04-01",
-    y: 16
-  },
-  {
-    x: "2018-05-01",
-    y: 17
-  },
-  {
-    x: "2018-06-01",
-    y: 24
-  },
-  {
-    x: "2018-07-01",
-    y: 47
-  },
-  {
-    x: "2018-08-01",
-    y: 32
-  },
-  {
-    x: "2018-09-01",
-    y: 8
-  },
-  {
-    x: "2018-10-01",
-    y: 27
-  },
-  {
-    x: "2018-11-01",
-    y: 31
-  },
-  {
-    x: "2018-12-01",
-    y: 105
-  },
-  {
-    x: "2019-01-01",
-    y: 166
-  },
-  {
-    x: "2019-02-01",
-    y: 181
-  },
-  {
-    x: "2019-03-01",
-    y: 232
-  },
-  {
-    x: "2019-04-01",
-    y: 224
-  },
-  {
-    x: "2019-05-01",
-    y: 196
-  },
-  {
-    x: "2019-06-01",
-    y: 211
-  }
-];
 
 const tickLabelOffset = 10;
 
@@ -88,13 +23,19 @@ const accessors_val = {
   xAccessor: (d) => new Date(`${d.date}T00:00:00`),
   yAccessor: (d) => d.orthometric_height_of_water_surface_at_reference_position
 };
+
 const accessors_max = {
   xAccessor: (d) => new Date(`${d.date}T00:00:00`),
-  yAccessor: (d) => d.up_uncertainty
+  yAccessor: (d) => d.up_uncertainty,
+  x0Accessor: (d) => new Date(`${d.date}T00:00:00`),
+  y0Accessor: (d) => d.orthometric_height_of_water_surface_at_reference_position
+
 };
 const accessors_min = {
   xAccessor: (d) => new Date(`${d.date}T00:00:00`),
-  yAccessor: (d) => d.down_uncertainty
+  yAccessor: (d) => d.orthometric_height_of_water_surface_at_reference_position,
+  x0Accessor: (d) => new Date(`${d.date}T00:00:00`),
+  y0Accessor: (d) => d.down_uncertainty
 };
 
 const LineXYChartWrapper = ({ xyData }) => {
@@ -111,7 +52,7 @@ const LineXYChartWrapper = ({ xyData }) => {
         
       >
         <AnimatedGrid
-          columns={false}
+          columns={true}
           numTicks={4}
           lineStyle={{
             stroke: "#e1e1e1",
@@ -136,27 +77,32 @@ const LineXYChartWrapper = ({ xyData }) => {
           tickLabelProps={() => ({ dx: -10 })}
         />
 
-        <AnimatedAreaSeries
-          stroke="#3C4F76"
+        <AnimatedLineSeries
+          stroke="#2B4865"
           dataKey="Water Level Value"
           data={xyData}
           {...accessors_val}
-          fillOpacity={0.4}
+          curve={curveCardinal}
 
         />
         <AnimatedAreaSeries
-          stroke="#383F51"
+          fill="#256D85"
           dataKey="Maximun"
           data={xyData}
           {...accessors_max}
-          fillOpacity={0.4}
+          fillOpacity={0.3}
+          curve={curveCardinal}
+          renderLine={false}
+
         />
         <AnimatedAreaSeries
-          stroke="#DDDBF1"
+          fill="#8FE3CF"
           dataKey="Minimun"
           data={xyData}
           {...accessors_min}
-          fillOpacity={0.4}
+          fillOpacity={0.7}
+          curve={curveCardinal}
+          renderLine={false}
 
         />
         <Tooltip
@@ -164,7 +110,7 @@ const LineXYChartWrapper = ({ xyData }) => {
           snapTooltipToDatumY
           showSeriesGlyphs
           glyphStyle={{
-            fill: "#008561",
+            fill: "#2B4865",
             strokeWidth: 0
           }}
           renderTooltip={({ tooltipData }) => {
@@ -179,7 +125,7 @@ const LineXYChartWrapper = ({ xyData }) => {
                         {format(accessors_val.xAccessor(value.datum), "MMM d")}
                       </div>
                       <div className="value">
-                        <ColoredSquare color="#008561" />
+                        <ColoredSquare color="#2B4865" />
                         {accessors_val.yAccessor(value.datum)}
                       </div>
                     </div>
