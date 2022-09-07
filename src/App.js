@@ -18,6 +18,9 @@ import SideMenuWrapper from "./SideMenuWrapper/SideMenuWrapper";
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 import { SplitContainer } from "./styles/SplitContainer.styled";
 import LowerMenuWrapper from "./Menu/LowerMenu";
+
+import Loader_wrapper from "./Extra/Loader_wrapper";
+
 const App = () => {
   const [center, setCenter] = useState(mapConfig.center);
   const [zoom, setZoom] = useState(mapConfig.zoom);
@@ -68,6 +71,7 @@ const getStyle = (feature) => {
   }
   // Adding the geojson layer to the map with stations
   useEffect(() => {
+    setLoading(true);
 
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStations/';
     const fetchStations = async () =>{
@@ -90,6 +94,8 @@ const getStyle = (feature) => {
 	}, [clusterDistance]);
   
   useEffect(() => {
+    setLoading(true);
+
 
     const Mydata = {
       'product': selectedFeature
@@ -108,9 +114,12 @@ const getStyle = (feature) => {
           // const {data: response} = await axios.post(service_link);
           console.log(response)
           setDataStation(response['data'])
+          setLoading(false);
 
       } catch (error) {
         console.error(error.message);
+        setLoading(false);
+
       }
     }
     if(selectedFeature !== ""){
@@ -123,8 +132,9 @@ const getStyle = (feature) => {
 
   return (
     <div>
-      {loading && <div>Loading</div>}
-      {!loading && (
+   
+      <Loader_wrapper loading={ loading }/>
+      
       <ContainerFlex>
         <SideMenuWrapper 
           onLayer = { onOffLayer}
@@ -261,7 +271,7 @@ const getStyle = (feature) => {
 
 
       </ContainerFlex>
-    )}
+    
 
     </div>
   );
