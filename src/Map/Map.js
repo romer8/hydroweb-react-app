@@ -5,7 +5,7 @@ import * as ol from "ol";
 import * as olExtent from 'ol/extent';
 
 import { MapContainer } from '../styles/Map.styled'
-const Map = ({ children, zoom, center,setSelectedFeature }) => {
+const Map = ({ children, zoom, center,setSelectedFeature, isFullMap }) => {
 	const mapRef = useRef();
 	const [map, setMap] = useState(null);
 
@@ -97,7 +97,7 @@ const Map = ({ children, zoom, center,setSelectedFeature }) => {
 	// }, [center])
 
 	return (
-		<MapContainer>
+		<MapContainer isFullMap={isFullMap} >
 			<MapContext.Provider value={{ map }}>
 				<div ref={mapRef} className="ol-map" >
 						{children}

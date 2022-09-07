@@ -30,7 +30,8 @@ const App = () => {
   const [minClusterDistance, setMinClusterDistance] = useState(50);
   const [styleCache, setStyleCache] = useState({});
   const [selectedFeature, setSelectedFeature] = useState("");
-  const [dataStation, setDataStation] = useState([])
+  const [dataStation, setDataStation] = useState([]);
+  const [isFullMap, setIsFullMap] = useState(true)
 
   const [virtualStations, setVirtualStations] = useState(
     {
@@ -81,7 +82,7 @@ const getStyle = (feature) => {
           console.log(response)
           setVirtualStations(response)
           setLoading(false);
-          setShowLayer1(true)
+          setShowLayer1(true);
 
       } catch (error) {
         console.error(error.message);
@@ -113,6 +114,7 @@ const getStyle = (feature) => {
           console.log(response)
           setDataStation(response['data'])
           setLoading(false);
+          setIsFullMap(false);
 
       } catch (error) {
         console.error(error.message);
@@ -125,6 +127,7 @@ const getStyle = (feature) => {
       
     }
     else{
+
       console.log("Not Requesting data")
     }
 
@@ -142,7 +145,7 @@ const getStyle = (feature) => {
           layer = {showLayer1}
         />
       <SplitContainer >
-        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} >
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} >
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}

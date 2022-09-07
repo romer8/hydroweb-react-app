@@ -10,11 +10,13 @@ export const MapContainer = styled.div`
     order: 1;
 
     width: 100%;
-    height: 60%;
     overflow-y: hidden;
     position:absolute;
+    
+    height: ${props => (props.isFullMap ? '100%' : '60%')};
 
 `;
+// height: 60%;
 
 // & .ol-map{
 //     width: 100%;
