@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react"
 // import "./Map.css";
 import MapContext from "./MapContext";
 import * as ol from "ol";
+import * as olExtent from 'ol/extent';
+
 import { MapContainer } from '../styles/Map.styled'
 const Map = ({ children, zoom, center,setSelectedFeature }) => {
 	const mapRef = useRef();
@@ -58,6 +60,11 @@ const Map = ({ children, zoom, center,setSelectedFeature }) => {
 				// if multiple features just zoom in
 				else{
 					console.log("multiple features");
+					
+					const extent = olExtent.boundingExtent(
+						multipleFeatures.map((r) => r.getGeometry().getCoordinates())
+					  );
+					map.getView().fit(extent, {duration: 1300, padding: [50, 50, 50, 50]});
 				}
 			//   console.log();
 			}
