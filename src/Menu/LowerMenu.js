@@ -1,12 +1,12 @@
 import React from "react";
 import { LowerMenu } from "../styles/LowerMenu.styled";
 import { LineXYChartWrapper } from "../Charts";
-const LowerMenuWrapper = ({ xyData }) => {
+const LowerMenuWrapper = ({ xyData, xyMin, xyMax }) => {
 
   return(
     
       <LowerMenu>
-        <LineXYChartWrapper xyData={xyData} />
+        <LineXYChartWrapper xyData={xyData} xyMin= { xyMin } xyMax={ xyMax } />
       </LowerMenu>
 
 

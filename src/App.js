@@ -31,6 +31,9 @@ const App = () => {
   const [styleCache, setStyleCache] = useState({});
   const [selectedFeature, setSelectedFeature] = useState("");
   const [dataStation, setDataStation] = useState([]);
+  const [minDataStation, setMinDataStation] = useState([]);
+  const [maxDataStation, setMaxDataStation] = useState([]);
+
   const [isFullMap, setIsFullMap] = useState(true)
 
   const [virtualStations, setVirtualStations] = useState(
@@ -109,10 +112,19 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
+          // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
 
           // const {data: response} = await axios.post(service_link);
-          console.log(response)
-          setDataStation(response['data'])
+          // console.log(response)
+          // setDataStation(response['data'])
+          setDataStation(response['data']['val'])
+          setMinDataStation(response['data']['min'])
+          setMaxDataStation(response['data']['max'])
+          console.log(response['data']['val'])
+          console.log(response['data']['max'])
+          console.log(response['data']['min'])
+
+
           setLoading(false);
           setIsFullMap(false);
 
@@ -268,7 +280,7 @@ const getStyle = (feature) => {
             <FullScreenControl />
           </Controls>
         </Map>
-        <LowerMenuWrapper xyData={ dataStation }/>
+        <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }/>
         
       </SplitContainer>
 
