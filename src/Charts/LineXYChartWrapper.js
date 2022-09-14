@@ -16,7 +16,6 @@ import { ColoredSquare } from "../styles/ColoredSquare.styled";
 import { TooltipContainer } from "../styles/TooltipContainer.styled";
 import { useState } from "react";
 
-var values_tooltip = ['San Francisco','New York','Austin'];
 
 const tickLabelOffset = 10;
 
@@ -38,6 +37,7 @@ const accessors_min = {
   x0Accessor: (d) => new Date(`${d.date}T00:00:00`),
   y0Accessor: (d) => d.down_uncertainty
 };
+
 const accessors_fin = {
   xAccessor: {
     val: (d) => new Date(`${d.date}T00:00:00`),
@@ -45,9 +45,9 @@ const accessors_fin = {
     min: (d) => new Date(`${d.date}T00:00:00`),
   },
   yAccessor:{
-    val: (d) => d.orthometric_height_of_water_surface_at_reference_position,
-    max: (d) => d.up_uncertainty,
-    min: (d) => d.orthometric_height_of_water_surface_at_reference_position,
+    val: (d) => Math.round(d.orthometric_height_of_water_surface_at_reference_position*100)/100,
+    max: (d) => Math.round(d.up_uncertainty*100)/100,
+    min: (d) => Math.round(d.orthometric_height_of_water_surface_at_reference_position*100)/100,
   },
   x0Accessor:{
     // val: (d) => (d) => new Date(`${d.date}T00:00:00`),
@@ -56,8 +56,8 @@ const accessors_fin = {
   },
   y0Accessor:{
     // val: (d) => (d) => new Date(`${d.date}T00:00:00`),
-    max: (d) => d.orthometric_height_of_water_surface_at_reference_position,
-    min: (d) => d.down_uncertainty
+    max: (d) => Math.round(d.orthometric_height_of_water_surface_at_reference_position*100)/100,
+    min: (d) => Math.round(d.down_uncertainty*100)/100
   }
 }
 
@@ -91,7 +91,7 @@ const LineXYChartWrapper = ({ xyData }) => {
           tickLabelProps={() => ({ dy: tickLabelOffset })}
           left={30}
           numTicks={4}
-          label="Time (year)"
+          // label="Time (year)"
           labelOffset={20}
 
         />
