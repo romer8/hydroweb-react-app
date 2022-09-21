@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 // flex:1 1 20%;
 // order: 1;
-export const SideMenu = styled.div`
+export const JobsMenu = styled.div`
     height: fit-content;
 
     overflow-y: hidden;

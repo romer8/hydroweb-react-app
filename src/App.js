@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Map from "./Map";
 import { Layers, TileLayer, VectorLayer } from "./Layers";
 
@@ -18,8 +18,11 @@ import SideMenuWrapper from "./SideMenuWrapper/SideMenuWrapper";
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 import { SplitContainer } from "./styles/SplitContainer.styled";
 import LowerMenuWrapper from "./Menu/LowerMenu";
-
+import JobsMenu from "./Menu/LowerMenu";
 import Loader_wrapper from "./Extra/Loader_wrapper";
+
+import { WebSocketWrapper } from "./WebsocketWrapper";
+
 
 const App = () => {
   const [center, setCenter] = useState(mapConfig.center);
@@ -30,11 +33,18 @@ const App = () => {
   const [minClusterDistance, setMinClusterDistance] = useState(50);
   const [styleCache, setStyleCache] = useState({});
   const [selectedFeature, setSelectedFeature] = useState("");
+  const [selectedGeoglows, setSelectedGeoglows] = useState("")
   const [dataStation, setDataStation] = useState([]);
   const [minDataStation, setMinDataStation] = useState([]);
   const [maxDataStation, setMaxDataStation] = useState([]);
-
+  const [dataGeoglows, setDataGeoglows] = useState({});
+  const [listGeoglowsApiCalls, setListGeoglowsApiCalls] = useState([]);
   const [isFullMap, setIsFullMap] = useState(true)
+  const [isGeoglowsActive, setIsGeoglowsActive] = useState(false)
+  const socketRef = useRef();
+
+  var ws = 'ws://' + 'localhost:8000/hydroweb' + '/data-notification/notifications/ws/';
+
 
   const [virtualStations, setVirtualStations] = useState(
     {
@@ -62,7 +72,20 @@ const App = () => {
     console.log(e)
   }
 
+  const executeGeoglows = () => {
+    setIsGeoglowsActive(!isGeoglowsActive);
+    console.log(isGeoglowsActive);
+    var new_job = `${selectedFeature}-->${selectedGeoglows}`;
+    console.log(new_job)
+    var found = listGeoglowsApiCalls.some(p => p == new_job)
+    console.log(found)
+    if(!found){
+      setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
+    }
 
+    console.log(listGeoglowsApiCalls)
+  };
+  
 const getStyle = (feature) => {
     const river_index = feature.get('river_name');
     if(river_index){
@@ -93,7 +116,8 @@ const getStyle = (feature) => {
       setLoading(false);
     }
     fetchStations();
-
+    socketRef.current = new WebSocketWrapper();
+    socketRef.current.startWS(ws);
 	}, []);
   
   useEffect(() => {
@@ -145,6 +169,113 @@ const getStyle = (feature) => {
 
 	}, [selectedFeature]);
 
+  // useEffect(() => {
+  //   setLoading(true);
+
+  //   const Mydata = {
+  //     'product': dataGeoglows
+  //   }
+  //   const config = {
+  //     header: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   };
+  //   console.log(Mydata);
+  //   const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
+  //   const fetchData= async () =>{
+  //     try {
+  //         const {data: response} = await axios.post(service_link,Mydata,config);
+  //         // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
+
+  //         // const {data: response} = await axios.post(service_link);
+  //         // console.log(response)
+  //         // setDataStation(response['data'])
+  //         setDataStation(response['data']['val'])
+  //         setMinDataStation(response['data']['min'])
+  //         setMaxDataStation(response['data']['max'])
+  //         console.log(response['data']['val'])
+  //         console.log(response['data']['max'])
+  //         console.log(response['data']['min'])
+
+
+  //         setLoading(false);
+  //         setIsFullMap(false);
+
+  //     } catch (error) {
+  //       console.error(error.message);
+  //       setLoading(false);
+
+  //     }
+  //   }
+  //   if(selectedFeature !== ""){
+  //     fetchData();
+      
+  //   }
+  //   else{
+
+  //     console.log("Not Requesting data")
+  //   }
+
+	// }, [dataGeoglows]);
+
+  useEffect(() => {
+    // setLoading(true);
+
+
+    const Mydata = {
+      'reach_id': selectedGeoglows,
+      'return_format':'json'
+    }
+
+  
+    const config = {
+      header: {
+        "Content-Type": "application/json",
+      },
+    };
+    console.log(Mydata);
+    const service_link = 'http://127.0.0.1:8000/apps/hydroweb/saveHistoricalSimulationData/';
+
+    const fetchData= async () =>{
+      try {
+          const {data: response} = await axios.post(service_link,Mydata,config);
+          // const {data: response} = await axios.get(service_link,{
+          //   params: {
+          //     reach_id: selectedGeoglows,
+          //     return_format: 'json'
+          //   }
+          // });
+
+          // setDataGeoglows(response)
+          // console.log(response)
+          // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
+
+          // const {data: response} = await axios.post(service_link);
+          // console.log(response)
+          // setDataStation(response['data'])
+          // setDataStation(response['data']['val'])
+
+
+
+          // setLoading(false);
+          // setIsFullMap(false);
+
+      } catch (error) {
+        console.error(error.message);
+        setLoading(false);
+
+      }
+    }
+    if(selectedFeature !== ""){
+      fetchData();
+      
+    }
+    else{
+
+      console.log("Not Requesting data")
+    }
+
+	}, [listGeoglowsApiCalls]);
 
   return (
     <div>
@@ -156,8 +287,9 @@ const getStyle = (feature) => {
           onLayer = { onOffLayer}
           layer = {showLayer1}
         />
+        {/* <JobsMenu /> */}
       <SplitContainer >
-        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} >
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} >
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}
@@ -280,7 +412,7 @@ const getStyle = (feature) => {
             <FullScreenControl />
           </Controls>
         </Map>
-        <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }/>
+        <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation } executeGeoglows={executeGeoglows} isFullMap={ isFullMap } />
         
       </SplitContainer>
 

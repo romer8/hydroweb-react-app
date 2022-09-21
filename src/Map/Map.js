@@ -5,7 +5,7 @@ import * as ol from "ol";
 import * as olExtent from 'ol/extent';
 
 import { MapContainer } from '../styles/Map.styled'
-const Map = ({ children, zoom, center,setSelectedFeature, isFullMap }) => {
+const Map = ({ children, zoom, center,setSelectedFeature, isFullMap, setSelectedGeoglows }) => {
 	const mapRef = useRef();
 	const [map, setMap] = useState(null);
 
@@ -55,6 +55,7 @@ const Map = ({ children, zoom, center,setSelectedFeature, isFullMap }) => {
 				if(multipleFeatures.length < 2){
 					// console.log(multipleFeatures);
 					setSelectedFeature(multipleFeatures[0].get("comid"))
+					setSelectedGeoglows(multipleFeatures[0].get("comid_geoglows"))
 
 				}
 				// if multiple features just zoom in
