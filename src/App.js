@@ -116,8 +116,39 @@ const getStyle = (feature) => {
       setLoading(false);
     }
     fetchStations();
-    socketRef.current = new WebSocketWrapper();
-    socketRef.current.startWS(ws);
+    // socketRef.current = new WebSocketWrapper();
+    // socketRef.current.startWS(ws);
+    socketRef.current = new WebSocket(ws);
+      socketRef.current.onopen = () => {
+        console.log("WebSocket is Open");
+      };
+  
+      socketRef.current.onmessage = function (e) {
+        let data = JSON.parse(e.data);
+        let reach_id2 = data['reach_id'];
+        let product2 = data['product'];
+
+        console.log(data);
+        socketRef.current.send(
+          JSON.stringify({
+            type: "plot_hs_data",
+            reach_id:reach_id2,
+            product: product2
+
+          })
+        );
+      };
+  
+      socketRef.current.onclose = function () {
+        // Try to reconnect in 1 second
+        setTimeout(function () {
+          //implement more logic
+          // this.startWS(websocketServerLocation);
+        }, 1000);
+        console.log("WebSocket is Closed");
+      };
+    
+
 	}, []);
   
   useEffect(() => {
@@ -221,9 +252,10 @@ const getStyle = (feature) => {
   useEffect(() => {
     // setLoading(true);
 
-
+    console.log(selectedGeoglows)
     const Mydata = {
       'reach_id': selectedGeoglows,
+      'product': selectedFeature,
       'return_format':'json'
     }
 
@@ -239,6 +271,10 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
+
+          
+          // const {data: response} = await axios.post(service_link,Mydata,config);
+
           // const {data: response} = await axios.get(service_link,{
           //   params: {
           //     reach_id: selectedGeoglows,
