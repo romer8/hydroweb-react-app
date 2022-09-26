@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import {
-  AnimatedAxis,
-  AnimatedGrid,
-  AnimatedLineSeries,
+  Axis,
+  Grid,
+  LineSeries,
   AnimatedAreaSeries,
   Tooltip,
   XYChart,
@@ -65,7 +65,9 @@ const normal_accesors = {
   xAccessor: (d) => new Date(`${d.x}T00:00:00`),
   yAccessor: (d) => d.y
 }
-const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
+// const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
+const LineXYChartWrapper = ({ xyData }) => {
+
 
   return (
 
@@ -86,7 +88,7 @@ const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
       yScale={{ type: "linear", zero: false }}
       
     >
-      <AnimatedGrid
+      <Grid
         columns={true}
         numTicks={4}
         lineStyle={{
@@ -96,7 +98,7 @@ const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
         }}
         strokeDasharray="0, 4"
       />
-      <AnimatedAxis
+      <Axis
         hideAxisLine={true}
         hideTicks={false}
         orientation="bottom"
@@ -107,7 +109,7 @@ const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
         labelOffset={20}
 
       />
-      <AnimatedAxis
+      <Axis
         hideAxisLine={false}
         hideTicks={false}
         orientation="left"
@@ -116,8 +118,22 @@ const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
         labelOffset={30}
         tickLabelProps={() => ({ dy: -10 })}
       />
-
-      <AnimatedLineSeries
+      {xyData.map(function(lineData) {
+        console.log(xyData)
+          return (
+              <LineSeries
+                key={lineData['dataKey']}
+                stroke={lineData['stroke']}
+                dataKey={lineData['dataKey']}
+                data={lineData['data']}
+                // xAccessor={accessors_fin.xAccessor['val']}
+                // yAccessor={accessors_fin.yAccessor['val']}
+                {...normal_accesors}
+                curve={curveCardinal}
+            />
+          );
+      })}
+      {/* <AnimatedLineSeries
         stroke="#2B4865"
         dataKey="Water Level Value"
         data={xyData}
@@ -141,7 +157,14 @@ const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
         data={xyMin}
         {...normal_accesors}
         curve={curveCardinal}
-      />
+      /> */}
+      {/* <AnimatedLineSeries
+        stroke="#0000"
+        dataKey="Historical Simulation"
+        data={xyHistorical}
+        {...normal_accesors}
+        curve={curveCardinal}
+      /> */}
       <Tooltip
         snapTooltipToDatumX
         snapTooltipToDatumY

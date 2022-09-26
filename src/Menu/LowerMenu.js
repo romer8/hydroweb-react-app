@@ -2,13 +2,15 @@ import React from "react";
 import { LowerMenu } from "../styles/LowerMenu.styled";
 import { LineXYChartWrapper } from "../Charts";
 import Button_group from "../Extra/Button_group"
-const LowerMenuWrapper = ({ xyData, xyMin, xyMax, executeGeoglows, isFullMap }) => {
+const LowerMenuWrapper = ({ xyData, xyMin, xyMax, executeGeoglows, executeBiasCorrection, isFullMap }) => {
 
   return(
     
       <LowerMenu>
-        <Button_group executeGeoglows = {executeGeoglows} isFullMap={isFullMap} />
-        <LineXYChartWrapper xyData={xyData} xyMin= { xyMin } xyMax={ xyMax } />
+        <Button_group executeGeoglows = {executeGeoglows} executeBiasCorrection={executeBiasCorrection}  isFullMap={isFullMap} />
+        <LineXYChartWrapper xyData={xyData} />
+        {/* <LineXYChartWrapper xyData={xyData} xyMin= { xyMin } xyMax={ xyMax } /> */}
+
       </LowerMenu>
 
 

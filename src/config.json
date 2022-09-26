@@ -69,5 +69,5 @@
     "markerImage24" : "https://cdn2.iconfinder.com/data/icons/social-media-and-payment/64/-47-24.png",
     "markerImage32" : "https://cdn2.iconfinder.com/data/icons/social-media-and-payment/64/-47-32.png",
     "markerImage64" : "https://cdn2.iconfinder.com/data/icons/social-media-and-payment/64/-47-64.png",
-    "floodAreas_geoserver": "https://geoserver.hydroshare.org/geoserver/HS-22714855232d44198d12aa4109ec8478/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=HS-22714855232d44198d12aa4109ec8478:GEOGLOWS_SilviaV3&outputFormat=application/json"   
+    "floodAreas_geoserver": "https://geoserver.hydroshare.org/geoserver/HS-22714855232d44198d12aa4109ec8478/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=HS-22714855232d44198d12aa4109ec8478:GEOGLOWS_SilviaV3&outputFormat=application/json"
   }
