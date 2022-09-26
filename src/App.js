@@ -22,7 +22,17 @@ import JobsMenu from "./Menu/LowerMenu";
 import Loader_wrapper from "./Extra/Loader_wrapper";
 
 import { WebSocketWrapper } from "./WebsocketWrapper";
+import {ErrorBoundary} from 'react-error-boundary'
 
+function ErrorFallback({error, resetErrorBoundary}) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  )
+}
 
 const App = () => {
   const [center, setCenter] = useState(mapConfig.center);
@@ -41,7 +51,10 @@ const App = () => {
   const [listGeoglowsApiCalls, setListGeoglowsApiCalls] = useState([]);
   const [isFullMap, setIsFullMap] = useState(true)
   const [isGeoglowsActive, setIsGeoglowsActive] = useState(false)
+  const [dataObject,setDataObject] = useState([]);
+  const [isBiasCorrectionOn, setBiasCorrectionOn] = useState(false);
   const socketRef = useRef();
+  const [isError, setIsError] = React.useState(false)
 
   var ws = 'ws://' + 'localhost:8000/hydroweb' + '/data-notification/notifications/ws/';
 
@@ -85,6 +98,17 @@ const App = () => {
 
     console.log(listGeoglowsApiCalls)
   };
+
+  const executeBiasCorrection = () => {
+    console.log(isBiasCorrectionOn);
+    var new_job = `${selectedFeature}-->${selectedGeoglows}`;
+    console.log(new_job)
+    var found = listGeoglowsApiCalls.some(p => p == new_job)
+    console.log(found)
+    if(found){
+      setBiasCorrectionOn(!isBiasCorrectionOn);
+    }
+  };
   
 const getStyle = (feature) => {
     const river_index = feature.get('river_name');
@@ -127,16 +151,33 @@ const getStyle = (feature) => {
         let data = JSON.parse(e.data);
         let reach_id2 = data['reach_id'];
         let product2 = data['product'];
-
+        let command = data['command'];
         console.log(data);
-        socketRef.current.send(
-          JSON.stringify({
-            type: "plot_hs_data",
-            reach_id:reach_id2,
-            product: product2
+        if (command == "Data_Downloaded"){
+          socketRef.current.send(
+            JSON.stringify({
+              type: "plot_hs_data",
+              reach_id:reach_id2,
+              product: product2
+  
+            })
+          );
+        }
+        if (command == "Plot_Data"){
+          let dataHistorical = JSON.parse(data['data']);
+          const dataHistoricalObject = {
+            stroke:"#00008B",
+            dataKey:"Historical Simulation",
+            data:dataHistorical
+          }
+          console.log(dataHistoricalObject)
 
-          })
-        );
+          setDataGeoglows(dataHistorical);
+          setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
+        }
+        
+        
+
       };
   
       socketRef.current.onclose = function () {
@@ -175,9 +216,34 @@ const getStyle = (feature) => {
           setDataStation(response['data']['val'])
           setMinDataStation(response['data']['min'])
           setMaxDataStation(response['data']['max'])
-          console.log(response['data']['val'])
-          console.log(response['data']['max'])
-          console.log(response['data']['min'])
+          const normal_data = {
+            stroke:"#2B4865",
+            dataKey:"Water Level Value",
+            data:response['data']['val']
+          }
+          const min_data = {
+            stroke:"#8FE3CF",
+            dataKey:"Minimun",
+            data:response['data']['val']
+          }
+          const max_data = {
+            stroke:"#256D85",
+            dataKey:"Maximun",
+            data:response['data']['max']
+          }
+          
+          // const data_object={
+          //   normal: normal_data,
+          //   minimun: min_data,
+          //   maximun: max_data
+          // }
+          const data_list =[normal_data,min_data,max_data]
+
+          setDataObject(data_list)
+          console.log(data_list)
+          // console.log(response['data']['val'])
+          // console.log(response['data']['max'])
+          // console.log(response['data']['min'])
 
 
           setLoading(false);
@@ -272,30 +338,6 @@ const getStyle = (feature) => {
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
 
-          
-          // const {data: response} = await axios.post(service_link,Mydata,config);
-
-          // const {data: response} = await axios.get(service_link,{
-          //   params: {
-          //     reach_id: selectedGeoglows,
-          //     return_format: 'json'
-          //   }
-          // });
-
-          // setDataGeoglows(response)
-          // console.log(response)
-          // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
-
-          // const {data: response} = await axios.post(service_link);
-          // console.log(response)
-          // setDataStation(response['data'])
-          // setDataStation(response['data']['val'])
-
-
-
-          // setLoading(false);
-          // setIsFullMap(false);
-
       } catch (error) {
         console.error(error.message);
         setLoading(false);
@@ -313,9 +355,54 @@ const getStyle = (feature) => {
 
 	}, [listGeoglowsApiCalls]);
 
+
+  useEffect(() => {
+    // setLoading(true);
+
+    console.log(selectedGeoglows)
+    const Mydata = {
+      'reach_id': selectedGeoglows,
+      'product': selectedFeature,
+      'return_format':'json'
+    }
+
+  
+    const config = {
+      header: {
+        "Content-Type": "application/json",
+      },
+    };
+    console.log(Mydata);
+    const service_link = 'http://127.0.0.1:8000/apps/hydroweb/executeBiasCorrection/';
+
+    const fetchData= async () =>{
+      try {
+          const {data: response} = await axios.post(service_link,Mydata,config);
+
+      } catch (error) {
+        console.error(error.message);
+        setLoading(false);
+
+      }
+    }
+    if(selectedFeature !== ""){
+      fetchData();
+      
+    }
+    else{
+
+      console.log("Not Requesting data")
+    }
+
+	}, [isBiasCorrectionOn]);
+
+
   return (
     <div>
-   
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {setIsError(false);setDataObject({})}}
+        resetKeys={[isError,dataObject]}>
       <Loader_wrapper loading={ loading }/>
       
       <ContainerFlex>
@@ -448,7 +535,9 @@ const getStyle = (feature) => {
             <FullScreenControl />
           </Controls>
         </Map>
-        <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation } executeGeoglows={executeGeoglows} isFullMap={ isFullMap } />
+        {/* <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }  executeGeoglows={executeGeoglows} isFullMap={ isFullMap } /> */}
+        <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} isFullMap={ isFullMap } />
+
         
       </SplitContainer>
 
@@ -456,7 +545,7 @@ const getStyle = (feature) => {
 
       </ContainerFlex>
     
-
+      </ErrorBoundary>
     </div>
   );
 };
