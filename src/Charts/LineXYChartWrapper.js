@@ -6,7 +6,12 @@ import {
   AnimatedAreaSeries,
   Tooltip,
   XYChart,
+  DataContext,
+  DataProvider
 } from "@visx/xychart";
+import { PatternLines } from "@visx/pattern";
+import { LegendOrdinal, LegendItem,LegendLabel } from "@visx/legend";
+
 import { curveCardinal } from '@visx/curve';
 
 import { ParentSize } from '@visx/responsive';
@@ -14,7 +19,7 @@ import { ParentSize } from '@visx/responsive';
 import { ChartContainer } from "../styles/ChartContainer.styled";
 import { ColoredSquare } from "../styles/ColoredSquare.styled";
 import { TooltipContainer } from "../styles/TooltipContainer.styled";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 
 const tickLabelOffset = 10;
@@ -61,10 +66,114 @@ const accessors_fin = {
   }
 }
 
+// const normal_accesors = {
+//   xAccessor: (d) => new Date(`${d.x}T00:00:00`),
+//   yAccessor: (d) => d.y
+// }
+
 const normal_accesors = {
-  xAccessor: (d) => new Date(`${d.x}T00:00:00`),
+  xAccessor: (d) => d.x,
   yAccessor: (d) => d.y
 }
+
+const legendGlyphSize = 15;
+
+const ChartBackground = ( patternId ) => {
+  const { theme, width, height, margin, innerHeight, innerWidth } = useContext(
+    DataContext
+  );
+  return (
+    <>
+      <PatternLines
+        id={patternId}
+        width={16}
+        height={16}
+        orientation={["diagonal"]}
+        stroke={theme?.gridStyles?.stroke}
+        strokeWidth={1}
+      />
+      <rect
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        fill={theme?.backgroundColor ?? "#fff"}
+      />
+      <rect
+        x={margin.left}
+        y={margin.top}
+        width={innerWidth}
+        height={innerHeight}
+        fill={`url(#${patternId})`}
+        fillOpacity={0.3}
+      />
+    </>
+  );
+};
+
+const ChartLegend = () => {
+  const { colorScale, theme, margin } = useContext(DataContext);
+
+  return (
+
+    <LegendOrdinal
+      // direction="row"
+      // itemMargin="8px 8px 8px 0"
+      scale={colorScale}
+      // labelFormat={(label) => label.replace("-", " ")}
+      // legendLabelProps={{ color: "black" }}
+      //style={{ display: 'flex', flexDirection: 'row' }}
+      // shape="line"
+      // labelMargin="0 15px 0 0"
+>
+          {(labels) => (
+            <div       
+            style={{
+              position: 'absolute',
+              top: margin.top * 1.5,
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+            >
+              {labels.map((label, i) => (
+                <LegendItem
+                  key={`legend-${i}`}
+                  margin="8px 8px 8px 0"
+                  onClick={() => {
+                    alert(`clicked: ${JSON.stringify(label)}`);
+                  }}
+                >
+                  <svg width={legendGlyphSize} height={legendGlyphSize}>
+                    <rect fill={label.value} width={legendGlyphSize} height={legendGlyphSize} />
+                  </svg>
+                  <LegendLabel align="left" margin="0 15px 0 0">
+                    {label.text}
+                  </LegendLabel>
+                </LegendItem>
+              ))}
+            </div>
+          )}
+
+      </LegendOrdinal>
+
+      // style={{
+      //   backgroundColor: theme.backgroundColor,
+      //   marginTop: -5,
+      //   paddingLeft: margin.left,
+      //   color: 'black',
+      //   display: 'flex',
+      //   float: 'left' ,// required in addition to `direction` if overriding styles
+      //   width:'fit-content'
+      // }}
+    // />
+  );
+};
+
+
+
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
 const LineXYChartWrapper = ({ xyData }) => {
 
@@ -72,7 +181,16 @@ const LineXYChartWrapper = ({ xyData }) => {
   return (
 
     <ChartContainer>
-
+      <DataProvider
+        // these props have been moved from XYChart to DataProvider
+        // this allows us to move DataContext up a level such that we can
+        // render an HTML legend that uses DataContext and an SVG chart
+        // without doing this you would have to render XYChart as a child
+        // of XYChart, which would then require the legend to be SVG-based
+        // because HTML cannot be a child of SVG
+        xScale={{ type: "band", paddingInner: 0.5 }}
+        yScale={{ type: "linear", zero: false }}
+      >
       <XYChart
       // parentWidth={parent.width}
       // parentHeight={parent.height}
@@ -88,6 +206,7 @@ const LineXYChartWrapper = ({ xyData }) => {
       yScale={{ type: "linear", zero: false }}
       
     >
+
       <Grid
         columns={true}
         numTicks={4}
@@ -126,8 +245,6 @@ const LineXYChartWrapper = ({ xyData }) => {
                 stroke={lineData['stroke']}
                 dataKey={lineData['dataKey']}
                 data={lineData['data']}
-                // xAccessor={accessors_fin.xAccessor['val']}
-                // yAccessor={accessors_fin.yAccessor['val']}
                 {...normal_accesors}
                 curve={curveCardinal}
             />
@@ -165,25 +282,37 @@ const LineXYChartWrapper = ({ xyData }) => {
         {...normal_accesors}
         curve={curveCardinal}
       /> */}
-      <Tooltip
-        snapTooltipToDatumX
-        snapTooltipToDatumY
-        showVerticalCrosshair
-        showSeriesGlyphs
-        renderTooltip={({ tooltipData, colorScale }) => (
-          <div>
-            <div style={{ color: colorScale(tooltipData.datumByKey.key) }}>
-              {tooltipData.datumByKey.key}
-            </div>
-            {/* {normal_accesors.xAccessor(tooltipData.nearestDatum.datum)}
-            {', '} */}
-            {normal_accesors.yAccessor(tooltipData.nearestDatum.datum)}
 
-          </div>
-        )}
-      />
+
+    <Tooltip
+            showVerticalCrosshair
+            snapTooltipToDatumX
+            renderTooltip={({ tooltipData, colorScale }) =>
+              tooltipData.nearestDatum.key && (
+                <>
+                  <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
+                    {tooltipData.nearestDatum.key}
+                  </div>
+                  <br />
+                  {
+                    // (d) => new Date(`${d.x}T00:00:00`)
+                    normal_accesors.xAccessor(
+                      tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                    )
+                  }
+                  :{" "}
+                  {normal_accesors.yAccessor(
+                    tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                  ).toFixed(2)}
+                </>
+              )
+            }
+          />
+
 
     </XYChart>
+    <ChartLegend />
+    </DataProvider>
     </ChartContainer>
 
     // )}
@@ -195,6 +324,21 @@ const LineXYChartWrapper = ({ xyData }) => {
 
 export default LineXYChartWrapper;
 /*
+      <Tooltip
+        snapTooltipToDatumX
+        snapTooltipToDatumY
+        showVerticalCrosshair
+        showSeriesGlyphs
+        renderTooltip={({ tooltipData, colorScale }) => (
+          <div>
+            <div style={{ color: colorScale(tooltipData.datumByKey.key) }}>
+              {tooltipData.datumByKey.key}
+            </div>
+            {normal_accesors.yAccessor(tooltipData.nearestDatum.datum)}
+
+          </div>
+        )}
+      />
 
       <AnimatedAreaSeries
         fill="#256D85"
