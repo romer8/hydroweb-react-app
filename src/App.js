@@ -278,6 +278,7 @@ const getStyle = (feature) => {
   
   useEffect(() => {
     setLoading(true);
+    console.log("Hydroweb data activated",selectedFeature)
 
     const Mydata = {
       'product': selectedFeature
@@ -287,7 +288,7 @@ const getStyle = (feature) => {
         "Content-Type": "application/json",
       },
     };
-    console.log(Mydata);
+    // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
     const fetchData= async () =>{
       try {
@@ -297,9 +298,9 @@ const getStyle = (feature) => {
           // const {data: response} = await axios.post(service_link);
           // console.log(response)
           // setDataStation(response['data'])
-          setDataStation(response['data']['val'])
-          setMinDataStation(response['data']['min'])
-          setMaxDataStation(response['data']['max'])
+          // setDataStation(response['data']['val'])
+          // setMinDataStation(response['data']['min'])
+          // setMaxDataStation(response['data']['max'])
           const normal_data = {
             stroke:"#2B4865",
             dataKey:"Water Level Value",
@@ -330,7 +331,7 @@ const getStyle = (feature) => {
           const data_list =[normal_data,min_data,max_data]
 
           setDataObject(data_list)
-          console.log(data_list)
+          // console.log(data_list)
           // console.log(response['data']['val'])
           // console.log(response['data']['max'])
           // console.log(response['data']['min'])
@@ -359,7 +360,7 @@ const getStyle = (feature) => {
   useEffect(() => {
     // setLoading(true);
 
-    console.log(selectedGeoglows)
+    console.log("Historical Simulation data Save activated",selectedGeoglows)
     const Mydata = {
       'reach_id': selectedGeoglows,
       'product': selectedFeature,
@@ -372,7 +373,7 @@ const getStyle = (feature) => {
         "Content-Type": "application/json",
       },
     };
-    console.log(Mydata);
+    // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/saveHistoricalSimulationData/';
 
     const fetchData= async () =>{
@@ -399,8 +400,9 @@ const getStyle = (feature) => {
 
   useEffect(() => {
     // setLoading(true);
+    console.log("Bias Correction data Save activated",selectedGeoglows,selectedFeature)
 
-    console.log(selectedGeoglows)
+    // console.log(selectedGeoglows)
     const Mydata = {
       'reach_id': selectedGeoglows,
       'product': selectedFeature,
@@ -413,7 +415,7 @@ const getStyle = (feature) => {
         "Content-Type": "application/json",
       },
     };
-    console.log(Mydata);
+    // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/executeBiasCorrection/';
 
     const fetchData= async () =>{

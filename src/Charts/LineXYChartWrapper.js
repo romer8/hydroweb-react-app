@@ -66,7 +66,7 @@ const accessors_fin = {
   }
 }
 
-// const normal_accesors = {
+// const normal_accesors_date = {
 //   xAccessor: (d) => new Date(`${d.x}T00:00:00`),
 //   yAccessor: (d) => d.y
 // }
@@ -120,7 +120,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
   const legendLabelStyle = (margin) => {
    return {    
       position: 'absolute',
-      top: margin.top * 1.5,
+      top: margin.top * 2,
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
@@ -281,8 +281,8 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
       />
       {xyData.map(function(lineData) {
         // console.log(xyData)
-        if(isHydroDataOn && lineData['dataKey'] !== "Historical Simulation"){
-          console.log("NOOOHistorical Simulation",isHydroDataOn)
+        if(isHydroDataOn && (lineData['dataKey'] !== "Historical Simulation" && !lineData['dataKey'].startsWith('Bias Corrected'))){
+          console.log("Hydroweb Data",isHydroDataOn)
 
             return (
               <LineSeries
