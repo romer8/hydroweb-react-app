@@ -1,15 +1,17 @@
 import React from "react";
 import {ButtonGroup} from '../styles/Button_group.styled'
 
-const Button_group = ({ executeGeoglows, executeBiasCorrection, isFullMap }) => {
-
+const Button_group = ({ executeGeoglows, executeBiasCorrection,executeHydroWebData, isFullMap }) => {
+  // const setIsHydroDataOnHandler = ()=>{
+  //   setIsHydroDataOn(true)
+  // }
 
 
   return(
     
       <ButtonGroup isFullMap={isFullMap}>
         <div className="multi-button">
-            <button id="hydroweb_data"> <span>1</span> Hydroweb Data</button>
+            <button onClick={executeHydroWebData} id="hydroweb_data"> <span>1</span> Hydroweb Data</button>
 
             <button onClick={executeGeoglows} id="historical_simulation"><span>2</span> Historical Simulation Data</button>
             <button onClick={executeBiasCorrection} id="bias_correction"><span>3</span> Execute Bias Correction</button>

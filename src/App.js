@@ -52,7 +52,9 @@ const App = () => {
   const [isFullMap, setIsFullMap] = useState(true)
   const [isGeoglowsActive, setIsGeoglowsActive] = useState(false)
   const [dataObject,setDataObject] = useState([]);
+  // const [dataStorage, setDataStorage] = useState([]);
   const [isBiasCorrectionOn, setBiasCorrectionOn] = useState(false);
+  const [isHydroDataOn, setIsHydroDataOn] = useState(false)
   const socketRef = useRef();
   const [isError, setIsError] = React.useState(false)
 
@@ -85,15 +87,27 @@ const App = () => {
     console.log(e)
   }
 
+  // const isHydroDataOnHandler = ()=>{
+  //   setIsHydroDataOn(!isHydroDataOn);
+  // };
+
+
   const executeGeoglows = () => {
-    setIsGeoglowsActive(!isGeoglowsActive);
-    console.log(isGeoglowsActive);
+    // setIsGeoglowsActive(!isGeoglowsActive);
+    // console.log(isGeoglowsActive);
     var new_job = `${selectedFeature}-->${selectedGeoglows}`;
     console.log(new_job)
     var found = listGeoglowsApiCalls.some(p => p == new_job)
     console.log(found)
     if(!found){
       setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
+      // setIsGeoglowsActive(!isGeoglowsActive);
+      setIsGeoglowsActive(true);
+      setIsHydroDataOn(false);
+    }
+    else{
+      setIsGeoglowsActive(true);
+      setIsHydroDataOn(false);
     }
 
     console.log(listGeoglowsApiCalls)
@@ -106,8 +120,15 @@ const App = () => {
     var found = listGeoglowsApiCalls.some(p => p == new_job)
     console.log(found)
     if(found){
-      setBiasCorrectionOn(!isBiasCorrectionOn);
+      // setBiasCorrectionOn(!isBiasCorrectionOn);
+      setBiasCorrectionOn(true);
+
     }
+  };
+  const executeHydroWebData = ()=>{
+    setBiasCorrectionOn(false);
+    setIsGeoglowsActive(false);
+    setIsHydroDataOn(true);
   };
   
 const getStyle = (feature) => {
@@ -168,12 +189,14 @@ const getStyle = (feature) => {
           const dataHistoricalObject = {
             stroke:"#00008B",
             dataKey:"Historical Simulation",
-            data:dataHistorical
+            data:dataHistorical,
+            visible:isGeoglowsActive
           }
           console.log(dataHistoricalObject)
 
-          setDataGeoglows(dataHistorical);
+          // setDataGeoglows(dataHistorical);
           setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
+          
         }
         
         
@@ -219,17 +242,23 @@ const getStyle = (feature) => {
           const normal_data = {
             stroke:"#2B4865",
             dataKey:"Water Level Value",
-            data:response['data']['val']
+            data:response['data']['val'],
+            visible:isHydroDataOn
+
           }
           const min_data = {
             stroke:"#8FE3CF",
             dataKey:"Minimun",
-            data:response['data']['val']
+            data:response['data']['val'],
+            visible:isHydroDataOn
+
           }
           const max_data = {
-            stroke:"#256D85",
+            stroke:"#002500",
             dataKey:"Maximun",
-            data:response['data']['max']
+            data:response['data']['max'],
+            visible:isHydroDataOn
+
           }
           
           // const data_object={
@@ -397,6 +426,8 @@ const getStyle = (feature) => {
 	}, [isBiasCorrectionOn]);
 
 
+
+
   return (
     <div>
       <ErrorBoundary
@@ -412,7 +443,7 @@ const getStyle = (feature) => {
         />
         {/* <JobsMenu /> */}
       <SplitContainer >
-        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} >
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} >
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}
@@ -536,7 +567,9 @@ const getStyle = (feature) => {
           </Controls>
         </Map>
         {/* <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }  executeGeoglows={executeGeoglows} isFullMap={ isFullMap } /> */}
-        <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} isFullMap={ isFullMap } />
+
+          <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} setDataObject = {setDataObject} isFullMap={ isFullMap } isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} />  
+        
 
         
       </SplitContainer>

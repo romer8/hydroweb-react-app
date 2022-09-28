@@ -111,72 +111,114 @@ const ChartBackground = ( patternId ) => {
   );
 };
 
-const ChartLegend = () => {
-  const { colorScale, theme, margin } = useContext(DataContext);
-
-  return (
-
-    <LegendOrdinal
-      // direction="row"
-      // itemMargin="8px 8px 8px 0"
-      scale={colorScale}
-      // labelFormat={(label) => label.replace("-", " ")}
-      // legendLabelProps={{ color: "black" }}
-      //style={{ display: 'flex', flexDirection: 'row' }}
-      // shape="line"
-      // labelMargin="0 15px 0 0"
->
-          {(labels) => (
-            <div       
-            style={{
-              position: 'absolute',
-              top: margin.top * 1.5,
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              fontSize: '14px',
-              cursor: 'pointer'
-            }}
-            >
-              {labels.map((label, i) => (
-                <LegendItem
-                  key={`legend-${i}`}
-                  margin="8px 8px 8px 0"
-                  onClick={() => {
-                    alert(`clicked: ${JSON.stringify(label)}`);
-                  }}
-                >
-                  <svg width={legendGlyphSize} height={legendGlyphSize}>
-                    <rect fill={label.value} width={legendGlyphSize} height={legendGlyphSize} />
-                  </svg>
-                  <LegendLabel align="left" margin="0 15px 0 0">
-                    {label.text}
-                  </LegendLabel>
-                </LegendItem>
-              ))}
-            </div>
-          )}
-
-      </LegendOrdinal>
-
-      // style={{
-      //   backgroundColor: theme.backgroundColor,
-      //   marginTop: -5,
-      //   paddingLeft: margin.left,
-      //   color: 'black',
-      //   display: 'flex',
-      //   float: 'left' ,// required in addition to `direction` if overriding styles
-      //   width:'fit-content'
-      // }}
-    // />
-  );
-};
 
 
 
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
-const LineXYChartWrapper = ({ xyData }) => {
+const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive }) => {
+  const [backupData, setBackupData] = useState([]);
+  const legendLabelStyle = (margin) => {
+   return {    
+      position: 'absolute',
+      top: margin.top * 1.5,
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      fontSize: '14px',
+      cursor: 'pointer'
+    }
+  }
+  const OffLegend = (label) =>{
+    
+    // setDataObject(xyData.filter(item => item.dataKey !== label.text))
+    setDataObject(xyData.filter(item => {
+      if(item.dataKey == label.text){
+          if(backupData.filter(item2 => item2.dataKey == label.text).length < 1){
+            console.log("hidding")
+            setBackupData(backupData => [...backupData, {
+              dataKey: item.dataKey,
+              data: item.data
+            }]);
+           item.data = []
+           console.log(backupData)
+          }
+          else{
+            console.log("showing")
+            console.log(backupData)
 
+            // console.log(backupData.filter(item => item.dataKey == label.text)[0]['data'])
+            item.data = backupData.filter(item => item.dataKey == label.text)[0]['data']
+
+            setBackupData(backupData.filter(item => item.dataKey !== label.text))
+            console.log(backupData)
+          }
+
+      }
+      return item
+    }))
+    
+  }
+  
+  const ChartLegend = () => {
+    const { colorScale, theme, margin } = useContext(DataContext);
+  
+    return (
+  
+      <LegendOrdinal
+        direction="row"
+        // itemMargin="8px 8px 8px 0"
+        scale={colorScale}
+        // labelFormat={(label) => label.replace("-", " ")}
+        // legendLabelProps={{ color: "black" }}
+        //style={{ display: 'flex', flexDirection: 'row' }}
+        // shape="line"
+        // labelMargin="0 15px 0 0"
+        >
+            {(labels) => (
+              <div       
+              style={legendLabelStyle(margin)}
+              >
+                {labels.map((label, i) => (
+                  <LegendItem
+                    key={`legend-${i}`}
+                    margin="8px 8px 8px 0"
+                    onClick={() => {
+                      // alert(`clicked: ${JSON.stringify(label)}`);
+                      
+                      OffLegend(label);
+
+                    }}
+                    style={{
+                      
+                      'textDecoration': backupData.filter(item2 => item2.dataKey == label.text).length < 1 ? 'none' : 'line-through',
+                      'display': 'flex'
+                    }}
+                  >
+                    <svg width={legendGlyphSize} height={legendGlyphSize}>
+                      <rect fill={label.value} width={legendGlyphSize} height={legendGlyphSize} />
+                    </svg>
+                    <LegendLabel align="left" margin="0 15px 0 0" >
+                      {label.text}
+                    </LegendLabel>
+                  </LegendItem>
+                ))}
+              </div>
+            )}
+  
+        </LegendOrdinal>
+  
+        // style={{
+        //   backgroundColor: theme.backgroundColor,
+        //   marginTop: -5,
+        //   paddingLeft: margin.left,
+        //   color: 'black',
+        //   display: 'flex',
+        //   float: 'left' ,// required in addition to `direction` if overriding styles
+        //   width:'fit-content'
+        // }}
+      // />
+    );
+  };
 
   return (
 
@@ -238,8 +280,11 @@ const LineXYChartWrapper = ({ xyData }) => {
         tickLabelProps={() => ({ dy: -10 })}
       />
       {xyData.map(function(lineData) {
-        console.log(xyData)
-          return (
+        // console.log(xyData)
+        if(isHydroDataOn && lineData['dataKey'] !== "Historical Simulation"){
+          console.log("NOOOHistorical Simulation",isHydroDataOn)
+
+            return (
               <LineSeries
                 key={lineData['dataKey']}
                 stroke={lineData['stroke']}
@@ -249,6 +294,21 @@ const LineXYChartWrapper = ({ xyData }) => {
                 curve={curveCardinal}
             />
           );
+        }
+        if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
+          console.log("Historical Simulation",isGeoglowsActive)
+          return (
+            <LineSeries
+              key={lineData['dataKey']}
+              stroke={lineData['stroke']}
+              dataKey={lineData['dataKey']}
+              data={lineData['data']}
+              {...normal_accesors}
+              curve={curveCardinal}
+          />
+          );
+        }
+
       })}
       {/* <AnimatedLineSeries
         stroke="#2B4865"
