@@ -115,7 +115,7 @@ const ChartBackground = ( patternId ) => {
 
 
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
-const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive }) => {
+const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn }) => {
   const [backupData, setBackupData] = useState([]);
   const legendLabelStyle = (margin) => {
    return {    
@@ -297,6 +297,19 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
         }
         if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
           console.log("Historical Simulation",isGeoglowsActive)
+          return (
+            <LineSeries
+              key={lineData['dataKey']}
+              stroke={lineData['stroke']}
+              dataKey={lineData['dataKey']}
+              data={lineData['data']}
+              {...normal_accesors}
+              curve={curveCardinal}
+          />
+          );
+        }
+        if(isBiasCorrectionOn && lineData['dataKey'] == "Hydroweb Bias Corrected "){
+          console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
           return (
             <LineSeries
               key={lineData['dataKey']}

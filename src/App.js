@@ -49,11 +49,12 @@ const App = () => {
   const [maxDataStation, setMaxDataStation] = useState([]);
   const [dataGeoglows, setDataGeoglows] = useState({});
   const [listGeoglowsApiCalls, setListGeoglowsApiCalls] = useState([]);
+  const [listBiasCorrection, setListBiasCorrection] = useState([]);
   const [isFullMap, setIsFullMap] = useState(true)
   const [isGeoglowsActive, setIsGeoglowsActive] = useState(false)
   const [dataObject,setDataObject] = useState([]);
   // const [dataStorage, setDataStorage] = useState([]);
-  const [isBiasCorrectionOn, setBiasCorrectionOn] = useState(false);
+  const [isBiasCorrectionOn, setIsBiasCorrectionOn] = useState(false);
   const [isHydroDataOn, setIsHydroDataOn] = useState(false)
   const socketRef = useRef();
   const [isError, setIsError] = React.useState(false)
@@ -102,31 +103,41 @@ const App = () => {
     if(!found){
       setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
       // setIsGeoglowsActive(!isGeoglowsActive);
-      setIsGeoglowsActive(true);
-      setIsHydroDataOn(false);
     }
-    else{
-      setIsGeoglowsActive(true);
-      setIsHydroDataOn(false);
-    }
+    setIsGeoglowsActive(true);
+    setIsHydroDataOn(false);
+    setIsBiasCorrectionOn(false);
 
-    console.log(listGeoglowsApiCalls)
+    // console.log(listGeoglowsApiCalls)
   };
 
   const executeBiasCorrection = () => {
     console.log(isBiasCorrectionOn);
     var new_job = `${selectedFeature}-->${selectedGeoglows}`;
     console.log(new_job)
-    var found = listGeoglowsApiCalls.some(p => p == new_job)
+    var found = listBiasCorrection.some(p => p == new_job)
     console.log(found)
-    if(found){
-      // setBiasCorrectionOn(!isBiasCorrectionOn);
-      setBiasCorrectionOn(true);
-
+    if(!found){
+      setListBiasCorrection(listBiasCorrection => [...listBiasCorrection, new_job]);
+      // setIsGeoglowsActive(!isGeoglowsActive);
     }
+    setIsBiasCorrectionOn(true);
+    setIsHydroDataOn(false);
+    setIsGeoglowsActive(false);
+    // if(found){
+    //   // setBiasCorrectionOn(!isBiasCorrectionOn);
+    //   setIsBiasCorrectionOn(true);
+    //   setIsHydroDataOn(false);
+    //   setIsGeoglowsActive(false);
+    // }
+    // else{
+    //   setIsBiasCorrectionOn(true);
+    //   setIsHydroDataOn(false);
+    //   setIsGeoglowsActive(false);
+    // }
   };
   const executeHydroWebData = ()=>{
-    setBiasCorrectionOn(false);
+    setIsBiasCorrectionOn(false);
     setIsGeoglowsActive(false);
     setIsHydroDataOn(true);
   };
@@ -568,7 +579,7 @@ const getStyle = (feature) => {
         </Map>
         {/* <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }  executeGeoglows={executeGeoglows} isFullMap={ isFullMap } /> */}
 
-          <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} setDataObject = {setDataObject} isFullMap={ isFullMap } isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} />  
+          <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} setDataObject = {setDataObject} isFullMap={ isFullMap } isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} />  
         
 
         
