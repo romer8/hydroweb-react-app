@@ -103,7 +103,7 @@ const App = () => {
       setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
       // setIsGeoglowsActive(!isGeoglowsActive);
     }
-    setIsGeoglowsActive(true);
+    // setIsGeoglowsActive(true);
     setIsHydroDataOn(false);
     setIsBiasCorrectionOn(false);
 
@@ -120,9 +120,10 @@ const App = () => {
       setListBiasCorrection(listBiasCorrection => [...listBiasCorrection, new_job]);
       // setIsGeoglowsActive(!isGeoglowsActive);
     }
-    setIsBiasCorrectionOn(true);
+    // setIsBiasCorrectionOn(true);
     setIsHydroDataOn(false);
     setIsGeoglowsActive(false);
+    
     // if(found){
     //   // setBiasCorrectionOn(!isBiasCorrectionOn);
     //   setIsBiasCorrectionOn(true);
@@ -358,7 +359,7 @@ const getStyle = (feature) => {
 	}, [selectedFeature]);
 
   useEffect(() => {
-    // setLoading(true);
+    setLoading(true);
 
     console.log("Historical Simulation data Save activated",selectedGeoglows)
     const Mydata = {
@@ -379,6 +380,10 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
+          setIsGeoglowsActive(true);
+          // setIsHydroDataOn(false);
+          // setIsBiasCorrectionOn(false);
+          setLoading(false);
 
       } catch (error) {
         console.error(error.message);
@@ -399,7 +404,7 @@ const getStyle = (feature) => {
 
 
   useEffect(() => {
-    // setLoading(true);
+    setLoading(true);
     console.log("Bias Correction data Save activated",selectedGeoglows,selectedFeature)
 
     // console.log(selectedGeoglows)
@@ -421,6 +426,10 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
+          setIsBiasCorrectionOn(true);
+          // setIsHydroDataOn(false);
+          // setIsGeoglowsActive(false);
+          setLoading(false);
 
       } catch (error) {
         console.error(error.message);
