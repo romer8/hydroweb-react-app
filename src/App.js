@@ -209,6 +209,16 @@ const getStyle = (feature) => {
           setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
           
         }
+        if(command == "Bias_Data_Downloaded"){
+          socketRef.current.send(
+            JSON.stringify({
+              type: "plot_bias_corrected_data",
+              reach_id:reach_id2,
+              product: product2
+  
+            })
+          );
+        }
         
         
 
