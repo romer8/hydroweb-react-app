@@ -53,7 +53,6 @@ const App = () => {
   const [isFullMap, setIsFullMap] = useState(true)
   const [isGeoglowsActive, setIsGeoglowsActive] = useState(false)
   const [dataObject,setDataObject] = useState([]);
-  // const [dataStorage, setDataStorage] = useState([]);
   const [isBiasCorrectionOn, setIsBiasCorrectionOn] = useState(false);
   const [isHydroDataOn, setIsHydroDataOn] = useState(false)
   const socketRef = useRef();
@@ -196,18 +195,21 @@ const getStyle = (feature) => {
           );
         }
         if (command == "Plot_Data"){
-          let dataHistorical = JSON.parse(data['data']);
-          const dataHistoricalObject = {
-            stroke:"#00008B",
-            dataKey:"Historical Simulation",
-            data:dataHistorical,
-            visible:isGeoglowsActive
+          var found = dataObject.some(p => p.dataKey == 'Historical Simulation');
+          if(!found){
+            console.log("ADDING THE HISTORICAL SIMULATION DATA")
+            let dataHistorical = JSON.parse(data['data']);
+            const dataHistoricalObject = {
+              stroke:"#00008B",
+              dataKey:"Historical Simulation",
+              data:dataHistorical,
+              visible:isGeoglowsActive
+            }
+            console.log(dataHistoricalObject)
+  
+            // setDataGeoglows(dataHistorical);
+            setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
           }
-          console.log(dataHistoricalObject)
-
-          // setDataGeoglows(dataHistorical);
-          setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
-          
         }
         if(command == "Bias_Data_Downloaded"){
           socketRef.current.send(
@@ -220,33 +222,41 @@ const getStyle = (feature) => {
           );
         }
         if (command == "Plot_Bias_Corrected_Data"){
-          let dataBiasCorrrected = data['data'];
 
-          console.log(dataBiasCorrrected)
+          var found = dataObject.some(p => p.dataKey == 'Bias Corrected Mean Level');
+          console.log(found)
+          if(!found){
+            console.log("ADDING THE BIAS CORRECTED HISTORICAL SIMULATION DATA")
 
-          // setDataGeoglows(dataHistorical);
-          const normal_bc_data = {
-            stroke:"#2B4865",
-            dataKey:"Bias Corrected Mean Level",
-            data:data['data']['val'],
-            visible:isBiasCorrectionOn
+            let dataBiasCorrrected = data['data'];
 
+            console.log(dataBiasCorrrected)
+  
+            // setDataGeoglows(dataHistorical);
+            const normal_bc_data = {
+              stroke:"#2B4865",
+              dataKey:"Bias Corrected Mean Level",
+              data:data['data']['val'],
+              visible:isBiasCorrectionOn
+  
+            }
+            const min_bc_data = {
+              stroke:"#8FE3CF",
+              dataKey:"Bias Corrected Minimun Level",
+              data:data['data']['val'],
+              visible:isBiasCorrectionOn
+  
+            }
+            const max_bc_data = {
+              stroke:"#002500",
+              dataKey:"Bias Corrected Maximun Level",
+              data:data['data']['max'],
+              visible:isBiasCorrectionOn
+  
+            }
+            setDataObject(dataObject => [...dataObject,normal_bc_data,min_bc_data,max_bc_data ]);
           }
-          const min_bc_data = {
-            stroke:"#8FE3CF",
-            dataKey:"Bias Corrected Minimun Level",
-            data:data['data']['val'],
-            visible:isBiasCorrectionOn
 
-          }
-          const max_bc_data = {
-            stroke:"#002500",
-            dataKey:"Bias Corrected Maximun Level",
-            data:data['data']['max'],
-            visible:isBiasCorrectionOn
-
-          }
-          setDataObject(dataObject => [...dataObject,normal_bc_data,min_bc_data,max_bc_data ]);
 
         }
         
@@ -346,55 +356,6 @@ const getStyle = (feature) => {
 
 	}, [selectedFeature]);
 
-  // useEffect(() => {
-  //   setLoading(true);
-
-  //   const Mydata = {
-  //     'product': dataGeoglows
-  //   }
-  //   const config = {
-  //     header: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
-  //   console.log(Mydata);
-  //   const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
-  //   const fetchData= async () =>{
-  //     try {
-  //         const {data: response} = await axios.post(service_link,Mydata,config);
-  //         // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
-
-  //         // const {data: response} = await axios.post(service_link);
-  //         // console.log(response)
-  //         // setDataStation(response['data'])
-  //         setDataStation(response['data']['val'])
-  //         setMinDataStation(response['data']['min'])
-  //         setMaxDataStation(response['data']['max'])
-  //         console.log(response['data']['val'])
-  //         console.log(response['data']['max'])
-  //         console.log(response['data']['min'])
-
-
-  //         setLoading(false);
-  //         setIsFullMap(false);
-
-  //     } catch (error) {
-  //       console.error(error.message);
-  //       setLoading(false);
-
-  //     }
-  //   }
-  //   if(selectedFeature !== ""){
-  //     fetchData();
-      
-  //   }
-  //   else{
-
-  //     console.log("Not Requesting data")
-  //   }
-
-	// }, [dataGeoglows]);
-
   useEffect(() => {
     // setLoading(true);
 
@@ -474,7 +435,7 @@ const getStyle = (feature) => {
       console.log("Not Requesting data")
     }
 
-	}, [isBiasCorrectionOn]);
+	}, [listBiasCorrection]);
 
 
 
