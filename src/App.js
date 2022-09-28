@@ -219,6 +219,36 @@ const getStyle = (feature) => {
             })
           );
         }
+        if (command == "Plot_Bias_Corrected_Data"){
+          let dataBiasCorrrected = data['data'];
+
+          console.log(dataBiasCorrrected)
+
+          // setDataGeoglows(dataHistorical);
+          const normal_bc_data = {
+            stroke:"#2B4865",
+            dataKey:"Bias Corrected Mean Level",
+            data:data['data']['val'],
+            visible:isBiasCorrectionOn
+
+          }
+          const min_bc_data = {
+            stroke:"#8FE3CF",
+            dataKey:"Bias Corrected Minimun Level",
+            data:data['data']['val'],
+            visible:isBiasCorrectionOn
+
+          }
+          const max_bc_data = {
+            stroke:"#002500",
+            dataKey:"Bias Corrected Maximun Level",
+            data:data['data']['max'],
+            visible:isBiasCorrectionOn
+
+          }
+          setDataObject(dataObject => [...dataObject,normal_bc_data,min_bc_data,max_bc_data ]);
+
+        }
         
         
 

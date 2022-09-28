@@ -308,7 +308,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
           />
           );
         }
-        if(isBiasCorrectionOn && lineData['dataKey'] == "Hydroweb Bias Corrected "){
+        if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
           console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
           return (
             <LineSeries

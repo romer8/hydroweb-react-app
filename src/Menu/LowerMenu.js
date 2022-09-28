@@ -10,7 +10,6 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
         <Button_group executeGeoglows = {executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} isFullMap={isFullMap} />
         <LineXYChartWrapper xyData={xyData} setDataObject={setDataObject} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} />
         {/* <LineXYChartWrapper xyData={xyData} xyMin= { xyMin } xyMax={ xyMax } /> */}
-
       </LowerMenu>
 
 
