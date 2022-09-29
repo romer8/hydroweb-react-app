@@ -102,8 +102,10 @@ const App = () => {
     if(!found){
       setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
       // setIsGeoglowsActive(!isGeoglowsActive);
+
     }
-    // setIsGeoglowsActive(true);
+
+    setIsGeoglowsActive(true);
     setIsHydroDataOn(false);
     setIsBiasCorrectionOn(false);
 
@@ -119,8 +121,12 @@ const App = () => {
     if(!found){
       setListBiasCorrection(listBiasCorrection => [...listBiasCorrection, new_job]);
       // setIsGeoglowsActive(!isGeoglowsActive);
+
     }
+  
     // setIsBiasCorrectionOn(true);
+    setIsBiasCorrectionOn(true);
+
     setIsHydroDataOn(false);
     setIsGeoglowsActive(false);
     
@@ -380,7 +386,7 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
-          setIsGeoglowsActive(true);
+          // setIsGeoglowsActive(true);
           // setIsHydroDataOn(false);
           // setIsBiasCorrectionOn(false);
           setLoading(false);
@@ -426,7 +432,7 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
-          setIsBiasCorrectionOn(true);
+          // setIsBiasCorrectionOn(true);
           // setIsHydroDataOn(false);
           // setIsGeoglowsActive(false);
           setLoading(false);
