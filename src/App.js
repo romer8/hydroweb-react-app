@@ -44,17 +44,21 @@ const App = () => {
   const [styleCache, setStyleCache] = useState({});
   const [selectedFeature, setSelectedFeature] = useState("");
   const [selectedGeoglows, setSelectedGeoglows] = useState("")
-  const [dataStation, setDataStation] = useState([]);
-  const [minDataStation, setMinDataStation] = useState([]);
-  const [maxDataStation, setMaxDataStation] = useState([]);
-  const [dataGeoglows, setDataGeoglows] = useState({});
+  // const [dataStation, setDataStation] = useState([]);
+  // const [minDataStation, setMinDataStation] = useState([]);
+  // const [maxDataStation, setMaxDataStation] = useState([]);
+  // const [dataGeoglows, setDataGeoglows] = useState({});
   const [listGeoglowsApiCalls, setListGeoglowsApiCalls] = useState([]);
   const [listBiasCorrection, setListBiasCorrection] = useState([]);
+  const [lisForecast, setListForecast] = useState([]);
+
   const [isFullMap, setIsFullMap] = useState(true)
   const [isGeoglowsActive, setIsGeoglowsActive] = useState(false)
   const [dataObject,setDataObject] = useState([]);
   const [isBiasCorrectionOn, setIsBiasCorrectionOn] = useState(false);
-  const [isHydroDataOn, setIsHydroDataOn] = useState(false)
+  const [isHydroDataOn, setIsHydroDataOn] = useState(false);
+  const [isForecastOn, setIsForecastOn] = useState(false);
+
   const socketRef = useRef();
   const [isError, setIsError] = React.useState(false)
 
@@ -106,6 +110,8 @@ const App = () => {
     }
 
     setIsGeoglowsActive(true);
+    setIsForecastOn(false)
+
     setIsHydroDataOn(false);
     setIsBiasCorrectionOn(false);
 
@@ -126,6 +132,7 @@ const App = () => {
   
     // setIsBiasCorrectionOn(true);
     setIsBiasCorrectionOn(true);
+    setIsForecastOn(false)
 
     setIsHydroDataOn(false);
     setIsGeoglowsActive(false);
@@ -142,6 +149,26 @@ const App = () => {
     //   setIsGeoglowsActive(false);
     // }
   };
+  const executeForecast = () => {
+    console.log(isForecastOn);
+    var new_job = `${selectedFeature}-->${selectedGeoglows}`;
+    console.log(new_job)
+    var found = lisForecast.some(p => p == new_job)
+    console.log(found)
+    if(!found){
+      setListForecast(lisForecast => [...lisForecast, new_job]);
+      // setIsGeoglowsActive(!isGeoglowsActive);
+
+    }
+  
+    // setIsBiasCorrectionOn(true);
+    setIsForecastOn(true)
+    setIsBiasCorrectionOn(false);
+    setIsHydroDataOn(false);
+    setIsGeoglowsActive(false);
+  
+  };
+  
   const executeHydroWebData = ()=>{
     setIsBiasCorrectionOn(false);
     setIsGeoglowsActive(false);
@@ -229,7 +256,6 @@ const getStyle = (feature) => {
           );
         }
         if (command == "Plot_Bias_Corrected_Data"){
-
           var found = dataObject.some(p => p.dataKey == 'Bias Corrected Mean Level');
           console.log(found)
           if(!found){
@@ -267,7 +293,26 @@ const getStyle = (feature) => {
 
         }
         
-        
+        if(command == "Ensemble_Forecast_Data_Downloaded"){
+          socketRef.current.send(
+            JSON.stringify({
+              type: "plot_ensemble_forecast_data",
+              reach_id:reach_id2,
+              product: product2
+  
+            })
+          );
+        }
+        if(command == "Forecast_Data_Downloaded"){
+          socketRef.current.send(
+            JSON.stringify({
+              type: "plot_forecast_data",
+              reach_id:reach_id2,
+              product: product2
+  
+            })
+          );
+        }
 
       };
   
@@ -455,7 +500,50 @@ const getStyle = (feature) => {
 	}, [listBiasCorrection]);
 
 
+  useEffect(() => {
+    setLoading(true);
+    console.log("Forecast data Save activated",selectedGeoglows,selectedFeature)
 
+    // console.log(selectedGeoglows)
+    const Mydata = {
+      'reach_id': selectedGeoglows,
+      'product': selectedFeature,
+      'return_format':'json'
+    }
+
+  
+    const config = {
+      header: {
+        "Content-Type": "application/json",
+      },
+    };
+    // console.log(Mydata);
+    const service_link = 'http://127.0.0.1:8000/apps/hydroweb/saveForecastData/';
+
+    const fetchData= async () =>{
+      try {
+          const {data: response} = await axios.post(service_link,Mydata,config);
+          // setIsBiasCorrectionOn(true);
+          // setIsHydroDataOn(false);
+          // setIsGeoglowsActive(false);
+          setLoading(false);
+
+      } catch (error) {
+        console.error(error.message);
+        setLoading(false);
+
+      }
+    }
+    if(selectedFeature !== ""){
+      fetchData();
+      
+    }
+    else{
+
+      console.log("Not Requesting data")
+    }
+
+	}, [lisForecast]);
 
   return (
     <div>
@@ -597,7 +685,7 @@ const getStyle = (feature) => {
         </Map>
         {/* <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }  executeGeoglows={executeGeoglows} isFullMap={ isFullMap } /> */}
 
-          <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} setDataObject = {setDataObject} isFullMap={ isFullMap } isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} />  
+          <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} executeForecast={executeForecast} setDataObject = {setDataObject} isFullMap={ isFullMap } isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn}/>  
         
 
         
