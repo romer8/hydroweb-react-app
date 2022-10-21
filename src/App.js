@@ -259,7 +259,7 @@ const getStyle = (feature) => {
           var found = dataObject.some(p => p.dataKey == 'Bias Corrected Mean Level');
           console.log(found)
           if(!found){
-            console.log("ADDING THE BIAS CORRECTED HISTORICAL SIMULATION DATA")
+            console.log("ADDING THE BIAS CORRECTED FORECAST ENSEMBLE SIMULATION DATA")
 
             let dataBiasCorrrected = data['data'];
 
@@ -293,7 +293,7 @@ const getStyle = (feature) => {
 
         }
         
-        if(command == "Plot_Forecast_Records_Bias_Data_Downloaded"){
+        if(command == "Plot_Forecast_Ensemble_Bias_Data_Downloaded"){
           setIsForecastBiasCorrectedDataPlot(false);
           var found = dataObject.some(p => p.dataKey == 'Mean Ensemble');
           console.log(found)
@@ -350,16 +350,70 @@ const getStyle = (feature) => {
             setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
           }
         }
-        if(command == "Forecast_Data_Downloaded"){
+        if(command == "Plot_Forecast_Records_Bias_Data_Downloaded"){
           setIsForecastBiasCorrectedDataPlot(false);
+          var found = dataObject.some(p => p.dataKey.includes('Records'));
+          console.log(found)
+          if(!found){
+            console.log("ADDING THE BIAS CORRECTED FORECAST RECORDS SIMULATION DATA")
 
-          socketRef.current.send(
-            JSON.stringify({
-              type: "plot_forecast_data",
-              reach_id:reach_id2,
-              product: product2
-            })
-          );
+            let dataForecastBiasCorrrected = data['data'];
+
+            console.log(dataForecastBiasCorrrected);
+            if(dataForecastBiasCorrrected['record_plot1']){
+              const record_plot1 = {
+                stroke:"#FFA15A",
+                dataKey:"1st Days Forecast Records",
+                data:dataForecastBiasCorrrected['record_plot1'],
+                visible:isForecastOn
+              }
+              setDataObject(dataObject => [...dataObject,record_plot1]);
+
+            }
+            if(dataForecastBiasCorrrected['max_min_record_WL']){
+              const max_min_record_WL = {
+                stroke:"#FFA15A",
+                dataKey:"1st Days Forecasts Records",
+                data:dataForecastBiasCorrrected['max_min_record_WL'],
+                visible:isForecastOn
+              }
+              const max_record_WL = {
+                stroke:"#FFA15A",
+                dataKey:"Maximum (1st Days Forecasts Records)",
+                data:dataForecastBiasCorrrected['max_record_WL'],
+                visible:isForecastOn
+              }
+              const min_record_WL = {
+                stroke:"#FFA15A",
+                dataKey:"Minimum (1st Days Forecasts Records)",
+                data:dataForecastBiasCorrrected['min_record_WL'],
+                visible:isForecastOn
+              }
+              setDataObject(dataObject => [...dataObject,max_min_record_WL,max_record_WL,min_record_WL]);
+            }
+            if(dataForecastBiasCorrrected['max_min_high_res_WL']){
+              const max_min_high_res_WL = {
+                stroke:"#000000",
+                dataKey:"High Resolution Forecast Records",
+                data:dataForecastBiasCorrrected['max_min_high_res_WL'],
+                visible:isForecastOn
+              }
+              const max_high_res_WL = {
+                stroke:"#000000",
+                dataKey:"Maximum (1st Days Forecasts Records)",
+                data:dataForecastBiasCorrrected['max_high_res_WL'],
+                visible:isForecastOn
+              }
+              const min_high_res_WL = {
+                stroke:"#000000",
+                dataKey:"Minimum (1st Days Forecasts Records)",
+                data:dataForecastBiasCorrrected['min_high_res_WL'],
+                visible:isForecastOn
+              }
+              setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
+            }
+          }
+
         }
 
       };

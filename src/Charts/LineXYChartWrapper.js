@@ -322,7 +322,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
           />
           );
         }
-        if(isForecastOn && lineData['dataKey'].startsWith('Forecast')){
+        if(isForecastOn && lineData['dataKey'].includes('Forecast')){
           console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
           return (
             <LineSeries
