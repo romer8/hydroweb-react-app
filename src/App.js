@@ -302,7 +302,7 @@ const getStyle = (feature) => {
 
             let dataForecastBiasCorrrected = data['data'];
 
-            console.log(dataBiasCorrrected)
+            console.log(dataForecastBiasCorrrected)
   
             // setDataGeoglows(dataHistorical);
             const mean_ensemble = {
@@ -598,7 +598,7 @@ const getStyle = (feature) => {
   useEffect(() => {
     console.log("Forecast Bias Correction data Save activated",selectedGeoglows,selectedFeature)
 
-    if(!isForecastBiasCorrectedDataPlot){
+    if(isForecastBiasCorrectedDataPlot){
         setLoading(true);
         const Mydata = {
           'reach_id': selectedGeoglows,
