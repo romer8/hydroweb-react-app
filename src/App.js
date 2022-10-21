@@ -58,11 +58,11 @@ const App = () => {
   const [isBiasCorrectionOn, setIsBiasCorrectionOn] = useState(false);
   const [isHydroDataOn, setIsHydroDataOn] = useState(false);
   const [isForecastOn, setIsForecastOn] = useState(false);
-
+  const [isForecastBiasCorrectedDataPlot, setIsForecastBiasCorrectedDataPlot] = useState(false)
   const socketRef = useRef();
   const [isError, setIsError] = React.useState(false)
 
-  var ws = 'ws://' + 'localhost:8000/hydroweb' + '/data-notification/notifications/ws/';
+  var ws = 'ws://' + 'localhost:8000/apps/hydroweb' + '/data-notification/notifications/ws/';
 
 
   const [virtualStations, setVirtualStations] = useState(
@@ -293,23 +293,71 @@ const getStyle = (feature) => {
 
         }
         
-        if(command == "Ensemble_Forecast_Data_Downloaded"){
-          socketRef.current.send(
-            JSON.stringify({
-              type: "plot_ensemble_forecast_data",
-              reach_id:reach_id2,
-              product: product2
+        if(command == "Plot_Forecast_Records_Bias_Data_Downloaded"){
+          setIsForecastBiasCorrectedDataPlot(false);
+          var found = dataObject.some(p => p.dataKey == 'Mean Ensemble');
+          console.log(found)
+          if(!found){
+            console.log("ADDING THE BIAS CORRECTED HISTORICAL SIMULATION DATA")
+
+            let dataForecastBiasCorrrected = data['data'];
+
+            console.log(dataBiasCorrrected)
   
-            })
-          );
+            // setDataGeoglows(dataHistorical);
+            const mean_ensemble = {
+              stroke:"#2B4865",
+              dataKey:"Forecast Mean StreamFlow",
+              data:dataForecastBiasCorrrected['mean'],
+              visible:isForecastOn
+  
+            }
+            const min_ensemble = {
+              stroke:"#8FE3CF",
+              dataKey:"Forecast Minimun StreamFlow",
+              data:dataForecastBiasCorrrected['min'],
+              visible:isForecastOn
+  
+            }
+            const max_ensemble = {
+              stroke:"#002500",
+              dataKey:"Forecast Maximun StreamFlow",
+              data:dataForecastBiasCorrrected['max'],
+              visible:isForecastOn
+  
+            }
+            const p25_ensemble = {
+              stroke:"#002500",
+              dataKey:"Forecast 25 Percentile StreamFlow",
+              data:dataForecastBiasCorrrected['max'],
+              visible:isForecastOn
+  
+            }
+            const p75_ensemble = {
+              stroke:"#002500",
+              dataKey:"Forecast 75 Percentile StreamFlow",
+              data:dataForecastBiasCorrrected['max'],
+              visible:isForecastOn
+  
+            }
+            const high_res_ensemble = {
+              stroke:"#002500",
+              dataKey:"Forecast High Resolution StreamFlow",
+              data:dataForecastBiasCorrrected['max'],
+              visible:isForecastOn
+  
+            }
+            setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
+          }
         }
         if(command == "Forecast_Data_Downloaded"){
+          setIsForecastBiasCorrectedDataPlot(false);
+
           socketRef.current.send(
             JSON.stringify({
               type: "plot_forecast_data",
               reach_id:reach_id2,
               product: product2
-  
             })
           );
         }
@@ -337,7 +385,7 @@ const getStyle = (feature) => {
     }
     const config = {
       header: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
     };
     // console.log(Mydata);
@@ -422,7 +470,7 @@ const getStyle = (feature) => {
   
     const config = {
       header: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
     };
     // console.log(Mydata);
@@ -527,6 +575,7 @@ const getStyle = (feature) => {
           // setIsHydroDataOn(false);
           // setIsGeoglowsActive(false);
           setLoading(false);
+          setIsForecastBiasCorrectedDataPlot(true);
 
       } catch (error) {
         console.error(error.message);
@@ -544,6 +593,50 @@ const getStyle = (feature) => {
     }
 
 	}, [lisForecast]);
+
+
+  useEffect(() => {
+    console.log("Forecast Bias Correction data Save activated",selectedGeoglows,selectedFeature)
+
+    if(!isForecastBiasCorrectedDataPlot){
+        setLoading(true);
+        const Mydata = {
+          'reach_id': selectedGeoglows,
+          'product': selectedFeature,
+          'return_format':'json'
+        }
+        const config = {
+          header: {
+            "Content-Type": "application/json",
+          },
+        };
+      const service_link = 'http://127.0.0.1:8000/apps/hydroweb/executeForecastBiasCorrection/';
+      const fetchData= async () =>{
+        try {
+            const {data: response} = await axios.post(service_link,Mydata,config);
+            // setIsBiasCorrectionOn(true);
+            // setIsHydroDataOn(false);
+            // setIsGeoglowsActive(false);
+            setLoading(false);
+
+        } catch (error) {
+          console.error(error.message);
+          setLoading(false);
+
+        }
+      }
+      if(selectedFeature !== ""){
+        fetchData();
+        
+      }
+      else{
+
+        console.log("Not Requesting data")
+      }
+    }
+
+	}, [isForecastBiasCorrectedDataPlot]);
+
 
   return (
     <div>

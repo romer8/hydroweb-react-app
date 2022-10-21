@@ -115,7 +115,7 @@ const ChartBackground = ( patternId ) => {
 
 
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
-const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn }) => {
+const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn }) => {
   const [backupData, setBackupData] = useState([]);
   const legendLabelStyle = (margin) => {
    return {    
@@ -183,8 +183,8 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     key={`legend-${i}`}
                     margin="8px 8px 8px 0"
                     onClick={() => {
-                      // alert(`clicked: ${JSON.stringify(label)}`);
-                      
+                      // alert(`clicked: ${DataContext}`);
+                      console.log(DataContext)
                       OffLegend(label);
 
                     }}
@@ -292,6 +292,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                 data={lineData['data']}
                 {...normal_accesors}
                 curve={curveCardinal}
+                colorAccessor ={(d)=>lineData['stroke']}
             />
           );
         }
@@ -310,6 +311,19 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
         }
         if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
           console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
+          return (
+            <LineSeries
+              key={lineData['dataKey']}
+              stroke={lineData['stroke']}
+              dataKey={lineData['dataKey']}
+              data={lineData['data']}
+              {...normal_accesors}
+              curve={curveCardinal}
+          />
+          );
+        }
+        if(isForecastOn && lineData['dataKey'].startsWith('Forecast')){
+          console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
           return (
             <LineSeries
               key={lineData['dataKey']}
