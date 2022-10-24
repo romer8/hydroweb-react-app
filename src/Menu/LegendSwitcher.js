@@ -18,8 +18,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                     return(
                         <div key={index}>
                             {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
-                            <input value={item.dataKey} type="checkbox"  onChange={toggleOffOn}/>
-
+                            <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <span>{item.dataKey}</span>
                         </div>
                     )
@@ -27,7 +26,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                 if(isGeoglowsActive && item['dataKey'] === "Historical Simulation"){
                     return(
                         <div key={index}>
-                            <input value={item.dataKey} type="checkbox"  onChange={toggleOffOn}/>
+                            <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <span>{item.dataKey}</span>
                         </div>
                     )
@@ -35,7 +34,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                 if(isBiasCorrectionOn && item['dataKey'].startsWith('Bias Corrected')){
                     return(
                         <div key={index}>
-                            <input value={item.dataKey} type="checkbox"  onChange={toggleOffOn}/>
+                            <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <span>{item.dataKey}</span>
                         </div>
                     )
@@ -43,7 +42,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                 if(isForecastOn && item['dataKey'].includes('Forecast')){
                     return(
                         <div key={index}>
-                            <input value={item.dataKey} type="checkbox" />
+                            <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <span>{item.dataKey}</span>
                         </div>
                     )
