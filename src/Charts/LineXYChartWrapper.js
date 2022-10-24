@@ -3,6 +3,7 @@ import {
   Axis,
   Grid,
   LineSeries,
+  AreaSeries,
   AnimatedAreaSeries,
   Tooltip,
   XYChart,
@@ -73,6 +74,11 @@ const accessors_fin = {
 const normal_accesors = {
   xAccessor: (d) => d.x,
   yAccessor: (d) => d.y
+}
+const normal_accesors_area = {
+  xAccessor: (d) => d.x,
+  yAccessor: (d) => d.y,
+  y0Accessor:(d) => d.y0
 }
 
 const legendGlyphSize = 15;
@@ -307,7 +313,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             tickLabelProps={() => ({ dy: -10 })}
           />
           {xyData.map(function(lineData) {
-            // console.log(xyData)
+            console.log(xyData)
             if(isHydroDataOn && (lineData['dataKey'] !== "Historical Simulation" && !lineData['dataKey'].startsWith('Bias Corrected'))){
               console.log("Hydroweb Data",isHydroDataOn)
                 return (
@@ -355,18 +361,40 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             }
             if(isForecastOn && lineData['dataKey'].includes('Forecast')){
               console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
-              return (
-                legendToggle[`${lineData['dataKey']}`] &&
+              console.log(lineData['dataKey'])
+              console.log(lineData['data'])
+              if(lineData['dataKey'].includes('-')){
+                return (
+ 
+                  legendToggle[`${lineData['dataKey']}`] &&
+  
+                  <AreaSeries
+                    key={lineData['dataKey']}
+                    // stroke={lineData['stroke']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors_area}
+                    curve={curveCardinal}
+                    fillOpacity={0.3}
+                />
+                );
+              }
+              else{
+                return (
+ 
+                  legendToggle[`${lineData['dataKey']}`] &&
+  
+                  <LineSeries
+                    key={lineData['dataKey']}
+                    // stroke={lineData['stroke']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors}
+                    curve={curveCardinal}
+                />
+                );
+              }
 
-                <LineSeries
-                  key={lineData['dataKey']}
-                  // stroke={lineData['stroke']}
-                  dataKey={lineData['dataKey']}
-                  data={lineData['data']}
-                  {...normal_accesors}
-                  curve={curveCardinal}
-              />
-              );
             }
     
           })}
