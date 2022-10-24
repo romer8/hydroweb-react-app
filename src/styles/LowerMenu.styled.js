@@ -8,7 +8,10 @@ export const LowerMenu = styled.div`
     flex:1 1 40%;
     order: 2;
     position:absolute;
-
+    
+    #graph_and_legend{
+        display:flex;
+    }
 `;
     // overflow-y: hidden;
 

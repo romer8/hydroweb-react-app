@@ -21,7 +21,6 @@ import { ColoredSquare } from "../styles/ColoredSquare.styled";
 import { TooltipContainer } from "../styles/TooltipContainer.styled";
 import { useState, useContext } from "react";
 
-
 const tickLabelOffset = 10;
 
 const accessors_val = {
@@ -41,7 +40,7 @@ const accessors_min = {
   yAccessor: (d) => d.orthometric_height_of_water_surface_at_reference_position,
   x0Accessor: (d) => new Date(`${d.date}T00:00:00`),
   y0Accessor: (d) => d.down_uncertainty
-};
+}
 
 const accessors_fin = {
   xAccessor: {
@@ -115,8 +114,11 @@ const ChartBackground = ( patternId ) => {
 
 
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
-const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn }) => {
+const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle }) => {
   const [backupData, setBackupData] = useState([]);
+  const [showHistoricalData, setShowHistoricalData] = useState(true)
+  const [showMeanWaterLevel, setShowMeanWaterLevel] = useState(true)
+
   const legendLabelStyle = (margin) => {
    return {    
       position: 'absolute',
@@ -129,33 +131,39 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
     }
   }
   const OffLegend = (label) =>{
+    if(label.text == "Historical Simulation"){
+      setShowHistoricalData(showHistoricalData => !showHistoricalData);
+    }
+    if(label.text == "Water Level Value"){
+      setShowMeanWaterLevel(showMeanWaterLevel => !showMeanWaterLevel);
+    }
+    //// setDataObject(xyData.filter(item => item.dataKey !== label.text))
     
-    // setDataObject(xyData.filter(item => item.dataKey !== label.text))
-    setDataObject(xyData.filter(item => {
-      if(item.dataKey == label.text){
-          if(backupData.filter(item2 => item2.dataKey == label.text).length < 1){
-            console.log("hidding")
-            setBackupData(backupData => [...backupData, {
-              dataKey: item.dataKey,
-              data: item.data
-            }]);
-           item.data = []
-           console.log(backupData)
-          }
-          else{
-            console.log("showing")
-            console.log(backupData)
+    // setDataObject(xyData.filter(item => {
+    //   if(item.dataKey == label.text){
+    //       if(backupData.filter(item2 => item2.dataKey == label.text).length < 1){
+    //         console.log("hidding")
+    //         setBackupData(backupData => [...backupData, {
+    //           dataKey: item.dataKey,
+    //           data: item.data
+    //         }]);
+    //        item.data = []
+    //        console.log(backupData)
+    //       }
+    //       else{
+    //         console.log("showing")
+    //         console.log(backupData)
 
-            // console.log(backupData.filter(item => item.dataKey == label.text)[0]['data'])
-            item.data = backupData.filter(item => item.dataKey == label.text)[0]['data']
+    //         // console.log(backupData.filter(item => item.dataKey == label.text)[0]['data'])
+    //         item.data = backupData.filter(item => item.dataKey == label.text)[0]['data']
 
-            setBackupData(backupData.filter(item => item.dataKey !== label.text))
-            console.log(backupData)
-          }
+    //         setBackupData(backupData.filter(item => item.dataKey !== label.text))
+    //         console.log(backupData)
+    //       }
 
-      }
-      return item
-    }))
+    //   }
+    //   return item
+    // }))
     
   }
   
@@ -163,7 +171,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
     const { colorScale, theme, margin } = useContext(DataContext);
   
     return (
-  
+
       <LegendOrdinal
         direction="row"
         // itemMargin="8px 8px 8px 0"
@@ -179,13 +187,14 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               style={legendLabelStyle(margin)}
               >
                 {labels.map((label, i) => (
+                  <div>
                   <LegendItem
                     key={`legend-${i}`}
                     margin="8px 8px 8px 0"
                     onClick={() => {
                       // alert(`clicked: ${DataContext}`);
-                      console.log(DataContext)
-                      OffLegend(label);
+                      console.log(labels)
+                      // OffLegend(label);
 
                     }}
                     style={{
@@ -201,6 +210,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                       {label.text}
                     </LegendLabel>
                   </LegendItem>
+
+                  </div>
+
                 ))}
               </div>
             )}
@@ -222,185 +234,193 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
   return (
 
-    <ChartContainer>
-      <DataProvider
-        // these props have been moved from XYChart to DataProvider
-        // this allows us to move DataContext up a level such that we can
-        // render an HTML legend that uses DataContext and an SVG chart
-        // without doing this you would have to render XYChart as a child
-        // of XYChart, which would then require the legend to be SVG-based
-        // because HTML cannot be a child of SVG
-        xScale={{ type: "band", paddingInner: 0.5 }}
-        yScale={{ type: "linear", zero: false }}
-      >
-      <XYChart
-      // parentWidth={parent.width}
-      // parentHeight={parent.height}
-      // parentTop={parent.top}
-      // parentLeft={parent.left}
-      // //this is the referer to the wrapper component
-      // parentRef={parent.ref}
-      // this function can be called inside MySuperCoolVisxChart to cause a resize of the wrapper component
-      // resizeParent={parent.resize}
-      height={350}
-      margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
-      xScale={{ type: "time" }}
-      yScale={{ type: "linear", zero: false }}
-      
-    >
-
-      <Grid
-        columns={true}
-        numTicks={4}
-        lineStyle={{
-          stroke: "#e1e1e1",
-          strokeLinecap: "round",
-          strokeWidth: 2
-        }}
-        strokeDasharray="0, 4"
-      />
-      <Axis
-        hideAxisLine={true}
-        hideTicks={false}
-        orientation="bottom"
-        tickLabelProps={() => ({ dy: tickLabelOffset })}
-        left={30}
-        numTicks={4}
-        // label="Time (year)"
-        labelOffset={20}
-
-      />
-      <Axis
-        hideAxisLine={false}
-        hideTicks={false}
-        orientation="left"
-        numTicks={4}
-        label="Water Level (m)"
-        labelOffset={30}
-        tickLabelProps={() => ({ dy: -10 })}
-      />
-      {xyData.map(function(lineData) {
-        // console.log(xyData)
-        if(isHydroDataOn && (lineData['dataKey'] !== "Historical Simulation" && !lineData['dataKey'].startsWith('Bias Corrected'))){
-          console.log("Hydroweb Data",isHydroDataOn)
-
-            return (
-              <LineSeries
-                key={lineData['dataKey']}
-                stroke={lineData['stroke']}
-                dataKey={lineData['dataKey']}
-                data={lineData['data']}
-                {...normal_accesors}
-                curve={curveCardinal}
-                colorAccessor ={(d)=>lineData['stroke']}
-            />
-          );
-        }
-        if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
-          console.log("Historical Simulation",isGeoglowsActive)
-          return (
-            <LineSeries
-              key={lineData['dataKey']}
-              stroke={lineData['stroke']}
-              dataKey={lineData['dataKey']}
-              data={lineData['data']}
-              {...normal_accesors}
-              curve={curveCardinal}
+        <ChartContainer>
+          <DataProvider
+            // these props have been moved from XYChart to DataProvider
+            // this allows us to move DataContext up a level such that we can
+            // render an HTML legend that uses DataContext and an SVG chart
+            // without doing this you would have to render XYChart as a child
+            // of XYChart, which would then require the legend to be SVG-based
+            // because HTML cannot be a child of SVG
+            xScale={{ type: "band", paddingInner: 0.5 }}
+            yScale={{ type: "linear", zero: false }}
+          >
+          <XYChart
+          // parentWidth={parent.width}
+          // parentHeight={parent.height}
+          // parentTop={parent.top}
+          // parentLeft={parent.left}
+          // //this is the referer to the wrapper component
+          // parentRef={parent.ref}
+          // this function can be called inside MySuperCoolVisxChart to cause a resize of the wrapper component
+          // resizeParent={parent.resize}
+          width={1600}
+          height={300}
+          margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
+          xScale={{ type: "time" }}
+          yScale={{ type: "linear", zero: false }}
+          
+        >
+    
+          <Grid
+            columns={true}
+            numTicks={4}
+            lineStyle={{
+              stroke: "#e1e1e1",
+              strokeLinecap: "round",
+              strokeWidth: 2
+            }}
+            strokeDasharray="0, 4"
           />
-          );
-        }
-        if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
-          console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
-          return (
-            <LineSeries
-              key={lineData['dataKey']}
-              stroke={lineData['stroke']}
-              dataKey={lineData['dataKey']}
-              data={lineData['data']}
-              {...normal_accesors}
-              curve={curveCardinal}
+          <Axis
+            hideAxisLine={true}
+            hideTicks={false}
+            orientation="bottom"
+            tickLabelProps={() => ({ dy: tickLabelOffset })}
+            left={30}
+            numTicks={4}
+            // label="Time (year)"
+            labelOffset={20}
+    
           />
-          );
-        }
-        if(isForecastOn && lineData['dataKey'].includes('Forecast')){
-          console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
-          return (
-            <LineSeries
-              key={lineData['dataKey']}
-              stroke={lineData['stroke']}
-              dataKey={lineData['dataKey']}
-              data={lineData['data']}
-              {...normal_accesors}
-              curve={curveCardinal}
+          <Axis
+            hideAxisLine={false}
+            hideTicks={false}
+            orientation="left"
+            numTicks={4}
+            label="Water Level (m)"
+            labelOffset={30}
+            tickLabelProps={() => ({ dy: -10 })}
           />
-          );
-        }
-
-      })}
-      {/* <AnimatedLineSeries
-        stroke="#2B4865"
-        dataKey="Water Level Value"
-        data={xyData}
-        // xAccessor={accessors_fin.xAccessor['val']}
-        // yAccessor={accessors_fin.yAccessor['val']}
-        {...normal_accesors}
-        curve={curveCardinal}
-
-      />
-
-      <AnimatedLineSeries
-        stroke="#256D85"
-        dataKey="Maximun"
-        data={xyMax}
-        {...normal_accesors}
-        curve={curveCardinal}
-      />
-      <AnimatedLineSeries
-        stroke="#8FE3CF"
-        dataKey="Minimun"
-        data={xyMin}
-        {...normal_accesors}
-        curve={curveCardinal}
-      /> */}
-      {/* <AnimatedLineSeries
-        stroke="#0000"
-        dataKey="Historical Simulation"
-        data={xyHistorical}
-        {...normal_accesors}
-        curve={curveCardinal}
-      /> */}
-
-
-    <Tooltip
-            showVerticalCrosshair
-            snapTooltipToDatumX
-            renderTooltip={({ tooltipData, colorScale }) =>
-              tooltipData.nearestDatum.key && (
-                <>
-                  <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
-                    {tooltipData.nearestDatum.key}
-                  </div>
-                  <br />
-                  {
-                    // (d) => new Date(`${d.x}T00:00:00`)
-                    normal_accesors.xAccessor(
-                      tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                    )
-                  }
-                  :{" "}
-                  {normal_accesors.yAccessor(
-                    tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                  ).toFixed(2)}
-                </>
-              )
+          {xyData.map(function(lineData) {
+            // console.log(xyData)
+            if(isHydroDataOn && (lineData['dataKey'] !== "Historical Simulation" && !lineData['dataKey'].startsWith('Bias Corrected'))){
+              console.log("Hydroweb Data",isHydroDataOn)
+                return (
+                    legendToggle[`${lineData['dataKey']}`] &&
+                    <LineSeries
+                      key={lineData['dataKey']}
+                      // stroke={lineData['stroke']}
+                      dataKey={lineData['dataKey']}
+                      data={lineData['data']}
+                      {...normal_accesors}
+                      curve={curveCardinal}
+                      colorAccessor ={(d)=>lineData['stroke']}
+                  />
+                 );
+              
             }
+            if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
+              console.log("Historical Simulation",isGeoglowsActive)
+              return (
+                legendToggle[`${lineData['dataKey']}`] &&
+                <LineSeries
+                  key={lineData['dataKey']}
+                  // stroke={lineData['stroke']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+              />
+              );
+            }
+            if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
+              console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
+              return (
+                legendToggle[`${lineData['dataKey']}`] &&
+
+                <LineSeries
+                  key={lineData['dataKey']}
+                  // stroke={lineData['stroke']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+              />
+              );
+            }
+            if(isForecastOn && lineData['dataKey'].includes('Forecast')){
+              console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
+              return (
+                legendToggle[`${lineData['dataKey']}`] &&
+
+                <LineSeries
+                  key={lineData['dataKey']}
+                  // stroke={lineData['stroke']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+              />
+              );
+            }
+    
+          })}
+          {/* <AnimatedLineSeries
+            stroke="#2B4865"
+            dataKey="Water Level Value"
+            data={xyData}
+            // xAccessor={accessors_fin.xAccessor['val']}
+            // yAccessor={accessors_fin.yAccessor['val']}
+            {...normal_accesors}
+            curve={curveCardinal}
+    
           />
+    
+          <AnimatedLineSeries
+            stroke="#256D85"
+            dataKey="Maximun"
+            data={xyMax}
+            {...normal_accesors}
+            curve={curveCardinal}
+          />
+          <AnimatedLineSeries
+            stroke="#8FE3CF"
+            dataKey="Minimun"
+            data={xyMin}
+            {...normal_accesors}
+            curve={curveCardinal}
+          /> */}
+          {/* <AnimatedLineSeries
+            stroke="#0000"
+            dataKey="Historical Simulation"
+            data={xyHistorical}
+            {...normal_accesors}
+            curve={curveCardinal}
+          /> */}
+    
+    
+        <Tooltip
+                showVerticalCrosshair
+                snapTooltipToDatumX
+                renderTooltip={({ tooltipData, colorScale }) =>
+                  tooltipData.nearestDatum.key && (
+                    <>
+                      <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
+                        {tooltipData.nearestDatum.key}
+                      </div>
+                      <br />
+                      {
+                        // (d) => new Date(`${d.x}T00:00:00`)
+                        normal_accesors.xAccessor(
+                          tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                        )
+                      }
+                      :{" "}
+                      {normal_accesors.yAccessor(
+                        tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                      ).toFixed(2)}
+                    </>
+                  )
+                }
+              />
+    
+    
+        </XYChart>
+        <ChartLegend />
+        </DataProvider>
+        </ChartContainer>
 
-
-    </XYChart>
-    <ChartLegend />
-    </DataProvider>
-    </ChartContainer>
 
     // )}
   // </ParentSize>
