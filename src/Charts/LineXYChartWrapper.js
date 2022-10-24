@@ -123,11 +123,25 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
    return {    
       position: 'absolute',
       top: margin.top * 2,
-      width: '100%',
+      left: 0,
+      right: 0,
+      marginLeft: 'auto',
+      marginRight: 'auto',  
+      width: 'fit-content',
+      height: '25px',
       display: 'flex',
+      flexDirection:"row",
       justifyContent: 'center',
-      fontSize: '14px',
-      cursor: 'pointer'
+      alignItems:'center',
+      fontSize: '12px',
+      color:'white',
+      fontFamily: 'arial',
+      fontWeight: 900,
+      backgroundColor: 'rgba(0,0,0,.5)',
+      borderRadius: '2px',
+      overflowY: 'auto',
+      flexGrow: 1
+      
     }
   }
   const OffLegend = (label) =>{
@@ -173,7 +187,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
     return (
 
       <LegendOrdinal
-        direction="row"
+        direction="column"
         // itemMargin="8px 8px 8px 0"
         scale={colorScale}
         // labelFormat={(label) => label.replace("-", " ")}
@@ -198,7 +212,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
                     }}
                     style={{
-                      
+                      'paddingLeft':'3px',
                       'textDecoration': backupData.filter(item2 => item2.dataKey == label.text).length < 1 ? 'none' : 'line-through',
                       'display': 'flex'
                     }}
@@ -254,7 +268,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
           // parentRef={parent.ref}
           // this function can be called inside MySuperCoolVisxChart to cause a resize of the wrapper component
           // resizeParent={parent.resize}
-          width={1600}
+          width={1680}
           height={300}
           margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
           xScale={{ type: "time" }}
