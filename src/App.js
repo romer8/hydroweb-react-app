@@ -173,6 +173,8 @@ const App = () => {
     setIsBiasCorrectionOn(false);
     setIsGeoglowsActive(false);
     setIsHydroDataOn(true);
+    setIsForecastOn(false);
+
   };
   
 const getStyle = (feature) => {
@@ -312,42 +314,58 @@ const getStyle = (feature) => {
               visible:isForecastOn
   
             }
-            const min_ensemble = {
+            const max_min_ensemble = {
               // stroke:"#8FE3CF",
-              dataKey:"Forecast Minimun StreamFlow",
-              data:dataForecastBiasCorrrected['min'],
+              dataKey:"Forecast Minimun-Maximun StreamFlow",
+              data:dataForecastBiasCorrrected['max_min'],
               visible:isForecastOn
   
             }
-            const max_ensemble = {
-              // stroke:"#002500",
-              dataKey:"Forecast Maximun StreamFlow",
-              data:dataForecastBiasCorrrected['max'],
-              visible:isForecastOn
+            // const min_ensemble = {
+            //   // stroke:"#8FE3CF",
+            //   dataKey:"Forecast Minimun StreamFlow",
+            //   data:dataForecastBiasCorrrected['min'],
+            //   visible:isForecastOn
   
-            }
+            // }
+            // const max_ensemble = {
+            //   // stroke:"#002500",
+            //   dataKey:"Forecast Maximun StreamFlow",
+            //   data:dataForecastBiasCorrrected['max'],
+            //   visible:isForecastOn
+  
+            // }
             const p25_ensemble = {
               // stroke:"#002500",
               dataKey:"Forecast 25 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['max'],
+              data:dataForecastBiasCorrrected['p25'],
               visible:isForecastOn
   
             }
             const p75_ensemble = {
               // stroke:"#002500",
               dataKey:"Forecast 75 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['max'],
+              data:dataForecastBiasCorrrected['p75'],
+              visible:isForecastOn
+  
+            }
+            const p75_25_ensemble = {
+              // stroke:"#002500",
+              dataKey:"Forecast 25-75 Percentile StreamFlow",
+              data:dataForecastBiasCorrrected['p75_25'],
               visible:isForecastOn
   
             }
             const high_res_ensemble = {
               // stroke:"#002500",
               dataKey:"Forecast High Resolution StreamFlow",
-              data:dataForecastBiasCorrrected['max'],
+              data:dataForecastBiasCorrrected['high_res'],
               visible:isForecastOn
   
             }
-            setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
+            // setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
+            setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble,p25_ensemble,p75_ensemble ]);
+          
           }
         }
         if(command == "Plot_Forecast_Records_Bias_Data_Downloaded"){
