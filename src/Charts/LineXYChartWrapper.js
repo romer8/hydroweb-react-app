@@ -20,7 +20,7 @@ import { ParentSize } from '@visx/responsive';
 import { ChartContainer } from "../styles/ChartContainer.styled";
 import { ColoredSquare } from "../styles/ColoredSquare.styled";
 import { TooltipContainer } from "../styles/TooltipContainer.styled";
-import { useState, useContext } from "react";
+import { useState, useContext,useEffect } from "react";
 
 const tickLabelOffset = 10;
 
@@ -72,11 +72,12 @@ const accessors_fin = {
 // }
 
 const normal_accesors = {
-  xAccessor: (d) => d.x,
+  // xAccessor: (d) => d.x,
+  xAccessor: (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`),
   yAccessor: (d) => d.y
 }
 const normal_accesors_area = {
-  xAccessor: (d) => d.x,
+  xAccessor: (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`),
   yAccessor: (d) => d.y,
   y0Accessor:(d) => d.y0
 }
@@ -118,12 +119,103 @@ const ChartBackground = ( patternId ) => {
 
 
 
+function pad2(n) { return n < 10 ? '0' + n : n }
 
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
 const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle }) => {
   const [backupData, setBackupData] = useState([]);
-  const [showHistoricalData, setShowHistoricalData] = useState(true)
-  const [showMeanWaterLevel, setShowMeanWaterLevel] = useState(true)
+  const [minDateXScale, setMinDateXScale] = useState("");
+  const [maxDateXScale, setMaxDateXScale] = useState("");
+
+  
+  useEffect(() => {
+    console.log("useEffect XYCHART")
+    //we only need to do this for forecast if it is on
+    if(isForecastOn){
+      var result = xyData.filter(function(serie_line_or_area) {
+        if(serie_line_or_area.dataKey.includes('Forecast') && legendToggle[serie_line_or_area.dataKey] ){
+          // console.log("hey")
+          return serie_line_or_area;
+        }
+      });
+      // get the minimun//
+      console.log(result)
+      var minimun_dates_array = []
+
+      var minimun_dates = result.filter(function(single_result){
+        const minDate = new Date(
+          Math.min(
+            ...single_result['data'].map(element => {
+                      
+              let [y,M,d,h,m,s] = element.x.split(/[- :]/);
+              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+              return new Date(newDate);
+            }),
+          ),
+        );
+        // console.log(new Date())
+        var new_min_date_format = minDate.getFullYear().toString()+ "-" + pad2(minDate.getMonth() + 1) + "-" + pad2(minDate.getDate()) +" "+ pad2( minDate.getHours() ) +":"+ pad2( minDate.getMinutes() ) + ":"+ pad2( minDate.getSeconds() )
+        minimun_dates_array.push(new_min_date_format)
+
+        return minDate
+      })
+        const minDate_final = new Date(
+
+          Math.min(
+            ...minimun_dates_array.map(element => {
+                      
+              let [y,M,d,h,m,s] = element.split(/[- :]/);
+              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+              return new Date(newDate);
+            }),
+          ),
+        );
+        var new_min_date_final_string = minDate_final.getFullYear().toString()+ "-" + pad2(minDate_final.getMonth() + 1) + "-" + pad2(minDate_final.getDate()) +" "+ pad2( minDate_final.getHours() ) +":"+ pad2( minDate_final.getMinutes() ) + ":"+ pad2(minDate_final.getSeconds() )
+        setMinDateXScale(new_min_date_final_string)
+
+      // get the maximun//
+      var maximun_dates_array = []
+
+      var maximun_dates = result.filter(function(single_result){
+        const maxDate = new Date(
+          Math.max(
+            ...single_result['data'].map(element => {
+                      
+              let [y,M,d,h,m,s] = element.x.split(/[- :]/);
+              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+              return new Date(newDate);
+            }),
+          ),
+        );
+        // console.log(new Date())
+        var new_max_date_format = maxDate.getFullYear().toString()+ "-" + pad2(maxDate.getMonth() + 1) + "-" + pad2(maxDate.getDate()) +" "+ pad2( maxDate.getHours() ) +":"+ pad2( maxDate.getMinutes() ) + ":"+ pad2( maxDate.getSeconds() )
+        maximun_dates_array.push(new_max_date_format)
+
+        return maxDate
+      })
+        const maxDate_final = new Date(
+
+          Math.max(
+            ...maximun_dates_array.map(element => {
+                      
+              let [y,M,d,h,m,s] = element.split(/[- :]/);
+              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+              return new Date(newDate);
+            }),
+          ),
+        );
+        var new_max_date_final_string = maxDate_final.getFullYear().toString()+ "-" + pad2(maxDate_final.getMonth() + 1) + "-" + pad2(maxDate_final.getDate()) +" "+ pad2( maxDate_final.getHours() ) +":"+ pad2( maxDate_final.getMinutes() ) + ":"+ pad2(maxDate_final.getSeconds() )
+        setMaxDateXScale(new_max_date_final_string)
+        console.log(minDateXScale, maxDateXScale)
+        console.log(new_min_date_final_string, new_max_date_final_string)
+
+    }
+
+    return () => {
+
+    }
+  }, [legendToggle])
+  
 
   const legendLabelStyle = (margin) => {
    return {    
@@ -151,12 +243,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
     }
   }
   const OffLegend = (label) =>{
-    if(label.text == "Historical Simulation"){
-      setShowHistoricalData(showHistoricalData => !showHistoricalData);
-    }
-    if(label.text == "Water Level Value"){
-      setShowMeanWaterLevel(showMeanWaterLevel => !showMeanWaterLevel);
-    }
+
     //// setDataObject(xyData.filter(item => item.dataKey !== label.text))
     
     // setDataObject(xyData.filter(item => {
@@ -189,7 +276,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
   
   const ChartLegend = () => {
     const { colorScale, theme, margin } = useContext(DataContext);
-  
+    
     return (
 
       <LegendOrdinal
@@ -212,7 +299,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     key={`legend-${i}`}
                     margin="8px 8px 8px 0"
                     onClick={() => {
-                      // alert(`clicked: ${DataContext}`);
+                      console.log(DataContext);
                       console.log(labels)
                       // OffLegend(label);
 
@@ -262,8 +349,16 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             // without doing this you would have to render XYChart as a child
             // of XYChart, which would then require the legend to be SVG-based
             // because HTML cannot be a child of SVG
-            xScale={{ type: "band", paddingInner: 0.5 }}
-            yScale={{ type: "linear", zero: false }}
+            xScale={{ 
+              type: "time"
+              // domain: [minDateXScale, maxDateXScale]
+
+            }}
+            yScale={{ 
+              type: "linear", 
+              zero: false,
+              // domain: [10, 50]
+            }}
           >
           <XYChart
           // parentWidth={parent.width}
@@ -277,9 +372,15 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
           width={1680}
           height={300}
           margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
-          xScale={{ type: "utc" }}
-          yScale={{ type: "linear", zero: false }}
-          
+        //   xScale={{ 
+        //       type: "time"
+        //       // domain: [new(minDateXScale), maxDateXScale]
+        //   }}
+        //   yScale={{ 
+        //     type: "linear", 
+        //     zero: false,
+        //     domain: [10, 50]
+        // }}
         >
     
           <Grid
@@ -313,7 +414,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             tickLabelProps={() => ({ dy: -10 })}
           />
           {xyData.map(function(lineData) {
-            console.log(xyData)
+            console.log(lineData)
             if(isHydroDataOn && (lineData['dataKey'] !== "Historical Simulation" && !lineData['dataKey'].startsWith('Bias Corrected'))){
               console.log("Hydroweb Data",isHydroDataOn)
                 return (
@@ -361,8 +462,8 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             }
             if(isForecastOn && lineData['dataKey'].includes('Forecast')){
               console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
-              console.log(lineData['dataKey'])
-              console.log(lineData['data'])
+              // console.log(lineData['dataKey'])
+              // console.log(lineData['data'])
               if(lineData['dataKey'].includes('-')){
                 return (
  
@@ -444,9 +545,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                       <br />
                       {
                         // (d) => new Date(`${d.x}T00:00:00`)
-                        normal_accesors.xAccessor(
-                          tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                        )
+                        // normal_accesors.xAccessor(
+                        //   tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                        // )
                       }
                       :{" "}
                       {normal_accesors.yAccessor(
