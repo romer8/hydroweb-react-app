@@ -8,8 +8,8 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
   
   const[legendToggle, setLegendToggle] = useState({
     'Water Level Value': true,
-    'Maximun': true,
-    'Minimun': true,
+    // 'Maximun': true,
+    // 'Minimun': true,
     'Historical Simulation':true,
     'Forecast 25-75 Percentile StreamFlow': true,
     'Forecast Minimun-Maximun StreamFlow': true,
@@ -19,8 +19,8 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Forecast Mean StreamFlow': true,
     'Forecast Minimun StreamFlow': true,
     'Forecast Maximun StreamFlow': true,
-    'Forecast 25 Percentile StreamFlow': true,
-    'Forecast 75 Percentile StreamFlow': true,
+    // 'Forecast 25 Percentile StreamFlow': true,
+    // 'Forecast 75 Percentile StreamFlow': true,
     'Forecast High Resolution StreamFlow': true
   })
 

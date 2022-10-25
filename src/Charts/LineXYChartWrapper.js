@@ -277,7 +277,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
           width={1680}
           height={300}
           margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
-          xScale={{ type: "time" }}
+          xScale={{ type: "utc" }}
           yScale={{ type: "linear", zero: false }}
           
         >

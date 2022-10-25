@@ -335,20 +335,20 @@ const getStyle = (feature) => {
             //   visible:isForecastOn
   
             // }
-            const p25_ensemble = {
-              // stroke:"#002500",
-              dataKey:"Forecast 25 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['p25'],
-              visible:isForecastOn
+            // const p25_ensemble = {
+            //   // stroke:"#002500",
+            //   dataKey:"Forecast 25 Percentile StreamFlow",
+            //   data:dataForecastBiasCorrrected['p25'],
+            //   visible:isForecastOn
   
-            }
-            const p75_ensemble = {
-              // stroke:"#002500",
-              dataKey:"Forecast 75 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['p75'],
-              visible:isForecastOn
+            // }
+            // const p75_ensemble = {
+            //   // stroke:"#002500",
+            //   dataKey:"Forecast 75 Percentile StreamFlow",
+            //   data:dataForecastBiasCorrrected['p75'],
+            //   visible:isForecastOn
   
-            }
+            // }
             const p75_25_ensemble = {
               // stroke:"#002500",
               dataKey:"Forecast 25-75 Percentile StreamFlow",
@@ -364,7 +364,7 @@ const getStyle = (feature) => {
   
             }
             // setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
-            setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble,p25_ensemble,p75_ensemble ]);
+            setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble ]);
           
           }
         }
