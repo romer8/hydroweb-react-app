@@ -382,7 +382,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               zero: false,
               // domain: [10, 50]
             }}
-            theme={darkTheme}
+            // theme={darkTheme}
             
             >
           <ParentSize>
@@ -484,9 +484,11 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                       data={lineData['data']}
                       {...normal_accesors}
                       curve={curveCardinal}
-                      colorAccessor ={(_)=>lineData['color_fill']}
                       fillOpacity={0.3}
                       strokeOpacity={0.5}
+                      stroke={lineData['color_fill']}
+                      fill={lineData['color_fill']}
+
                   />
                   );
                 }
@@ -538,14 +540,15 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
       
                       <AreaSeries
                         key={lineData['dataKey']}
-                        // stroke={lineData['stroke']}
+                        stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
                         {...normal_accesors_area}
                         curve={curveCardinal}
                         fillOpacity={0.3}
                         strokeOpacity={0.3}
-                        colorAccessor ={(_)=>lineData['color_fill']}
+                        fill={lineData['color_fill']}
+
                     />
                     );
                   }
@@ -560,7 +563,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
       
                       <LineSeries
                         key={lineData['dataKey']}
-                        // stroke={lineData['stroke']}
+                        stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
                         {...normal_accesors}
@@ -652,7 +655,8 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                                    }} >
                                     {serieline}
                                   </em>
-                                    {dataval}
+                                  {'  '}
+                                    {`${dataval} m`}
                                 </div>
 
                               )
@@ -690,107 +694,4 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 };
 
 export default LineXYChartWrapper;
-/*
-      <Tooltip
-        snapTooltipToDatumX
-        snapTooltipToDatumY
-        showVerticalCrosshair
-        showSeriesGlyphs
-        renderTooltip={({ tooltipData, colorScale }) => (
-          <div>
-            <div style={{ color: colorScale(tooltipData.datumByKey.key) }}>
-              {tooltipData.datumByKey.key}
-            </div>
-            {normal_accesors.yAccessor(tooltipData.nearestDatum.datum)}
 
-          </div>
-        )}
-      />
-
-      <AnimatedAreaSeries
-        fill="#256D85"
-        dataKey="Maximun"
-        data={xyData}
-        xAccessor={accessors_fin.xAccessor['max']}
-        yAccessor={accessors_fin.yAccessor['max']}
-        x0Accessor={accessors_fin.x0Accessor['max']}
-        y0Accessor={accessors_fin.y0Accessor['max']}
-        // {...accessors_max}
-        fillOpacity={0.3}
-        curve={curveCardinal}
-        renderLine={false}
-
-      />
-      <AnimatedAreaSeries
-        fill="#8FE3CF"
-        dataKey="Minimun"
-        data={xyData}
-        xAccessor={accessors_fin.xAccessor['min']}
-        yAccessor={accessors_fin.yAccessor['min']}
-        x0Accessor={accessors_fin.x0Accessor['min']}
-        y0Accessor={accessors_fin.y0Accessor['min']}
-        // {...accessors_min}
-        fillOpacity={0.7}
-        curve={curveCardinal}
-        renderLine={false}
-
-      />
-
-
-<Tooltip
-snapTooltipToDatumX
-snapTooltipToDatumY
-showSeriesGlyphs
-glyphStyle={{
-  fill: "#2B4865",
-  strokeWidth: 1
-}}
-renderTooltip={({ tooltipData }) => {
-  return (
-    <TooltipContainer>
-      {Object.entries(tooltipData.datumByKey).map((lineDataArray) => {
-        // console.log()
-        const [key, value] = lineDataArray;
-        console.log(key)
-        return (
-          <>
-            {
-            (key == 'Water Level Value') && 
-              (<div className="row" key={`${key}`}>
-              <div className="date">
-                {format(accessors_fin.xAccessor.val(value.datum), "MMM d")}
-              </div>
-              <div className="value">
-                  <ColoredSquare color="#2B4865" />
-                  {accessors_fin.yAccessor.val(value.datum)}
-              </div>
-            </div>)
-            }
-            {
-            (key == 'Maximun') && (
-              <div className="row" key={key}>
-                <div className="value">
-                  <ColoredSquare color="#256D85" />
-                  {accessors_fin.yAccessor.max(value.datum)}
-                </div>
-              </div>)
-            }
-            {
-            (key == 'Minimun') && (
-              <div className="row" key={key}>
-                  <div className="value">
-                    <ColoredSquare color="#8FE3CF" />
-                    {accessors_fin.y0Accessor.min(value.datum)}
-                </div>
-              </div>
-              )
-
-            }
-        </>
-        );
-      })}
-    </TooltipContainer>
-  );
-}}
-/>
-*/
