@@ -6,6 +6,7 @@ export const ChartContainer = styled.div`
   height:95%;
   flex-grow: 2;
   overflow-y:hidden;
+  overflow-x:hidden;
   text {
     font-family: "Untitled Sans", sans-serif;
   }

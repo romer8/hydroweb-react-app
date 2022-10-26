@@ -7,12 +7,9 @@ import LegendSwitcherWrapper from "../Menu/LegendSwitcher";
 const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,executeHydroWebData,executeForecast, setDataObject, isFullMap,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn}) => {
   
   const[legendToggle, setLegendToggle] = useState({
-    'Water Level Mean Value': true,
+    'Water Level Mean Value': false,
     'Water Level Maximun-Minimun': true,
     'Water Level Minimun': true,
-    // 'Maximun': true,
-
-    // 'Minimun': true,
     'Historical Simulation':true,
     'Forecast 25-75 Percentile StreamFlow': true,
     'Forecast 25 Percentile StreamFlow':true,

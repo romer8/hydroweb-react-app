@@ -8,8 +8,12 @@ import {
   Tooltip,
   XYChart,
   DataContext,
-  DataProvider
+  DataProvider,
+  darkTheme as dt,
+  buildChartTheme
 } from "@visx/xychart";
+import { ThemeConfig } from '@visx/xychart/lib/theme/buildChartTheme'
+
 import { PatternLines } from "@visx/pattern";
 import { LegendOrdinal, LegendItem,LegendLabel } from "@visx/legend";
 
@@ -70,8 +74,25 @@ const accessors_fin = {
 //   xAccessor: (d) => new Date(`${d.x}T00:00:00`),
 //   yAccessor: (d) => d.y
 // }
+const colorScaleCasero = (xyData,tooltipData) =>{
+  const colorselected = xyData.filter(item => item.dataKey === tooltipData.nearestDatum.key)[0]['color_fill']
+  return colorselected
+}
+const colorScaleCasero2 = (xyData,tooltipData) =>{
+  const colorselected = xyData.filter(item => item.dataKey === tooltipData.nearestDatum.key)[0]['color_fill']
+  return colorselected
+}
+// const color_fillaccessor_t = (d) => xyData[d]['color_fill']
+const darkTheme = buildChartTheme({
+  ...dt,
+  colors: ['#2B4865','#8FE3CF','#8FE3CF'],
+})
 
-// const color_accessor_t = (d) => xyData[d]['color_']
+const accesor_tooltip = {
+  xAccessor: (d) => d.x,
+  yAccessor: (d) => d.y,
+  y0Accessor:(d) => d.y0 ? d.yo : ""
+}
 const normal_accesors = {
   // xAccessor: (d) => d.x,
   xAccessor: (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`),
@@ -360,7 +381,10 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               type: "linear", 
               zero: false,
               // domain: [10, 50]
-            }}>
+            }}
+            theme={darkTheme}
+            
+            >
           <ParentSize>
           {
             parent =>(
@@ -376,15 +400,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               width={parent.width}
               height={parent.height}
               margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
-            //   xScale={{ 
-            //       type: "time"
-            //       // domain: [new(minDateXScale), maxDateXScale]
-            //   }}
-            //   yScale={{ 
-            //     type: "linear", 
-            //     zero: false,
-            //     domain: [10, 50]
-            // }}
+              
             >
         
               <Grid
@@ -419,43 +435,44 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               />
               {xyData.map(function(lineData) {
                 // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
-                if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level')){
-                  console.log("Hydroweb Data",isHydroDataOn)
-                  if(lineData['dataKey'].includes('-')){
+                if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level') && legendToggle[`${lineData['dataKey']}`]){
+                  // console.log("Hydroweb Data",isHydroDataOn)
+                  if(!lineData['dataKey'].includes('-')){
+                    console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
                     return (
-                      legendToggle[`${lineData['dataKey']}`] &&
-                      <AreaSeries
+                      
+                      <LineSeries
                         key={lineData['dataKey']}
-                        // stroke={lineData['stroke']}
+                        stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
-                        {...normal_accesors_area}
+                        {...normal_accesors}
                         curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_']}
-                        fillOpacity={0.3}
-                        strokeOpacity={0.3}
-                        className="hiddenElement"
+                        colorAccessor ={(_)=>lineData['color_fill']}
                     />
                    );
                   }
                   else{
+
                     return (
-                      legendToggle[`${lineData['dataKey']}`] &&
-                      <LineSeries
+                      
+                      <AreaSeries
                         key={lineData['dataKey']}
-                        // stroke={lineData['stroke']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
-                        {...normal_accesors}
-                        // colorAccessor={color_accessor_t()}
+                        {...normal_accesors_area}
                         curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_']}
-                    />
+                        fill={lineData['color_fill']}
+                        stroke={lineData['color_fill']}
+                        fillOpacity={0.3}
+                        strokeOpacity={0.3}
+                      />
+                    
+
                    );
                   }
     
-    
-                  
+              
                 }
                 if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
                   console.log("Historical Simulation",isGeoglowsActive)
@@ -467,9 +484,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                       data={lineData['data']}
                       {...normal_accesors}
                       curve={curveCardinal}
-                      colorAccessor ={(_)=>lineData['color_']}
-                      // fillOpacity={0.3}
-                      // strokeOpacity={0.5}
+                      colorAccessor ={(_)=>lineData['color_fill']}
+                      fillOpacity={0.3}
+                      strokeOpacity={0.5}
                   />
                   );
                 }
@@ -486,7 +503,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                         data={lineData['data']}
                         {...normal_accesors}
                         curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_']}
+                        colorAccessor ={(_)=>lineData['color_fill']}
                     />
                     );
                   }
@@ -501,7 +518,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                         data={lineData['data']}
                         {...normal_accesors}
                         curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_']}
+                        colorAccessor ={(_)=>lineData['color_fill']}
                         strokeOpacity={0.5}
       
                     />
@@ -514,7 +531,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                   // console.log(lineData['dataKey'])
                   // console.log(lineData['data'])
                   if(lineData['dataKey'].includes('-')){
-                    console.log(lineData['color_'])
+                    console.log(lineData['color_fill'])
                     return (
      
                       legendToggle[`${lineData['dataKey']}`] &&
@@ -528,7 +545,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                         curve={curveCardinal}
                         fillOpacity={0.3}
                         strokeOpacity={0.3}
-                        colorAccessor ={(_)=>lineData['color_']}
+                        colorAccessor ={(_)=>lineData['color_fill']}
                     />
                     );
                   }
@@ -548,7 +565,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                         data={lineData['data']}
                         {...normal_accesors}
                         curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_']}
+                        colorAccessor ={(_)=>lineData['color_fill']}
                         // strokeOpacity={0.3}
     
                     />
@@ -593,27 +610,64 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
         
         
             <Tooltip
+            
                     showVerticalCrosshair
                     snapTooltipToDatumX
+                    showSeriesGlyphs
+                    glyphStyle={{
+                      fill: "#008561",
+                      strokeWidth: 0
+                    }}
                     renderTooltip={({ tooltipData, colorScale }) =>
+
                       tooltipData.nearestDatum.key && (
                         <>
-                          {/* <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
+                          <div style={{ color: colorScaleCasero(xyData,tooltipData) }}>
                             {tooltipData.nearestDatum.key}
                           </div>
-                          <br /> */}
+                          <br />
                           {
                             // (d) => new Date(`${d.x}T00:00:00`)
-                            // normal_accesors.xAccessor(
-                            //   tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                            // )
+                            // (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`)
+
+                            accesor_tooltip.xAccessor(tooltipData.nearestDatum.datum)
                           }
-                          :{" "}
-                          {normal_accesors.yAccessor(
-                            tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                          ).toFixed(2)}
+                          : {" "}
+                          {
+                            (Object.keys(tooltipData?.datumByKey).filter((serieline)=>serieline).map((serieline)=>{
+                              const dataval =
+                                tooltipData?.nearestDatum?.datum &&
+                                normal_accesors['yAccessor'](
+                                  tooltipData.datumByKey[serieline].datum
+                                ).toFixed(2);
+
+                              const colorDatum =  tooltipData?.nearestDatum?.datum && xyData.filter(item => item.dataKey === tooltipData.datumByKey[serieline].key)[0]['color_fill'] ? xyData.filter(item => item.dataKey === tooltipData.datumByKey[serieline].key)[0]['color_fill'] : ""
+                              return(
+                                
+                                <div key={serieline}>
+                                  <em style={{ 
+                                  color: colorDatum,
+                                   textDecoration:
+                                      tooltipData?.nearestDatum?.key === serieline ? 'underline' : undefined,
+                                   }} >
+                                    {serieline}
+                                  </em>
+                                    {dataval}
+                                </div>
+
+                              )
+                            
+                            })
+                            )
+                          // normal_accesors.yAccessor(
+                          //   tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                          // ).toFixed(2)
+                          
+                          }
                         </>
                       )
+                    
+   
                     }
                   />
         

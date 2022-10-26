@@ -237,7 +237,7 @@ const getStyle = (feature) => {
             let dataHistorical = JSON.parse(data['data']);
             const dataHistoricalObject = {
               // stroke:"#00008B",
-              color_:"#00008B",
+              color_fill:"#00008B",
 
               dataKey:"Historical Simulation",
               key:"Historical Simulation",
@@ -273,7 +273,7 @@ const getStyle = (feature) => {
             // setDataGeoglows(dataHistorical);
             const normal_bc_data = {
               // stroke:"#2B4865",
-              color_:'#2B4865',
+              color_fill:'#2B4865',
               dataKey:"Bias Corrected Mean Level",
               key:"Bias Corrected Mean Level",
               data:data['data']['val'],
@@ -282,7 +282,7 @@ const getStyle = (feature) => {
             }
             const min_bc_data = {
               // stroke:"#8FE3CF",
-              color_:'#8FE3CF',
+              color_fill:'#8FE3CF',
               dataKey:"Bias Corrected Minimun Level",
               key:"Bias Corrected Minimun Level",
               data:data['data']['val'],
@@ -291,7 +291,7 @@ const getStyle = (feature) => {
             }
             const max_bc_data = {
               // stroke:"#002500",
-              color_:'#002500',
+              color_fill:'#002500',
               dataKey:"Bias Corrected Maximun Level",
               key:"Bias Corrected Maximun Level",
               data:data['data']['max'],
@@ -317,7 +317,7 @@ const getStyle = (feature) => {
   
             // setDataGeoglows(dataHistorical);
             const mean_ensemble = {
-              color_:"#2B4865",
+              color_fill:"#2B4865",
               dataKey:"Forecast Mean StreamFlow",
               key:"Forecast Mean StreamFlow",
               data:dataForecastBiasCorrrected['mean'],
@@ -326,7 +326,7 @@ const getStyle = (feature) => {
             }
             const max_min_ensemble = {
               // stroke:"#8FE3CF",
-              color_:"#8FE3CF",
+              color_fill:"#8FE3CF",
               dataKey:"Forecast Minimun-Maximun StreamFlow",
               key:"Forecast Minimun-Maximun StreamFlow",
               data:dataForecastBiasCorrrected['max_min'],
@@ -352,7 +352,7 @@ const getStyle = (feature) => {
               key:"Forecast 25 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p25'],
               visible:isForecastOn,
-              color_:"#002500"
+              color_fill:"#002500"
   
             }
             // const p75_ensemble = {
@@ -364,7 +364,7 @@ const getStyle = (feature) => {
             // }
             const p75_25_ensemble = {
               // stroke:"#002500",
-              color_:"#002500",
+              color_fill:"#002500",
               dataKey:"Forecast 25-75 Percentile StreamFlow",
               key:"Forecast 25-75 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p75_25'],
@@ -377,7 +377,7 @@ const getStyle = (feature) => {
               key:"Forecast High Resolution StreamFlow",
               data:dataForecastBiasCorrrected['high_res'],
               visible:isForecastOn,
-              color_:"#030303"
+              color_fill:"#030303"
 
   
             }
@@ -398,7 +398,7 @@ const getStyle = (feature) => {
             console.log(dataForecastBiasCorrrected);
             if(dataForecastBiasCorrrected['record_plot1']){
               const record_plot1 = {
-                color_:"#FFA15A",
+                color_fill:"#FFA15A",
                 dataKey:"1st Days Forecast Records",
                 key:"1st Days Forecast Records",
                 data:dataForecastBiasCorrrected['record_plot1'],
@@ -415,7 +415,7 @@ const getStyle = (feature) => {
               //   visible:isForecastOn
               // }
               const max_min_area_record_WL = {
-                color_:"#FFA15A",
+                color_fill:"#FFA15A",
                 dataKey:"1st Days Forecasts Maximum-Minimum Records",
                 key:"1st Days Forecasts Maximum-Minimum Records",
                 data:dataForecastBiasCorrrected['max_min_area_record_WL'],
@@ -439,7 +439,7 @@ const getStyle = (feature) => {
             }
             if(dataForecastBiasCorrrected['max_min_high_res_WL']){
               const max_min_high_res_WL = {
-                color_:"#000000",
+                color_fill:"#000000",
                 dataKey:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
                 key:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
                 data:dataForecastBiasCorrrected['max_min_high_res_WL'],
@@ -508,14 +508,14 @@ const getStyle = (feature) => {
           const normal_data = {
             // stroke:"#2B4865",
             dataKey:"Water Level Mean Value",
-            color_:"#2B4865",
+            color_fill:"#2B4865",
             key:"Water Level Value",
             data:response['data']['val'],
             visible:isHydroDataOn
 
           }
           const min_max_data = {
-            color_:"#8FE3CF",
+            color_fill:"#8FE3CF",
             dataKey:"Water Level Maximun-Minimun",
             key:"Water Level Maximun-Minimun",
             data:response['data']['min_max'],
@@ -523,7 +523,7 @@ const getStyle = (feature) => {
 
           }
           const min_data = {
-            color_:"#8FE3CF",
+            color_fill:"#8FE3CF",
             dataKey:"Water Level Minimun",
             key:"Water Level Minimun",
             data:response['data']['min'],
@@ -531,7 +531,7 @@ const getStyle = (feature) => {
           }
           // const max_data = {
           //   // stroke:"#002500",
-          //   color_:"#002500",
+          //   color_fill:"#002500",
           //   dataKey:"Maximun",
           //   key:"Maximun",
           //   data:response['data']['max'],
