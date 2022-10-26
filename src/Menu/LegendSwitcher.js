@@ -19,6 +19,8 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
             console.log("hey2")
 
             setLegendToggle(legendToggle => ({...legendToggle, [`Water Level Minimun`]: !legendToggle[`Water Level Minimun`]}))
+            setLegendToggle(legendToggle => ({...legendToggle, [`Water Level Maximun`]: !legendToggle[`Water Level Maximun`]}))
+
         }
         if(dataKey=='Forecast 25-75 Percentile StreamFlow'){
             setLegendToggle(legendToggle => ({...legendToggle, [`Forecast 25 Percentile StreamFlow`]: !legendToggle[`Forecast 25 Percentile StreamFlow`]}))
@@ -31,7 +33,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
       <LegendSwitcher>
         {xyData.map((item,index)=>{
                 if(isHydroDataOn && item['dataKey'].startsWith('Water Level')) {
-                    if(item['dataKey'] == 'Water Level Minimun'){
+                    if(item['dataKey'] == 'Water Level Minimun' || item['dataKey'] == 'Water Level Maximun'){
                         return(
                             <div key={item['dataKey']} className="hiddenElement">
                                 {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}

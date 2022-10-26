@@ -10,13 +10,18 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Water Level Mean Value': false,
     'Water Level Maximun-Minimun': true,
     'Water Level Minimun': true,
+    'Water Level Maximun': true,
+
     'Historical Simulation':true,
-    'Forecast 25-75 Percentile StreamFlow': true,
-    'Forecast 25 Percentile StreamFlow':true,
-    'Forecast Minimun-Maximun StreamFlow': true,
+
     'Bias Corrected Mean Level':true,
     'Bias Corrected Minimun Level': false,
     'Bias Corrected Maximun Level':false,
+
+    'Forecast 25-75 Percentile StreamFlow': true,
+    'Forecast 25 Percentile StreamFlow':true,
+    'Forecast Minimun-Maximun StreamFlow': true,
+    
     'Forecast Mean StreamFlow': true,
     'Forecast Minimun StreamFlow': true,
     'Forecast Maximun StreamFlow': true,

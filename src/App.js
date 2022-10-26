@@ -529,21 +529,21 @@ const getStyle = (feature) => {
             data:response['data']['min'],
             visible:isHydroDataOn
           }
-          // const max_data = {
-          //   // stroke:"#002500",
-          //   color_fill:"#002500",
-          //   dataKey:"Maximun",
-          //   key:"Maximun",
-          //   data:response['data']['max'],
-          //   visible:isHydroDataOn
-          // }
+          const max_data = {
+            color_fill:"#8FE3CF",
+            color_fill:"#8FE3CF",
+            dataKey:"Water Level Maximun",
+            key:"Water Level Maximun",
+            data:response['data']['max'],
+            visible:isHydroDataOn
+          }
           
           // const data_object={
           //   normal: normal_data,
           //   minimun: min_data,
           //   maximun: max_data
           // }
-          const data_list =[normal_data,min_max_data,min_data]
+          const data_list =[normal_data,min_max_data,min_data,max_data]
           // const data_list =[normal_data,min_data,max_data]
 
 
