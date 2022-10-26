@@ -35,9 +35,8 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
       <LowerMenu>
         <Button_group executeGeoglows = {executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} executeForecast={executeForecast} isFullMap={isFullMap} />
         <div id="graph_and_legend">
-          <LineXYChartWrapper xyData={xyData} setDataObject={setDataObject} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn} legendToggle={legendToggle} />
+            <LineXYChartWrapper xyData={xyData} setDataObject={setDataObject} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn} legendToggle={legendToggle} />
           <LegendSwitcherWrapper xyData={xyData} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn}  legendToggle={legendToggle} setLegendToggle = {setLegendToggle}/>
-
         </div>
         
         {/* <LineXYChartWrapper xyData={xyData} xyMin= { xyMin } xyMax={ xyMax } /> */}

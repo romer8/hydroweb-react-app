@@ -125,8 +125,8 @@ function pad2(n) { return n < 10 ? '0' + n : n }
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
 const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle }) => {
   const [backupData, setBackupData] = useState([]);
-  const [minDateXScale, setMinDateXScale] = useState("");
-  const [maxDateXScale, setMaxDateXScale] = useState("");
+  // const [minDateXScale, setMinDateXScale] = useState("");
+  // const [maxDateXScale, setMaxDateXScale] = useState("");
 
   
   // useEffect(() => {
@@ -360,263 +360,270 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               type: "linear", 
               zero: false,
               // domain: [10, 50]
-            }}
-          >
-          <XYChart
-          // parentWidth={parent.width}
-          // parentHeight={parent.height}
-          // parentTop={parent.top}
-          // parentLeft={parent.left}
-          // //this is the referer to the wrapper component
-          // parentRef={parent.ref}
-          // this function can be called inside MySuperCoolVisxChart to cause a resize of the wrapper component
-          // resizeParent={parent.resize}
-          width={1680}
-          height={300}
-          margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
-        //   xScale={{ 
-        //       type: "time"
-        //       // domain: [new(minDateXScale), maxDateXScale]
-        //   }}
-        //   yScale={{ 
-        //     type: "linear", 
-        //     zero: false,
-        //     domain: [10, 50]
-        // }}
-        >
-    
-          <Grid
-            columns={true}
-            numTicks={4}
-            lineStyle={{
-              stroke: "#e1e1e1",
-              strokeLinecap: "round",
-              strokeWidth: 2
-            }}
-            strokeDasharray="0, 4"
-          />
-          <Axis
-            hideAxisLine={true}
-            hideTicks={false}
-            orientation="bottom"
-            tickLabelProps={() => ({ dy: tickLabelOffset })}
-            left={30}
-            numTicks={4}
-            // label="Time (year)"
-            labelOffset={20}
-    
-          />
-          <Axis
-            hideAxisLine={false}
-            hideTicks={false}
-            orientation="left"
-            numTicks={4}
-            label="Water Level (m)"
-            labelOffset={30}
-            tickLabelProps={() => ({ dy: -10 })}
-          />
-          {xyData.map(function(lineData) {
-            // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
-            if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level')){
-              console.log("Hydroweb Data",isHydroDataOn)
-              if(lineData['dataKey'].includes('-')){
-                return (
-                  legendToggle[`${lineData['dataKey']}`] &&
-                  <AreaSeries
-                    key={lineData['dataKey']}
-                    // stroke={lineData['stroke']}
-                    dataKey={lineData['dataKey']}
-                    data={lineData['data']}
-                    {...normal_accesors_area}
-                    curve={curveCardinal}
-                    colorAccessor ={(d)=>lineData['color_']}
-                    fillOpacity={0.3}
-                    strokeOpacity={0.3}
-                />
-               );
-              }
-              else{
-                return (
-                  legendToggle[`${lineData['dataKey']}`] &&
-                  <LineSeries
-                    key={lineData['dataKey']}
-                    // stroke={lineData['stroke']}
-                    dataKey={lineData['dataKey']}
-                    data={lineData['data']}
-                    {...normal_accesors}
-                    // colorAccessor={color_accessor_t()}
-                    curve={curveCardinal}
-                    colorAccessor ={(d)=>lineData['color_']}
-                />
-               );
-              }
-
-
-              
-            }
-            if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
-              console.log("Historical Simulation",isGeoglowsActive)
-              return (
-                legendToggle[`${lineData['dataKey']}`] &&
-                <AreaSeries
-                  key={lineData['dataKey']}
-                  dataKey={lineData['dataKey']}
-                  data={lineData['data']}
-                  {...normal_accesors}
-                  curve={curveCardinal}
-                  colorAccessor ={(d)=>lineData['color_']}
-                  // fillOpacity={0.3}
-                  // strokeOpacity={0.5}
+            }}>
+          <ParentSize>
+          {
+            parent =>(
+              <XYChart
+              // parentWidth={parent.width}
+              // parentHeight={parent.height}
+              // parentTop={parent.top}
+              // parentLeft={parent.left}
+              // //this is the referer to the wrapper component
+              // parentRef={parent.ref}
+              // this function can be called inside MySuperCoolVisxChart to cause a resize of the wrapper component
+              // resizeParent={parent.resize}
+              width={parent.width}
+              height={parent.height}
+              margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
+            //   xScale={{ 
+            //       type: "time"
+            //       // domain: [new(minDateXScale), maxDateXScale]
+            //   }}
+            //   yScale={{ 
+            //     type: "linear", 
+            //     zero: false,
+            //     domain: [10, 50]
+            // }}
+            >
+        
+              <Grid
+                columns={true}
+                numTicks={4}
+                lineStyle={{
+                  stroke: "#e1e1e1",
+                  strokeLinecap: "round",
+                  strokeWidth: 2
+                }}
+                strokeDasharray="0, 4"
               />
-              );
-            }
-            if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
-              console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
-              if(lineData['dataKey'].includes('Mean')){
-                return (
-                  legendToggle[`${lineData['dataKey']}`] &&
-  
-                  <LineSeries
-                    key={lineData['dataKey']}
-                    // stroke={lineData['stroke']}
-                    dataKey={lineData['dataKey']}
-                    data={lineData['data']}
-                    {...normal_accesors}
-                    curve={curveCardinal}
-                    colorAccessor ={(d)=>lineData['color_']}
-                />
-                );
-              }
-              else{
-                return (
-                  legendToggle[`${lineData['dataKey']}`] &&
-  
-                  <LineSeries
-                    key={lineData['dataKey']}
-                    // stroke={lineData['stroke']}
-                    dataKey={lineData['dataKey']}
-                    data={lineData['data']}
-                    {...normal_accesors}
-                    curve={curveCardinal}
-                    colorAccessor ={(d)=>lineData['color_']}
-                    strokeOpacity={0.5}
-  
-                />
-                );
-              }
-
-            }
-            if(isForecastOn && lineData['dataKey'].includes('Forecast')){
-              console.log("Hydroweb Forecast Bias Corrected",isForecastOn)
-              // console.log(lineData['dataKey'])
-              // console.log(lineData['data'])
-              if(lineData['dataKey'].includes('-')){
-                console.log(lineData['color_'])
-                return (
- 
-                  legendToggle[`${lineData['dataKey']}`] &&
-  
-                  <AreaSeries
-                    key={lineData['dataKey']}
-                    // stroke={lineData['stroke']}
-                    dataKey={lineData['dataKey']}
-                    data={lineData['data']}
-                    {...normal_accesors_area}
-                    curve={curveCardinal}
-                    fillOpacity={0.3}
-                    strokeOpacity={0.3}
-                    colorAccessor ={(d)=>lineData['color_']}
-                />
-                );
-              }
-              else{
-                if(lineData['dataKey']=='Forecast 25 Percentile StreamFlow'){
-                  console.log(lineData)
-                }
-
-                return (
- 
-                  legendToggle[`${lineData['dataKey']}`] &&
-  
-                  <LineSeries
-                    key={lineData['dataKey']}
-                    // stroke={lineData['stroke']}
-                    dataKey={lineData['dataKey']}
-                    data={lineData['data']}
-                    {...normal_accesors}
-                    curve={curveCardinal}
-                    colorAccessor ={(d)=>lineData['color_']}
-                    // strokeOpacity={0.3}
-
-                />
-                );
-              }
-
-            }
-    
-          })}
-          {/* <AnimatedLineSeries
-            stroke="#2B4865"
-            dataKey="Water Level Value"
-            data={xyData}
-            // xAccessor={accessors_fin.xAccessor['val']}
-            // yAccessor={accessors_fin.yAccessor['val']}
-            {...normal_accesors}
-            curve={curveCardinal}
-    
-          />
-    
-          <AnimatedLineSeries
-            stroke="#256D85"
-            dataKey="Maximun"
-            data={xyMax}
-            {...normal_accesors}
-            curve={curveCardinal}
-          />
-          <AnimatedLineSeries
-            stroke="#8FE3CF"
-            dataKey="Minimun"
-            data={xyMin}
-            {...normal_accesors}
-            curve={curveCardinal}
-          /> */}
-          {/* <AnimatedLineSeries
-            stroke="#0000"
-            dataKey="Historical Simulation"
-            data={xyHistorical}
-            {...normal_accesors}
-            curve={curveCardinal}
-          /> */}
-    
-    
-        <Tooltip
-                showVerticalCrosshair
-                snapTooltipToDatumX
-                renderTooltip={({ tooltipData, colorScale }) =>
-                  tooltipData.nearestDatum.key && (
-                    <>
-                      {/* <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
-                        {tooltipData.nearestDatum.key}
-                      </div>
-                      <br /> */}
-                      {
-                        // (d) => new Date(`${d.x}T00:00:00`)
-                        // normal_accesors.xAccessor(
-                        //   tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                        // )
-                      }
-                      :{" "}
-                      {normal_accesors.yAccessor(
-                        tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                      ).toFixed(2)}
-                    </>
-                  )
-                }
+              <Axis
+                hideAxisLine={true}
+                hideTicks={false}
+                orientation="bottom"
+                tickLabelProps={() => ({ dy: tickLabelOffset })}
+                left={30}
+                numTicks={4}
+                // label="Time (year)"
+                labelOffset={20}
+        
               />
+              <Axis
+                hideAxisLine={false}
+                hideTicks={false}
+                orientation="left"
+                numTicks={4}
+                label="Water Level (m)"
+                labelOffset={30}
+                tickLabelProps={() => ({ dy: -10 })}
+              />
+              {xyData.map(function(lineData) {
+                // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
+                if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level')){
+                  console.log("Hydroweb Data",isHydroDataOn)
+                  if(lineData['dataKey'].includes('-')){
+                    return (
+                      legendToggle[`${lineData['dataKey']}`] &&
+                      <AreaSeries
+                        key={lineData['dataKey']}
+                        // stroke={lineData['stroke']}
+                        dataKey={lineData['dataKey']}
+                        data={lineData['data']}
+                        {...normal_accesors_area}
+                        curve={curveCardinal}
+                        colorAccessor ={(_)=>lineData['color_']}
+                        fillOpacity={0.3}
+                        strokeOpacity={0.3}
+                        className="hiddenElement"
+                    />
+                   );
+                  }
+                  else{
+                    return (
+                      legendToggle[`${lineData['dataKey']}`] &&
+                      <LineSeries
+                        key={lineData['dataKey']}
+                        // stroke={lineData['stroke']}
+                        dataKey={lineData['dataKey']}
+                        data={lineData['data']}
+                        {...normal_accesors}
+                        // colorAccessor={color_accessor_t()}
+                        curve={curveCardinal}
+                        colorAccessor ={(_)=>lineData['color_']}
+                    />
+                   );
+                  }
     
     
-        </XYChart>
-        <ChartLegend />
+                  
+                }
+                if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
+                  console.log("Historical Simulation",isGeoglowsActive)
+                  return (
+                    legendToggle[`${lineData['dataKey']}`] &&
+                    <AreaSeries
+                      key={lineData['dataKey']}
+                      dataKey={lineData['dataKey']}
+                      data={lineData['data']}
+                      {...normal_accesors}
+                      curve={curveCardinal}
+                      colorAccessor ={(_)=>lineData['color_']}
+                      // fillOpacity={0.3}
+                      // strokeOpacity={0.5}
+                  />
+                  );
+                }
+                if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
+                  console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
+                  if(lineData['dataKey'].includes('Mean')){
+                    return (
+                      legendToggle[`${lineData['dataKey']}`] &&
+      
+                      <LineSeries
+                        key={lineData['dataKey']}
+                        // stroke={lineData['stroke']}
+                        dataKey={lineData['dataKey']}
+                        data={lineData['data']}
+                        {...normal_accesors}
+                        curve={curveCardinal}
+                        colorAccessor ={(_)=>lineData['color_']}
+                    />
+                    );
+                  }
+                  else{
+                    return (
+                      legendToggle[`${lineData['dataKey']}`] &&
+      
+                      <LineSeries
+                        key={lineData['dataKey']}
+                        // stroke={lineData['stroke']}
+                        dataKey={lineData['dataKey']}
+                        data={lineData['data']}
+                        {...normal_accesors}
+                        curve={curveCardinal}
+                        colorAccessor ={(_)=>lineData['color_']}
+                        strokeOpacity={0.5}
+      
+                    />
+                    );
+                  }
+    
+                }
+                if(isForecastOn && lineData['dataKey'].includes('Forecast')){
+                  console.log("Hydroweb Forecast Bias Corrected",isForecastOn)
+                  // console.log(lineData['dataKey'])
+                  // console.log(lineData['data'])
+                  if(lineData['dataKey'].includes('-')){
+                    console.log(lineData['color_'])
+                    return (
+     
+                      legendToggle[`${lineData['dataKey']}`] &&
+      
+                      <AreaSeries
+                        key={lineData['dataKey']}
+                        // stroke={lineData['stroke']}
+                        dataKey={lineData['dataKey']}
+                        data={lineData['data']}
+                        {...normal_accesors_area}
+                        curve={curveCardinal}
+                        fillOpacity={0.3}
+                        strokeOpacity={0.3}
+                        colorAccessor ={(_)=>lineData['color_']}
+                    />
+                    );
+                  }
+                  else{
+                    if(lineData['dataKey']=='Forecast 25 Percentile StreamFlow'){
+                      console.log(lineData)
+                    }
+    
+                    return (
+     
+                      legendToggle[`${lineData['dataKey']}`] &&
+      
+                      <LineSeries
+                        key={lineData['dataKey']}
+                        // stroke={lineData['stroke']}
+                        dataKey={lineData['dataKey']}
+                        data={lineData['data']}
+                        {...normal_accesors}
+                        curve={curveCardinal}
+                        colorAccessor ={(_)=>lineData['color_']}
+                        // strokeOpacity={0.3}
+    
+                    />
+                    );
+                  }
+    
+                }
+        
+              })}
+              {/* <AnimatedLineSeries
+                stroke="#2B4865"
+                dataKey="Water Level Value"
+                data={xyData}
+                // xAccessor={accessors_fin.xAccessor['val']}
+                // yAccessor={accessors_fin.yAccessor['val']}
+                {...normal_accesors}
+                curve={curveCardinal}
+        
+              />
+        
+              <AnimatedLineSeries
+                stroke="#256D85"
+                dataKey="Maximun"
+                data={xyMax}
+                {...normal_accesors}
+                curve={curveCardinal}
+              />
+              <AnimatedLineSeries
+                stroke="#8FE3CF"
+                dataKey="Minimun"
+                data={xyMin}
+                {...normal_accesors}
+                curve={curveCardinal}
+              /> */}
+              {/* <AnimatedLineSeries
+                stroke="#0000"
+                dataKey="Historical Simulation"
+                data={xyHistorical}
+                {...normal_accesors}
+                curve={curveCardinal}
+              /> */}
+        
+        
+            <Tooltip
+                    showVerticalCrosshair
+                    snapTooltipToDatumX
+                    renderTooltip={({ tooltipData, colorScale }) =>
+                      tooltipData.nearestDatum.key && (
+                        <>
+                          {/* <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
+                            {tooltipData.nearestDatum.key}
+                          </div>
+                          <br /> */}
+                          {
+                            // (d) => new Date(`${d.x}T00:00:00`)
+                            // normal_accesors.xAccessor(
+                            //   tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                            // )
+                          }
+                          :{" "}
+                          {normal_accesors.yAccessor(
+                            tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
+                          ).toFixed(2)}
+                        </>
+                      )
+                    }
+                  />
+        
+        
+            </XYChart>
+            )
+          }
+
+        </ParentSize>
+        {/* <ChartLegend /> */}
         </DataProvider>
         </ChartContainer>
 

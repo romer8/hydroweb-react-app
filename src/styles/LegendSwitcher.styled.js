@@ -7,7 +7,13 @@ export const LegendSwitcher = styled.div`
     display:flex;
     font-size: smaller;
     flex-direction: column;
+    flex-basis:content;
+    flex-wrap: wrap;
 
+    .legendText{
+        overflow-wrap: break-word;
+
+    }
     .hiddenElement{
         display:none;
     }

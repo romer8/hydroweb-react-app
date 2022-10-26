@@ -9,8 +9,11 @@ export const LowerMenu = styled.div`
     order: 2;
     position:absolute;
     
+
     #graph_and_legend{
         display:flex;
+        height:100%;
+        width:100%;
     }
 `;
     // overflow-y: hidden;

@@ -15,7 +15,6 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
         }
         if(dataKey=='Forecast 25-75 Percentile StreamFlow'){
             setLegendToggle(legendToggle => ({...legendToggle, [`Forecast 25 Percentile StreamFlow`]: !legendToggle[`Forecast 25 Percentile StreamFlow`]}))
-
         }
         // console.log(dataKey)
 
@@ -33,7 +32,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                                 <svg width={legendGlyphSize} height={legendGlyphSize}>
                                     <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
                                 </svg>
-                                <span>{item.dataKey}</span>
+                                <span className="legendText">{item.dataKey}</span>
                             </div>
                         )
                     }
@@ -45,7 +44,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                                 <svg width={legendGlyphSize} height={legendGlyphSize}>
                                     <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
                                 </svg>
-                                <span>{item.dataKey}</span>
+                                <span className="legendText">{item.dataKey}</span>
                             </div>
                         )
                     }
@@ -58,7 +57,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             <svg width={legendGlyphSize} height={legendGlyphSize}>
                                 <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize}  opacity="0.5" />
                             </svg>
-                            <span>{item.dataKey}</span>
+                            <span className="legendText">{item.dataKey}</span>
                         </div>
                     )
                 }
@@ -69,7 +68,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             <svg width={legendGlyphSize} height={legendGlyphSize}>
                                     <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
                             </svg>
-                            <span>{item.dataKey}</span>
+                            <span className="legendText">{item.dataKey}</span>
                         </div>
                     )
                 }
@@ -81,7 +80,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                                 <svg width={legendGlyphSize} height={legendGlyphSize}>
                                     <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
                                 </svg>
-                                <span>{item.dataKey}</span>
+                                <span className="legendText">{item.dataKey}</span>
                             </div>
                         )
                     }
@@ -92,7 +91,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                                 <svg width={legendGlyphSize} height={legendGlyphSize}>
                                     <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
                                 </svg>
-                                <span>{item.dataKey}</span>
+                                <span className="legendText">{item.dataKey}</span>
                             </div>
                         )
                     }
