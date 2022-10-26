@@ -71,6 +71,7 @@ const accessors_fin = {
 //   yAccessor: (d) => d.y
 // }
 
+// const color_accessor_t = (d) => xyData[d]['color_']
 const normal_accesors = {
   // xAccessor: (d) => d.x,
   xAccessor: (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`),
@@ -224,14 +225,15 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
       left: 0,
       right: 0,
       marginLeft: 'auto',
-      marginRight: 'auto',  
+      // marginRight: 'auto',  
       width: 'fit-content',
-      height: '25px',
+      height: 'fit-content',
       display: 'flex',
-      flexDirection:"row",
-      justifyContent: 'center',
-      alignItems:'center',
-      fontSize: '12px',
+      flexDirection:"column",
+      padding:'5px',
+      // justifyContent: 'center',
+      // alignItems:'center',
+      fontSize: '10px',
       color:'white',
       fontFamily: 'arial',
       fontWeight: 900,
@@ -239,7 +241,6 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
       borderRadius: '2px',
       overflowY: 'auto',
       flexGrow: 1
-      
     }
   }
   const OffLegend = (label) =>{
@@ -294,13 +295,14 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               style={legendLabelStyle(margin)}
               >
                 {labels.map((label, i) => (
+                  // {console.log(i)}
                   <div>
                   <LegendItem
                     key={`legend-${i}`}
                     margin="8px 8px 8px 0"
                     onClick={() => {
                       console.log(DataContext);
-                      console.log(labels)
+                      console.log(i)
                       // OffLegend(label);
 
                     }}
@@ -414,57 +416,102 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             tickLabelProps={() => ({ dy: -10 })}
           />
           {xyData.map(function(lineData) {
-            console.log(lineData)
-            if(isHydroDataOn && (lineData['dataKey'] !== "Historical Simulation" && !lineData['dataKey'].startsWith('Bias Corrected'))){
+            // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
+            if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level')){
               console.log("Hydroweb Data",isHydroDataOn)
+              if(lineData['dataKey'].includes('-')){
                 return (
-                    legendToggle[`${lineData['dataKey']}`] &&
-                    <LineSeries
-                      key={lineData['dataKey']}
-                      // stroke={lineData['stroke']}
-                      dataKey={lineData['dataKey']}
-                      data={lineData['data']}
-                      {...normal_accesors}
-                      curve={curveCardinal}
-                      colorAccessor ={(d)=>lineData['stroke']}
-                  />
-                 );
+                  legendToggle[`${lineData['dataKey']}`] &&
+                  <AreaSeries
+                    key={lineData['dataKey']}
+                    // stroke={lineData['stroke']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors_area}
+                    curve={curveCardinal}
+                    colorAccessor ={(d)=>lineData['color_']}
+                    fillOpacity={0.3}
+                    strokeOpacity={0.3}
+                />
+               );
+              }
+              else{
+                return (
+                  legendToggle[`${lineData['dataKey']}`] &&
+                  <LineSeries
+                    key={lineData['dataKey']}
+                    // stroke={lineData['stroke']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors}
+                    // colorAccessor={color_accessor_t()}
+                    curve={curveCardinal}
+                    colorAccessor ={(d)=>lineData['color_']}
+                />
+               );
+              }
+
+
               
             }
             if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
               console.log("Historical Simulation",isGeoglowsActive)
               return (
                 legendToggle[`${lineData['dataKey']}`] &&
-                <LineSeries
+                <AreaSeries
                   key={lineData['dataKey']}
-                  // stroke={lineData['stroke']}
                   dataKey={lineData['dataKey']}
                   data={lineData['data']}
                   {...normal_accesors}
                   curve={curveCardinal}
+                  colorAccessor ={(d)=>lineData['color_']}
+                  fillOpacity={0.3}
+                  strokeOpacity={0.5}
               />
               );
             }
             if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
               console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
-              return (
-                legendToggle[`${lineData['dataKey']}`] &&
+              if(lineData['dataKey'].includes('Mean')){
+                return (
+                  legendToggle[`${lineData['dataKey']}`] &&
+  
+                  <LineSeries
+                    key={lineData['dataKey']}
+                    // stroke={lineData['stroke']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors}
+                    curve={curveCardinal}
+                    colorAccessor ={(d)=>lineData['color_']}
+                />
+                );
+              }
+              else{
+                return (
+                  legendToggle[`${lineData['dataKey']}`] &&
+  
+                  <LineSeries
+                    key={lineData['dataKey']}
+                    // stroke={lineData['stroke']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors}
+                    curve={curveCardinal}
+                    colorAccessor ={(d)=>lineData['color_']}
+                    strokeOpacity={0.5}
+  
+                />
+                );
+              }
 
-                <LineSeries
-                  key={lineData['dataKey']}
-                  // stroke={lineData['stroke']}
-                  dataKey={lineData['dataKey']}
-                  data={lineData['data']}
-                  {...normal_accesors}
-                  curve={curveCardinal}
-              />
-              );
             }
             if(isForecastOn && lineData['dataKey'].includes('Forecast')){
               console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
               // console.log(lineData['dataKey'])
               // console.log(lineData['data'])
               if(lineData['dataKey'].includes('-')){
+                console.log(lineData['color_'])
                 return (
  
                   legendToggle[`${lineData['dataKey']}`] &&
@@ -477,10 +524,14 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     {...normal_accesors_area}
                     curve={curveCardinal}
                     fillOpacity={0.3}
+                    strokeOpacity={0.3}
+                    colorAccessor ={(d)=>lineData['color_']}
                 />
                 );
               }
               else{
+                console.log(lineData['color_'])
+
                 return (
  
                   legendToggle[`${lineData['dataKey']}`] &&
@@ -492,6 +543,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     data={lineData['data']}
                     {...normal_accesors}
                     curve={curveCardinal}
+                    colorAccessor ={(d)=>lineData['color_']}
+                    strokeOpacity={0.3}
+
                 />
                 );
               }

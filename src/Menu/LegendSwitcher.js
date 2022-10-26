@@ -5,27 +5,47 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
         console.log(e)
         // e.preventDefault();
         const dataKey = e.target.value
-        console.log(dataKey)
         setLegendToggle(legendToggle => ({...legendToggle, [`${dataKey}`]: !legendToggle[`${dataKey}`]}))
         console.log(legendToggle)
         e.target.value = !legendToggle[`${dataKey}`]
+        if(dataKey=='Water Level Maximun-Minimun'){
+            setLegendToggle(legendToggle => ({...legendToggle, [`Water Level Minimun`]: !legendToggle[`Water Level Minimun`]}))
+        }
+        if(dataKey=='Forecast 25-75 Percentile StreamFlow'){
+            setLegendToggle(legendToggle => ({...legendToggle, [`Forecast 25 Percentile StreamFlow`]: !legendToggle[`Forecast 25 Percentile StreamFlow`]}))
+
+        }
+        // console.log(dataKey)
+
     }
   return(
     
       <LegendSwitcher>
         {xyData.map((item,index)=>{
-                if(isHydroDataOn && (item['dataKey'] !== "Historical Simulation" && !item['dataKey'].startsWith('Bias Corrected'))) {
-                    return(
-                        <div key={index}>
-                            {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
-                            <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <span>{item.dataKey}</span>
-                        </div>
-                    )
+                if(isHydroDataOn && item['dataKey'].startsWith('Water Level')) {
+                    if(item['dataKey'] == 'Water Level Minimun'){
+                        return(
+                            <div key={item['dataKey']} className="hiddenElement">
+                                {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
+                                <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <span>{item.dataKey}</span>
+                            </div>
+                        )
+                    }
+                    else{
+                        return(
+                            <div key={item['dataKey']}>
+                                {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
+                                <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <span>{item.dataKey}</span>
+                            </div>
+                        )
+                    }
+
                 }
                 if(isGeoglowsActive && item['dataKey'] === "Historical Simulation"){
                     return(
-                        <div key={index}>
+                        <div key={item['dataKey']}>
                             <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <span>{item.dataKey}</span>
                         </div>
@@ -33,19 +53,30 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                 }
                 if(isBiasCorrectionOn && item['dataKey'].startsWith('Bias Corrected')){
                     return(
-                        <div key={index}>
+                        <div key={item['dataKey']}>
                             <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <span>{item.dataKey}</span>
                         </div>
                     )
                 }
                 if(isForecastOn && item['dataKey'].includes('Forecast')){
-                    return(
-                        <div key={index}>
-                            <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <span>{item.dataKey}</span>
-                        </div>
-                    )
+                    if(item['dataKey'] == 'Forecast 25 Percentile StreamFlow'){
+                        return(
+                            <div key={item['dataKey']} className="hiddenElement">
+                                <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <span>{item.dataKey}</span>
+                            </div>
+                        )
+                    }
+                    else{
+                        return(
+                            <div key={item['dataKey']}>
+                                <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <span>{item.dataKey}</span>
+                            </div>
+                        )
+                    }
+
                 }
             }
         )

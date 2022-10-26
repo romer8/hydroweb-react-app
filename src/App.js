@@ -237,7 +237,10 @@ const getStyle = (feature) => {
             let dataHistorical = JSON.parse(data['data']);
             const dataHistoricalObject = {
               // stroke:"#00008B",
+              color_:"#00008B",
+
               dataKey:"Historical Simulation",
+              key:"Historical Simulation",
               data:dataHistorical,
               visible:isGeoglowsActive
             }
@@ -270,21 +273,27 @@ const getStyle = (feature) => {
             // setDataGeoglows(dataHistorical);
             const normal_bc_data = {
               // stroke:"#2B4865",
+              color_:'#2B4865',
               dataKey:"Bias Corrected Mean Level",
+              key:"Bias Corrected Mean Level",
               data:data['data']['val'],
               visible:isBiasCorrectionOn
   
             }
             const min_bc_data = {
               // stroke:"#8FE3CF",
+              color_:'#8FE3CF',
               dataKey:"Bias Corrected Minimun Level",
+              key:"Bias Corrected Minimun Level",
               data:data['data']['val'],
               visible:isBiasCorrectionOn
   
             }
             const max_bc_data = {
               // stroke:"#002500",
+              color_:'#002500',
               dataKey:"Bias Corrected Maximun Level",
+              key:"Bias Corrected Maximun Level",
               data:data['data']['max'],
               visible:isBiasCorrectionOn
   
@@ -308,18 +317,20 @@ const getStyle = (feature) => {
   
             // setDataGeoglows(dataHistorical);
             const mean_ensemble = {
-              // stroke:"#2B4865",
+              color_:"#2B4865",
               dataKey:"Forecast Mean StreamFlow",
+              key:"Forecast Mean StreamFlow",
               data:dataForecastBiasCorrrected['mean'],
               visible:isForecastOn
   
             }
             const max_min_ensemble = {
               // stroke:"#8FE3CF",
+              color_:"#8FE3CF",
               dataKey:"Forecast Minimun-Maximun StreamFlow",
+              key:"Forecast Minimun-Maximun StreamFlow",
               data:dataForecastBiasCorrrected['max_min'],
-              visible:isForecastOn
-  
+              visible:isForecastOn  
             }
             // const min_ensemble = {
             //   // stroke:"#8FE3CF",
@@ -335,13 +346,15 @@ const getStyle = (feature) => {
             //   visible:isForecastOn
   
             // }
-            // const p25_ensemble = {
-            //   // stroke:"#002500",
-            //   dataKey:"Forecast 25 Percentile StreamFlow",
-            //   data:dataForecastBiasCorrrected['p25'],
-            //   visible:isForecastOn
+            const p25_ensemble = {
+              // stroke:"#002500",
+              dataKey:"Forecast 25 Percentile StreamFlow",
+              key:"Forecast 25 Percentile StreamFlow",
+              data:dataForecastBiasCorrrected['p25'],
+              visible:isForecastOn,
+              color_:"#002500"
   
-            // }
+            }
             // const p75_ensemble = {
             //   // stroke:"#002500",
             //   dataKey:"Forecast 75 Percentile StreamFlow",
@@ -352,19 +365,24 @@ const getStyle = (feature) => {
             const p75_25_ensemble = {
               // stroke:"#002500",
               dataKey:"Forecast 25-75 Percentile StreamFlow",
+              key:"Forecast 25-75 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p75_25'],
-              visible:isForecastOn
+              visible:isForecastOn,
+              color_:"#002500"
   
             }
             const high_res_ensemble = {
               // stroke:"#002500",
               dataKey:"Forecast High Resolution StreamFlow",
+              key:"Forecast High Resolution StreamFlow",
               data:dataForecastBiasCorrrected['high_res'],
-              visible:isForecastOn
+              visible:isForecastOn,
+              color_:"#030303"
+
   
             }
             // setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
-            setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble ]);
+            setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble,p25_ensemble ]);
           
           }
         }
@@ -380,8 +398,9 @@ const getStyle = (feature) => {
             console.log(dataForecastBiasCorrrected);
             if(dataForecastBiasCorrrected['record_plot1']){
               const record_plot1 = {
-                // stroke:"#FFA15A",
+                color_:"#FFA15A",
                 dataKey:"1st Days Forecast Records",
+                key:"1st Days Forecast Records",
                 data:dataForecastBiasCorrrected['record_plot1'],
                 visible:isForecastOn
               }
@@ -396,8 +415,9 @@ const getStyle = (feature) => {
               //   visible:isForecastOn
               // }
               const max_min_area_record_WL = {
-                // stroke:"#FFA15A",
+                color_:"#FFA15A",
                 dataKey:"1st Days Forecasts Maximum-Minimum Records",
+                key:"1st Days Forecasts Maximum-Minimum Records",
                 data:dataForecastBiasCorrrected['max_min_area_record_WL'],
                 visible:isForecastOn
               }
@@ -419,8 +439,9 @@ const getStyle = (feature) => {
             }
             if(dataForecastBiasCorrrected['max_min_high_res_WL']){
               const max_min_high_res_WL = {
-                // stroke:"#000000",
+                color_:"#000000",
                 dataKey:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
+                key:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
                 data:dataForecastBiasCorrrected['max_min_high_res_WL'],
                 visible:isForecastOn
               }
@@ -475,6 +496,7 @@ const getStyle = (feature) => {
     const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
+          console.log(response)
           // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
 
           // const {data: response} = await axios.post(service_link);
@@ -485,32 +507,45 @@ const getStyle = (feature) => {
           // setMaxDataStation(response['data']['max'])
           const normal_data = {
             // stroke:"#2B4865",
-            dataKey:"Water Level Value",
+            dataKey:"Water Level Mean Value",
+            color_:"#2B4865",
+            key:"Water Level Value",
             data:response['data']['val'],
+            visible:isHydroDataOn
+
+          }
+          const min_max_data = {
+            color_:"#8FE3CF",
+            dataKey:"Water Level Maximun-Minimun",
+            key:"Water Level Maximun-Minimun",
+            data:response['data']['min_max'],
             visible:isHydroDataOn
 
           }
           const min_data = {
-            // stroke:"#8FE3CF",
-            dataKey:"Minimun",
-            data:response['data']['val'],
+            color_:"#8FE3CF",
+            dataKey:"Water Level Minimun",
+            key:"Water Level Minimun",
+            data:response['data']['min'],
             visible:isHydroDataOn
-
           }
-          const max_data = {
-            // stroke:"#002500",
-            dataKey:"Maximun",
-            data:response['data']['max'],
-            visible:isHydroDataOn
-
-          }
+          // const max_data = {
+          //   // stroke:"#002500",
+          //   color_:"#002500",
+          //   dataKey:"Maximun",
+          //   key:"Maximun",
+          //   data:response['data']['max'],
+          //   visible:isHydroDataOn
+          // }
           
           // const data_object={
           //   normal: normal_data,
           //   minimun: min_data,
           //   maximun: max_data
           // }
-          const data_list =[normal_data,min_data,max_data]
+          const data_list =[normal_data,min_max_data,min_data]
+          // const data_list =[normal_data,min_data,max_data]
+
 
           setDataObject(data_list)
           // console.log(data_list)

@@ -8,5 +8,9 @@ export const LegendSwitcher = styled.div`
     font-size: smaller;
     flex-direction: column;
 
+    .hiddenElement{
+        display:none;
+    }
+
 `;
 

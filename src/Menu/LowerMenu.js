@@ -7,19 +7,24 @@ import LegendSwitcherWrapper from "../Menu/LegendSwitcher";
 const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,executeHydroWebData,executeForecast, setDataObject, isFullMap,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn}) => {
   
   const[legendToggle, setLegendToggle] = useState({
-    'Water Level Value': true,
-    'Maximun': true,
-    'Minimun': true,
+    'Water Level Mean Value': true,
+    'Water Level Maximun-Minimun': true,
+    'Water Level Minimun': true,
+    // 'Maximun': true,
+
+    // 'Minimun': true,
     'Historical Simulation':true,
     'Forecast 25-75 Percentile StreamFlow': true,
+    'Forecast 25 Percentile StreamFlow':true,
     'Forecast Minimun-Maximun StreamFlow': true,
     'Bias Corrected Mean Level':true,
-    'Bias Corrected Minimun Level': true,
-    'Bias Corrected Maximun Level':true,
+    'Bias Corrected Minimun Level': false,
+    'Bias Corrected Maximun Level':false,
     'Forecast Mean StreamFlow': true,
     'Forecast Minimun StreamFlow': true,
     'Forecast Maximun StreamFlow': true,
     '1st Days Forecasts Maximum-Minimum Records': true,
+    '1st Days Forecast Records': true,
     'High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)':true,
     'Forecast High Resolution StreamFlow': true
   })
