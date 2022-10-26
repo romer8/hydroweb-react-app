@@ -78,15 +78,19 @@ const colorScaleCasero = (xyData,tooltipData) =>{
   const colorselected = xyData.filter(item => item.dataKey === tooltipData.nearestDatum.key)[0]['color_fill']
   return colorselected
 }
-const colorScaleCasero2 = (xyData,tooltipData) =>{
-  const colorselected = xyData.filter(item => item.dataKey === tooltipData.nearestDatum.key)[0]['color_fill']
-  return colorselected
-}
+
 // const color_fillaccessor_t = (d) => xyData[d]['color_fill']
 const darkTheme = buildChartTheme({
   ...dt,
   colors: ['#2B4865','#8FE3CF','#8FE3CF'],
 })
+
+const customTheme = buildChartTheme({
+  ...dt,
+  colors: ['#2B4865','#8FE3CF','#8FE3CF'],
+  backgroundColor: "#9a336a",
+})
+
 
 const accesor_tooltip = {
   xAccessor: (d) => d.x,
@@ -382,7 +386,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               zero: false,
               // domain: [10, 50]
             }}
-            // theme={darkTheme}
+            theme={customTheme}
             
             >
           <ParentSize>
@@ -625,17 +629,19 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
                       tooltipData.nearestDatum.key && (
                         <>
-                          <div style={{ color: colorScaleCasero(xyData,tooltipData) }}>
+                          {/* <div style={{ color: colorScaleCasero(xyData,tooltipData) }}>
                             {tooltipData.nearestDatum.key}
-                          </div>
-                          <br />
+                          </div> */}
+                          
                           {
                             // (d) => new Date(`${d.x}T00:00:00`)
                             // (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`)
 
                             accesor_tooltip.xAccessor(tooltipData.nearestDatum.datum)
                           }
-                          : {" "}
+                          <br/>
+                          <br/>
+
                           {
                             (Object.keys(tooltipData?.datumByKey).filter((serieline)=>serieline).map((serieline)=>{
                               const dataval =
@@ -645,21 +651,24 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                                 ).toFixed(2);
 
                               const colorDatum =  tooltipData?.nearestDatum?.datum && xyData.filter(item => item.dataKey === tooltipData.datumByKey[serieline].key)[0]['color_fill'] ? xyData.filter(item => item.dataKey === tooltipData.datumByKey[serieline].key)[0]['color_fill'] : ""
-                              return(
-                                
-                                <div key={serieline}>
-                                  <em style={{ 
-                                  color: colorDatum,
-                                   textDecoration:
-                                      tooltipData?.nearestDatum?.key === serieline ? 'underline' : undefined,
-                                   }} >
-                                    {serieline}
-                                  </em>
-                                  {'  '}
-                                    {`${dataval} m`}
-                                </div>
+                              if(!serieline.includes('-')){
+                                return(
 
-                              )
+                                  <div key={serieline}>
+                                    <em style={{ 
+                                    color: colorDatum,
+                                     textDecoration:
+                                        tooltipData?.nearestDatum?.key === serieline ? 'underline' : undefined,
+                                     }} >
+                                      {serieline}
+                                    </em>
+                                    {'  '}
+                                      {`${dataval} m`}
+                                  </div>
+  
+                                )
+                              }
+
                             
                             })
                             )
