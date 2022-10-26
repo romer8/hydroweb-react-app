@@ -364,11 +364,11 @@ const getStyle = (feature) => {
             // }
             const p75_25_ensemble = {
               // stroke:"#002500",
+              color_:"#002500",
               dataKey:"Forecast 25-75 Percentile StreamFlow",
               key:"Forecast 25-75 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p75_25'],
-              visible:isForecastOn,
-              color_:"#002500"
+              visible:isForecastOn
   
             }
             const high_res_ensemble = {

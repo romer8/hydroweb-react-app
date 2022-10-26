@@ -129,93 +129,93 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
   const [maxDateXScale, setMaxDateXScale] = useState("");
 
   
-  useEffect(() => {
-    console.log("useEffect XYCHART")
-    //we only need to do this for forecast if it is on
-    if(isForecastOn){
-      var result = xyData.filter(function(serie_line_or_area) {
-        if(serie_line_or_area.dataKey.includes('Forecast') && legendToggle[serie_line_or_area.dataKey] ){
-          // console.log("hey")
-          return serie_line_or_area;
-        }
-      });
-      // get the minimun//
-      console.log(result)
-      var minimun_dates_array = []
+  // useEffect(() => {
+  //   console.log("useEffect XYCHART")
+  //   //we only need to do this for forecast if it is on
+  //   if(isForecastOn){
+  //     var result = xyData.filter(function(serie_line_or_area) {
+  //       if(serie_line_or_area.dataKey.includes('Forecast') && legendToggle[serie_line_or_area.dataKey] ){
+  //         // console.log("hey")
+  //         return serie_line_or_area;
+  //       }
+  //     });
+  //     // get the minimun//
+  //     console.log(result)
+  //     var minimun_dates_array = []
 
-      var minimun_dates = result.filter(function(single_result){
-        const minDate = new Date(
-          Math.min(
-            ...single_result['data'].map(element => {
+  //     var minimun_dates = result.filter(function(single_result){
+  //       const minDate = new Date(
+  //         Math.min(
+  //           ...single_result['data'].map(element => {
                       
-              let [y,M,d,h,m,s] = element.x.split(/[- :]/);
-              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-              return new Date(newDate);
-            }),
-          ),
-        );
-        // console.log(new Date())
-        var new_min_date_format = minDate.getFullYear().toString()+ "-" + pad2(minDate.getMonth() + 1) + "-" + pad2(minDate.getDate()) +" "+ pad2( minDate.getHours() ) +":"+ pad2( minDate.getMinutes() ) + ":"+ pad2( minDate.getSeconds() )
-        minimun_dates_array.push(new_min_date_format)
+  //             let [y,M,d,h,m,s] = element.x.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       // console.log(new Date())
+  //       var new_min_date_format = minDate.getFullYear().toString()+ "-" + pad2(minDate.getMonth() + 1) + "-" + pad2(minDate.getDate()) +" "+ pad2( minDate.getHours() ) +":"+ pad2( minDate.getMinutes() ) + ":"+ pad2( minDate.getSeconds() )
+  //       minimun_dates_array.push(new_min_date_format)
 
-        return minDate
-      })
-        const minDate_final = new Date(
+  //       return minDate
+  //     })
+  //       const minDate_final = new Date(
 
-          Math.min(
-            ...minimun_dates_array.map(element => {
+  //         Math.min(
+  //           ...minimun_dates_array.map(element => {
                       
-              let [y,M,d,h,m,s] = element.split(/[- :]/);
-              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-              return new Date(newDate);
-            }),
-          ),
-        );
-        var new_min_date_final_string = minDate_final.getFullYear().toString()+ "-" + pad2(minDate_final.getMonth() + 1) + "-" + pad2(minDate_final.getDate()) +" "+ pad2( minDate_final.getHours() ) +":"+ pad2( minDate_final.getMinutes() ) + ":"+ pad2(minDate_final.getSeconds() )
-        setMinDateXScale(new_min_date_final_string)
+  //             let [y,M,d,h,m,s] = element.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       var new_min_date_final_string = minDate_final.getFullYear().toString()+ "-" + pad2(minDate_final.getMonth() + 1) + "-" + pad2(minDate_final.getDate()) +" "+ pad2( minDate_final.getHours() ) +":"+ pad2( minDate_final.getMinutes() ) + ":"+ pad2(minDate_final.getSeconds() )
+  //       setMinDateXScale(new_min_date_final_string)
 
-      // get the maximun//
-      var maximun_dates_array = []
+  //     // get the maximun//
+  //     var maximun_dates_array = []
 
-      var maximun_dates = result.filter(function(single_result){
-        const maxDate = new Date(
-          Math.max(
-            ...single_result['data'].map(element => {
+  //     var maximun_dates = result.filter(function(single_result){
+  //       const maxDate = new Date(
+  //         Math.max(
+  //           ...single_result['data'].map(element => {
                       
-              let [y,M,d,h,m,s] = element.x.split(/[- :]/);
-              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-              return new Date(newDate);
-            }),
-          ),
-        );
-        // console.log(new Date())
-        var new_max_date_format = maxDate.getFullYear().toString()+ "-" + pad2(maxDate.getMonth() + 1) + "-" + pad2(maxDate.getDate()) +" "+ pad2( maxDate.getHours() ) +":"+ pad2( maxDate.getMinutes() ) + ":"+ pad2( maxDate.getSeconds() )
-        maximun_dates_array.push(new_max_date_format)
+  //             let [y,M,d,h,m,s] = element.x.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       // console.log(new Date())
+  //       var new_max_date_format = maxDate.getFullYear().toString()+ "-" + pad2(maxDate.getMonth() + 1) + "-" + pad2(maxDate.getDate()) +" "+ pad2( maxDate.getHours() ) +":"+ pad2( maxDate.getMinutes() ) + ":"+ pad2( maxDate.getSeconds() )
+  //       maximun_dates_array.push(new_max_date_format)
 
-        return maxDate
-      })
-        const maxDate_final = new Date(
+  //       return maxDate
+  //     })
+  //       const maxDate_final = new Date(
 
-          Math.max(
-            ...maximun_dates_array.map(element => {
+  //         Math.max(
+  //           ...maximun_dates_array.map(element => {
                       
-              let [y,M,d,h,m,s] = element.split(/[- :]/);
-              let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-              return new Date(newDate);
-            }),
-          ),
-        );
-        var new_max_date_final_string = maxDate_final.getFullYear().toString()+ "-" + pad2(maxDate_final.getMonth() + 1) + "-" + pad2(maxDate_final.getDate()) +" "+ pad2( maxDate_final.getHours() ) +":"+ pad2( maxDate_final.getMinutes() ) + ":"+ pad2(maxDate_final.getSeconds() )
-        setMaxDateXScale(new_max_date_final_string)
-        console.log(minDateXScale, maxDateXScale)
-        console.log(new_min_date_final_string, new_max_date_final_string)
+  //             let [y,M,d,h,m,s] = element.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       var new_max_date_final_string = maxDate_final.getFullYear().toString()+ "-" + pad2(maxDate_final.getMonth() + 1) + "-" + pad2(maxDate_final.getDate()) +" "+ pad2( maxDate_final.getHours() ) +":"+ pad2( maxDate_final.getMinutes() ) + ":"+ pad2(maxDate_final.getSeconds() )
+  //       setMaxDateXScale(new_max_date_final_string)
+  //       console.log(minDateXScale, maxDateXScale)
+  //       console.log(new_min_date_final_string, new_max_date_final_string)
 
-    }
+  //   }
 
-    return () => {
+  //   return () => {
 
-    }
-  }, [legendToggle])
+  //   }
+  // }, [legendToggle])
   
 
   const legendLabelStyle = (margin) => {
@@ -465,8 +465,8 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                   {...normal_accesors}
                   curve={curveCardinal}
                   colorAccessor ={(d)=>lineData['color_']}
-                  fillOpacity={0.3}
-                  strokeOpacity={0.5}
+                  // fillOpacity={0.3}
+                  // strokeOpacity={0.5}
               />
               );
             }
@@ -507,7 +507,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
             }
             if(isForecastOn && lineData['dataKey'].includes('Forecast')){
-              console.log("Hydroweb Forecast Bias Corrected",isBiasCorrectionOn)
+              console.log("Hydroweb Forecast Bias Corrected",isForecastOn)
               // console.log(lineData['dataKey'])
               // console.log(lineData['data'])
               if(lineData['dataKey'].includes('-')){
@@ -530,7 +530,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                 );
               }
               else{
-                console.log(lineData['color_'])
+                if(lineData['dataKey']=='Forecast 25 Percentile StreamFlow'){
+                  console.log(lineData)
+                }
 
                 return (
  
@@ -544,7 +546,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     {...normal_accesors}
                     curve={curveCardinal}
                     colorAccessor ={(d)=>lineData['color_']}
-                    strokeOpacity={0.3}
+                    // strokeOpacity={0.3}
 
                 />
                 );
@@ -593,10 +595,10 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                 renderTooltip={({ tooltipData, colorScale }) =>
                   tooltipData.nearestDatum.key && (
                     <>
-                      <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
+                      {/* <div style={{ color: colorScale(tooltipData.nearestDatum.key) }}>
                         {tooltipData.nearestDatum.key}
                       </div>
-                      <br />
+                      <br /> */}
                       {
                         // (d) => new Date(`${d.x}T00:00:00`)
                         // normal_accesors.xAccessor(

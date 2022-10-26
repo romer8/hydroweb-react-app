@@ -1,6 +1,8 @@
 import React from "react";
 import { LegendSwitcher } from "../styles/LegendSwitcher.styled";
 const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn, legendToggle,setLegendToggle}) => {
+    const legendGlyphSize = 15;
+    
     const toggleOffOn = (e)=>{
         console.log(e)
         // e.preventDefault();
@@ -28,6 +30,9 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             <div key={item['dataKey']} className="hiddenElement">
                                 {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
                                 <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
                                 <span>{item.dataKey}</span>
                             </div>
                         )
@@ -37,6 +42,9 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             <div key={item['dataKey']}>
                                 {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
                                 <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
                                 <span>{item.dataKey}</span>
                             </div>
                         )
@@ -47,6 +55,9 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                     return(
                         <div key={item['dataKey']}>
                             <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize}  opacity="0.5" />
+                            </svg>
                             <span>{item.dataKey}</span>
                         </div>
                     )
@@ -55,6 +66,9 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                     return(
                         <div key={item['dataKey']}>
                             <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
+                            </svg>
                             <span>{item.dataKey}</span>
                         </div>
                     )
@@ -62,8 +76,11 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                 if(isForecastOn && item['dataKey'].includes('Forecast')){
                     if(item['dataKey'] == 'Forecast 25 Percentile StreamFlow'){
                         return(
-                            <div key={item['dataKey']} className="hiddenElement">
+                            <div key={item['dataKey']} className="">
                                 <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
                                 <span>{item.dataKey}</span>
                             </div>
                         )
@@ -72,6 +89,9 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                         return(
                             <div key={item['dataKey']}>
                                 <input value={item.dataKey} type="checkbox"  checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
                                 <span>{item.dataKey}</span>
                             </div>
                         )
