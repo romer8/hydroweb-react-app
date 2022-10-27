@@ -24,6 +24,13 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
         }
         if(dataKey=='Forecast 25-75 Percentile StreamFlow'){
             setLegendToggle(legendToggle => ({...legendToggle, [`Forecast 25 Percentile StreamFlow`]: !legendToggle[`Forecast 25 Percentile StreamFlow`]}))
+            setLegendToggle(legendToggle => ({...legendToggle, [`Forecast 75 Percentile StreamFlow`]: !legendToggle[`Forecast 75 Percentile StreamFlow`]}))
+        
+        }
+        if(dataKey=='Forecast Minimun-Maximun StreamFlow'){
+            setLegendToggle(legendToggle => ({...legendToggle, [`Forecast Minimun StreamFlow`]: !legendToggle[`Forecast Minimun StreamFlow`]}))
+            setLegendToggle(legendToggle => ({...legendToggle, [`Forecast Maximun StreamFlow`]: !legendToggle[`Forecast Maximun StreamFlow`]}))
+        
         }
         // console.log(dataKey)
 
@@ -95,7 +102,21 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                     )
                 }
                 if(isForecastOn && item['dataKey'].includes('Forecast')){
-                    if(item['dataKey'] == 'Forecast 25 Percentile StreamFlow'){
+                    if(item['dataKey'] == 'Forecast 25 Percentile StreamFlow' || item['dataKey'] == 'Forecast 75 Percentile StreamFlow'){
+                        return(
+                            <div key={item['dataKey']} className="hiddenElement">
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
+                                <span className="legendText">{item.dataKey}</span>
+                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <button className="iconColorLegend" onclick="">
+                                    <FontAwesomeIcon icon={faCircleDown} />
+                                </button>
+                            </div>
+                        )
+                    }
+                    else if (item['dataKey'] == 'Forecast Maximun StreamFlow' || item['dataKey'] == 'Forecast Minimun StreamFlow'){
                         return(
                             <div key={item['dataKey']} className="hiddenElement">
                                 <svg width={legendGlyphSize} height={legendGlyphSize}>

@@ -18,8 +18,11 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Bias Corrected Minimun Level': false,
     'Bias Corrected Maximun Level':false,
 
+    'Forecast 75 Percentile StreamFlow': true,
+    'Forecast 25 Percentile StreamFlow': true,
     'Forecast 25-75 Percentile StreamFlow': true,
-    'Forecast 25 Percentile StreamFlow':true,
+    'Forecast Maximun StreamFlow': true,
+    'Forecast Minimun StreamFlow': true,
     'Forecast Minimun-Maximun StreamFlow': true,
     
     'Forecast Mean StreamFlow': true,
