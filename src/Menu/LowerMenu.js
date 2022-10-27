@@ -24,10 +24,9 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Forecast Maximun StreamFlow': true,
     'Forecast Minimun StreamFlow': true,
     'Forecast Minimun-Maximun StreamFlow': true,
-    
     'Forecast Mean StreamFlow': true,
-    'Forecast Minimun StreamFlow': true,
-    'Forecast Maximun StreamFlow': true,
+    'Forecast High Resolution StreamFlow': true,
+
     '1st Days Forecasts Maximum-Minimum Records': true,
     '1st Days Forecasts Maximun Records': true,
     '1st Days Forecasts Minimum Records': true,
@@ -35,7 +34,6 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'High Resolution Minimum (1st Days Forecasts Records)': true,
     'High Resolution Maximum (1st Days Forecasts Records)': true,
     'High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)':true,
-    'Forecast High Resolution StreamFlow': true
   })
 
 

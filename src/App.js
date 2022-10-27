@@ -18,7 +18,8 @@ import SideMenuWrapper from "./SideMenuWrapper/SideMenuWrapper";
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 import { SplitContainer } from "./styles/SplitContainer.styled";
 import LowerMenuWrapper from "./Menu/LowerMenu";
-import JobsMenu from "./Menu/LowerMenu";
+import { graph_styles } from "./styles/Graphs_styles";
+
 import Loader_wrapper from "./Extra/Loader_wrapper";
 
 import { WebSocketWrapper } from "./WebsocketWrapper";
@@ -236,9 +237,7 @@ const getStyle = (feature) => {
             console.log("ADDING THE HISTORICAL SIMULATION DATA")
             let dataHistorical = JSON.parse(data['data']);
             const dataHistoricalObject = {
-              // stroke:"#00008B",
-              color_fill:"#00008B",
-
+              color_fill: graph_styles["Historical Simulation"],
               dataKey:"Historical Simulation",
               key:"Historical Simulation",
               data:dataHistorical,
@@ -272,8 +271,7 @@ const getStyle = (feature) => {
   
             // setDataGeoglows(dataHistorical);
             const normal_bc_data = {
-              // stroke:"#2B4865",
-              color_fill:'#2B4865',
+              color_fill:graph_styles["Bias Corrected Mean Level"],
               dataKey:"Bias Corrected Mean Level",
               key:"Bias Corrected Mean Level",
               data:data['data']['val'],
@@ -281,8 +279,7 @@ const getStyle = (feature) => {
   
             }
             const min_bc_data = {
-              // stroke:"#8FE3CF",
-              color_fill:'#8FE3CF',
+              color_fill:graph_styles['Bias Corrected Minimun Level'],
               dataKey:"Bias Corrected Minimun Level",
               key:"Bias Corrected Minimun Level",
               data:data['data']['val'],
@@ -290,8 +287,7 @@ const getStyle = (feature) => {
   
             }
             const max_bc_data = {
-              // stroke:"#002500",
-              color_fill:'#002500',
+              color_fill:graph_styles['Bias Corrected Maximun Level'],
               dataKey:"Bias Corrected Maximun Level",
               key:"Bias Corrected Maximun Level",
               data:data['data']['max'],
@@ -317,7 +313,7 @@ const getStyle = (feature) => {
   
             // setDataGeoglows(dataHistorical);
             const mean_ensemble = {
-              color_fill:"#2B4865",
+              color_fill:graph_styles['Forecast Mean StreamFlow'],
               dataKey:"Forecast Mean StreamFlow",
               key:"Forecast Mean StreamFlow",
               data:dataForecastBiasCorrrected['mean'],
@@ -325,16 +321,14 @@ const getStyle = (feature) => {
   
             }
             const max_min_ensemble = {
-              // stroke:"#8FE3CF",
-              color_fill:"#8FE3CF",
+              color_fill:graph_styles['Forecast Minimun-Maximun StreamFlow'],
               dataKey:"Forecast Minimun-Maximun StreamFlow",
               key:"Forecast Minimun-Maximun StreamFlow",
               data:dataForecastBiasCorrrected['max_min'],
               visible:isForecastOn  
             }
             const min_ensemble = {
-              // stroke:"#8FE3CF",
-              color_fill:"#8FE3CF",
+              color_fill:graph_styles['Forecast Minimun StreamFlow'],
               dataKey:"Forecast Minimun StreamFlow",
               Key:"Forecast Minimun StreamFlow",
               data:dataForecastBiasCorrrected['min'],
@@ -342,24 +336,22 @@ const getStyle = (feature) => {
   
             }
             const max_ensemble = {
-              // stroke:"#002500",
-              color_fill:"#8FE3CF",
+              color_fill:graph_styles['Forecast Maximun StreamFlow'],
               dataKey:"Forecast Maximun StreamFlow",
               Key:"Forecast Maximun StreamFlow",
               data:dataForecastBiasCorrrected['max'],
               visible:isForecastOn
             }
             const p25_ensemble = {
-              // stroke:"#002500",
-              dataKey:"Forecast 25 Percentile StreamFlow",
+              dataKey:"Forecast Maximun StreamFlow",
               key:"Forecast 25 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p25'],
               visible:isForecastOn,
-              color_fill:"#002500"
+              color_fill:graph_styles['Forecast Maximun StreamFlow']
             }
             const p75_ensemble = {
               // stroke:"#002500",
-              color_fill:"#002500",
+              color_fill:graph_styles['Forecast 75 Percentile StreamFlow'],
               dataKey:"Forecast 75 Percentile StreamFlow",
               Key:"Forecast 75 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p75'],
@@ -367,7 +359,7 @@ const getStyle = (feature) => {
             }
             const p75_25_ensemble = {
               // stroke:"#002500",
-              color_fill:"#002500",
+              color_fill:graph_styles['Forecast 25-75 Percentile StreamFlow'],
               dataKey:"Forecast 25-75 Percentile StreamFlow",
               key:"Forecast 25-75 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p75_25'],
@@ -375,12 +367,11 @@ const getStyle = (feature) => {
   
             }
             const high_res_ensemble = {
-              // stroke:"#002500",
               dataKey:"Forecast High Resolution StreamFlow",
               key:"Forecast High Resolution StreamFlow",
               data:dataForecastBiasCorrrected['high_res'],
               visible:isForecastOn,
-              color_fill:"#030303"
+              color_fill:graph_styles['Forecast High Resolution StreamFlow']
 
   
             }
@@ -401,7 +392,7 @@ const getStyle = (feature) => {
             console.log(dataForecastBiasCorrrected);
             if(dataForecastBiasCorrrected['record_plot1']){
               const record_plot1 = {
-                color_fill:"#FFA15A",
+                color_fill:graph_styles['1st Days Forecast Records'],
                 dataKey:"1st Days Forecast Records",
                 key:"1st Days Forecast Records",
                 data:dataForecastBiasCorrrected['record_plot1'],
@@ -418,21 +409,21 @@ const getStyle = (feature) => {
               //   visible:isForecastOn
               // }
               const max_min_area_record_WL = {
-                color_fill:"#FFA15A",
+                color_fill:graph_styles['1st Days Forecasts Maximum-Minimum Records'],
                 dataKey:"1st Days Forecasts Maximum-Minimum Records",
                 key:"1st Days Forecasts Maximum-Minimum Records",
                 data:dataForecastBiasCorrrected['max_min_area_record_WL'],
                 visible:isForecastOn
               }
               const max_record_WL = {
-                color_fill:"#FFA15A",
+                color_fill:graph_styles['1st Days Forecasts Maximun Records'],
                 dataKey:"1st Days Forecasts Maximun Records",
                 key:"1st Days Forecasts Maximun Records",
                 data:dataForecastBiasCorrrected['max_record_WL'],
                 visible:isForecastOn
               }
               const min_record_WL = {
-                color_fill:"#FFA15A",
+                color_fill:graph_styles['1st Days Forecasts Minimun Records'],
                 dataKey:"1st Days Forecasts Minimun Records",
                 key:"1st Days Forecasts Minimun Records",
                 data:dataForecastBiasCorrrected['min_record_WL'],
@@ -444,21 +435,21 @@ const getStyle = (feature) => {
             }
             if(dataForecastBiasCorrrected['max_min_high_res_WL']){
               const max_min_high_res_WL = {
-                color_fill:"#000000",
+                color_fill:graph_styles['High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)'],
                 dataKey:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
                 key:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
                 data:dataForecastBiasCorrrected['max_min_high_res_WL'],
                 visible:isForecastOn
               }
               const max_high_res_WL = {
-                color_fill:"#000000",
+                color_fill:graph_styles['High Resolution Maximum (1st Days Forecasts Records)'],
                 dataKey:"High Resolution Maximum (1st Days Forecasts Records)",
                 key:"High Resolution Maximum (1st Days Forecasts Records)",
                 data:dataForecastBiasCorrrected['max_high_res_WL'],
                 visible:isForecastOn
               }
               const min_high_res_WL = {
-                color_fill:"#000000",
+                color_fill:graph_styles['High Resolution Minimum (1st Days Forecasts Records)'],
                 dataKey:"High Resolution Minimum (1st Days Forecasts Records)",
                 key:"High Resolution Minimum (1st Days Forecasts Records)",
                 data:dataForecastBiasCorrrected['min_high_res_WL'],
@@ -515,14 +506,14 @@ const getStyle = (feature) => {
           const normal_data = {
             // stroke:"#2B4865",
             dataKey:"Water Level Mean Value",
-            color_fill:"#2B4865",
+            color_fill:graph_styles["Water Level Mean Value"],
             key:"Water Level Value",
             data:response['data']['val'],
             visible:isHydroDataOn
 
           }
           const min_max_data = {
-            color_fill:"#8FE3CF",
+            color_fill: graph_styles["Water Level Maximun-Minimun"],
             dataKey:"Water Level Maximun-Minimun",
             key:"Water Level Maximun-Minimun",
             data:response['data']['min_max'],
@@ -530,15 +521,14 @@ const getStyle = (feature) => {
 
           }
           const min_data = {
-            color_fill:"#8FE3CF",
+            color_fill: graph_styles["Water Level Minimun"],
             dataKey:"Water Level Minimun",
             key:"Water Level Minimun",
             data:response['data']['min'],
             visible:isHydroDataOn
           }
           const max_data = {
-            color_fill:"#8FE3CF",
-            color_fill:"#8FE3CF",
+            color_fill:graph_styles["Water Level Maximun"],
             dataKey:"Water Level Maximun",
             key:"Water Level Maximun",
             data:response['data']['max'],
