@@ -3,6 +3,7 @@ import {
   Axis,
   Grid,
   LineSeries,
+  AnimatedLineSeries,
   AreaSeries,
   AnimatedAreaSeries,
   Tooltip,
@@ -445,7 +446,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
                     return (
                       
-                      <LineSeries
+                      <AnimatedLineSeries
                         key={lineData['dataKey']}
                         stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
@@ -460,7 +461,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
                     return (
                       
-                      <AreaSeries
+                      <AnimatedLineSeries
                         key={lineData['dataKey']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
@@ -482,7 +483,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                   console.log("Historical Simulation",isGeoglowsActive)
                   return (
                     legendToggle[`${lineData['dataKey']}`] &&
-                    <LineSeries
+                    <AnimatedLineSeries
                       key={lineData['dataKey']}
                       dataKey={lineData['dataKey']}
                       data={lineData['data']}
@@ -499,7 +500,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     return (
                       legendToggle[`${lineData['dataKey']}`] &&
       
-                      <LineSeries
+                      <AnimatedLineSeries
                         key={lineData['dataKey']}
                         // stroke={lineData['stroke']}
                         dataKey={lineData['dataKey']}
@@ -514,7 +515,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     return (
                       legendToggle[`${lineData['dataKey']}`] &&
       
-                      <LineSeries
+                      <AnimatedLineSeries
                         key={lineData['dataKey']}
                         // stroke={lineData['stroke']}
                         dataKey={lineData['dataKey']}
@@ -539,7 +540,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
      
                       legendToggle[`${lineData['dataKey']}`] &&
       
-                      <AreaSeries
+                      <AnimatedAreaSeries
                         key={lineData['dataKey']}
                         stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
@@ -559,7 +560,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
      
                       legendToggle[`${lineData['dataKey']}`] &&
       
-                      <LineSeries
+                      <AnimatedLineSeries
                         key={lineData['dataKey']}
                         stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
