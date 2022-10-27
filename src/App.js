@@ -424,20 +424,22 @@ const getStyle = (feature) => {
                 data:dataForecastBiasCorrrected['max_min_area_record_WL'],
                 visible:isForecastOn
               }
-              // const max_record_WL = {
-              //   // stroke:"#FFA15A",
-              //   dataKey:"Maximum (1st Days Forecasts Records)",
-              //   data:dataForecastBiasCorrrected['max_record_WL'],
-              //   visible:isForecastOn
-              // }
-              // const min_record_WL = {
-              //   // stroke:"#FFA15A",
-              //   dataKey:"Minimum (1st Days Forecasts Records)",
-              //   data:dataForecastBiasCorrrected['min_record_WL'],
-              //   visible:isForecastOn
-              // }
+              const max_record_WL = {
+                color_fill:"#FFA15A",
+                dataKey:"1st Days Forecasts Maximun Records",
+                key:"1st Days Forecasts Maximun Records",
+                data:dataForecastBiasCorrrected['max_record_WL'],
+                visible:isForecastOn
+              }
+              const min_record_WL = {
+                color_fill:"#FFA15A",
+                dataKey:"1st Days Forecasts Minimun Records",
+                key:"1st Days Forecasts Minimun Records",
+                data:dataForecastBiasCorrrected['min_record_WL'],
+                visible:isForecastOn
+              }
               // setDataObject(dataObject => [...dataObject,max_min_record_WL,max_record_WL,min_record_WL]);
-              setDataObject(dataObject => [...dataObject,max_min_area_record_WL]);
+              setDataObject(dataObject => [...dataObject,max_min_area_record_WL,max_record_WL,min_record_WL]);
 
             }
             if(dataForecastBiasCorrrected['max_min_high_res_WL']){
@@ -448,20 +450,22 @@ const getStyle = (feature) => {
                 data:dataForecastBiasCorrrected['max_min_high_res_WL'],
                 visible:isForecastOn
               }
-              // const max_high_res_WL = {
-              //   // stroke:"#000000",
-              //   dataKey:"High Resolution Maximum (1st Days Forecasts Records)",
-              //   data:dataForecastBiasCorrrected['max_high_res_WL'],
-              //   visible:isForecastOn
-              // }
-              // const min_high_res_WL = {
-              //   // stroke:"#000000",
-              //   dataKey:"High Resolution Minimum (1st Days Forecasts Records)",
-              //   data:dataForecastBiasCorrrected['min_high_res_WL'],
-              //   visible:isForecastOn
-              // }
+              const max_high_res_WL = {
+                color_fill:"#000000",
+                dataKey:"High Resolution Maximum (1st Days Forecasts Records)",
+                key:"High Resolution Maximum (1st Days Forecasts Records)",
+                data:dataForecastBiasCorrrected['max_high_res_WL'],
+                visible:isForecastOn
+              }
+              const min_high_res_WL = {
+                color_fill:"#000000",
+                dataKey:"High Resolution Minimum (1st Days Forecasts Records)",
+                key:"High Resolution Minimum (1st Days Forecasts Records)",
+                data:dataForecastBiasCorrrected['min_high_res_WL'],
+                visible:isForecastOn
+              }
               // setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
-              setDataObject(dataObject => [...dataObject,max_min_high_res_WL]);
+              setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
 
             }
           }

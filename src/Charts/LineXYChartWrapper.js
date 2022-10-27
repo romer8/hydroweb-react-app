@@ -482,17 +482,14 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                   console.log("Historical Simulation",isGeoglowsActive)
                   return (
                     legendToggle[`${lineData['dataKey']}`] &&
-                    <AreaSeries
+                    <LineSeries
                       key={lineData['dataKey']}
                       dataKey={lineData['dataKey']}
                       data={lineData['data']}
                       {...normal_accesors}
+                      colorAccessor ={(_)=>lineData['color_fill']}
                       curve={curveCardinal}
-                      fillOpacity={0.3}
-                      strokeOpacity={0.5}
                       stroke={lineData['color_fill']}
-                      fill={lineData['color_fill']}
-
                   />
                   );
                 }
@@ -557,10 +554,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     );
                   }
                   else{
-                    if(lineData['dataKey']=='Forecast 25 Percentile StreamFlow'){
-                      console.log(lineData)
-                    }
-    
+
                     return (
      
                       legendToggle[`${lineData['dataKey']}`] &&
@@ -648,7 +642,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                                 tooltipData?.nearestDatum?.datum &&
                                 normal_accesors['yAccessor'](
                                   tooltipData.datumByKey[serieline].datum
-                                ).toFixed(2);
+                                )?.toFixed(2);
 
                               const colorDatum =  tooltipData?.nearestDatum?.datum && xyData.filter(item => item.dataKey === tooltipData.datumByKey[serieline].key)[0]['color_fill'] ? xyData.filter(item => item.dataKey === tooltipData.datumByKey[serieline].key)[0]['color_fill'] : ""
                               if(!serieline.includes('-')){

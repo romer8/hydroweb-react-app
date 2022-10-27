@@ -30,9 +30,15 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
         if(dataKey=='Forecast Minimun-Maximun StreamFlow'){
             setLegendToggle(legendToggle => ({...legendToggle, [`Forecast Minimun StreamFlow`]: !legendToggle[`Forecast Minimun StreamFlow`]}))
             setLegendToggle(legendToggle => ({...legendToggle, [`Forecast Maximun StreamFlow`]: !legendToggle[`Forecast Maximun StreamFlow`]}))
-        
         }
-        // console.log(dataKey)
+        if(dataKey=='1st Days Forecasts Maximum-Minimum Records'){
+            setLegendToggle(legendToggle => ({...legendToggle, [`1st Days Forecasts Maximun Records`]: !legendToggle[`1st Days Forecasts Maximun Records`]}))
+            setLegendToggle(legendToggle => ({...legendToggle, [`1st Days Forecasts Minimum Records`]: !legendToggle[`1st Days Forecasts Minimum Records`]}))         
+        }
+        if(dataKey=='High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)'){
+            setLegendToggle(legendToggle => ({...legendToggle, [`High Resolution Minimum (1st Days Forecasts Records)`]: !legendToggle[`High Resolution Minimum (1st Days Forecasts Records)`]}))
+            setLegendToggle(legendToggle => ({...legendToggle, [`High Resolution Maximum (1st Days Forecasts Records)`]: !legendToggle[`High Resolution Maximum (1st Days Forecasts Records)`]}))         
+        }
 
     }
   return(
@@ -117,6 +123,34 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                         )
                     }
                     else if (item['dataKey'] == 'Forecast Maximun StreamFlow' || item['dataKey'] == 'Forecast Minimun StreamFlow'){
+                        return(
+                            <div key={item['dataKey']} className="hiddenElement">
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
+                                <span className="legendText">{item.dataKey}</span>
+                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <button className="iconColorLegend" onclick="">
+                                    <FontAwesomeIcon icon={faCircleDown} />
+                                </button>
+                            </div>
+                        )
+                    }
+                    else if (item['dataKey'] == '1st Days Forecasts Maximun Records' || item['dataKey'] == '1st Days Forecasts Minimun Records'){
+                        return(
+                            <div key={item['dataKey']} className="hiddenElement">
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                                </svg>
+                                <span className="legendText">{item.dataKey}</span>
+                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                                <button className="iconColorLegend" onclick="">
+                                    <FontAwesomeIcon icon={faCircleDown} />
+                                </button>
+                            </div>
+                        )
+                    }
+                    else if (item['dataKey'] == 'High Resolution Maximum (1st Days Forecasts Records)' || item['dataKey'] == 'High Resolution Minimum (1st Days Forecasts Records)'){
                         return(
                             <div key={item['dataKey']} className="hiddenElement">
                                 <svg width={legendGlyphSize} height={legendGlyphSize}>

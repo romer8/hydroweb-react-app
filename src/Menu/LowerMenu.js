@@ -29,7 +29,11 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Forecast Minimun StreamFlow': true,
     'Forecast Maximun StreamFlow': true,
     '1st Days Forecasts Maximum-Minimum Records': true,
+    '1st Days Forecasts Maximun Records': true,
+    '1st Days Forecasts Minimum Records': true,
     '1st Days Forecast Records': true,
+    'High Resolution Minimum (1st Days Forecasts Records)': true,
+    'High Resolution Maximum (1st Days Forecasts Records)': true,
     'High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)':true,
     'Forecast High Resolution StreamFlow': true
   })
