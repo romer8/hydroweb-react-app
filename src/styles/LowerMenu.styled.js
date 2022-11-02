@@ -12,7 +12,7 @@ export const LowerMenu = styled.div`
 
     #graph_and_legend{
         display:flex;
-        height:100%;
+        height:80%;
         width:100%;
     }
 `;

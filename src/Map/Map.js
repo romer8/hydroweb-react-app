@@ -85,11 +85,11 @@ const Map = ({ children, zoom, center,setSelectedFeature, isFullMap, setSelected
 		  });
 	},[map])
 	// zoom change handler
-	useEffect(() => {
-		if (!map) return;
+	// useEffect(() => {
+	// 	if (!map) return;
 
-		map.getView().setZoom(zoom);
-	}, [zoom]);
+	// 	map.getView().setZoom(zoom);
+	// }, [zoom]);
 
 	// center change handler
 	// useEffect(() => {

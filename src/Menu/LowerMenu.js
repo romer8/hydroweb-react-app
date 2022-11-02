@@ -11,13 +11,10 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Water Level Maximun-Minimun': true,
     'Water Level Minimun': true,
     'Water Level Maximun': true,
-
     'Historical Simulation':true,
-
     'Bias Corrected Mean Level':true,
     'Bias Corrected Minimun Level': false,
     'Bias Corrected Maximun Level':false,
-
     'Forecast 75 Percentile StreamFlow': true,
     'Forecast 25 Percentile StreamFlow': true,
     'Forecast 25-75 Percentile StreamFlow': true,
@@ -26,7 +23,6 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'Forecast Minimun-Maximun StreamFlow': true,
     'Forecast Mean StreamFlow': true,
     'Forecast High Resolution StreamFlow': true,
-
     '1st Days Forecasts Maximum-Minimum Records': true,
     '1st Days Forecasts Maximun Records': true,
     '1st Days Forecasts Minimum Records': true,
@@ -35,6 +31,7 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
     'High Resolution Maximum (1st Days Forecasts Records)': true,
     'High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)':true,
   })
+  
 
 
   return(

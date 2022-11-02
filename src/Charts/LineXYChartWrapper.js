@@ -392,7 +392,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             >
           <ParentSize>
           {
+            
             parent =>(
+              
               <XYChart
               // parentWidth={parent.width}
               // parentHeight={parent.height}
@@ -405,6 +407,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               width={parent.width}
               height={parent.height}
               margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
+              ignoreDimensions={["width"]}
               
             >
         
@@ -446,7 +449,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
                     return (
                       
-                      <AnimatedLineSeries
+                      <LineSeries
                         key={lineData['dataKey']}
                         stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
@@ -461,7 +464,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
                     return (
                       
-                      <AnimatedAreaSeries
+                      <AreaSeries
                         key={lineData['dataKey']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
@@ -615,7 +618,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             
                     showVerticalCrosshair
                     snapTooltipToDatumX
-                    showSeriesGlyphs
+                    // showSeriesGlyphs
                     glyphStyle={{
                       fill: "#008561",
                       strokeWidth: 0

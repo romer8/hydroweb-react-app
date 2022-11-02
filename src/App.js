@@ -343,11 +343,11 @@ const getStyle = (feature) => {
               visible:isForecastOn
             }
             const p25_ensemble = {
-              dataKey:"Forecast Maximun StreamFlow",
+              dataKey:"Forecast 25 Percentile StreamFlow",
               key:"Forecast 25 Percentile StreamFlow",
               data:dataForecastBiasCorrrected['p25'],
               visible:isForecastOn,
-              color_fill:graph_styles['Forecast Maximun StreamFlow']
+              color_fill:graph_styles['Forecast 25 Percentile StreamFlow']
             }
             const p75_ensemble = {
               // stroke:"#002500",
@@ -753,7 +753,7 @@ const getStyle = (feature) => {
 
 
   return (
-    <div>
+    <div className="hiddenElement">
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onReset={() => {setIsError(false);setDataObject({})}}
@@ -874,7 +874,7 @@ const getStyle = (feature) => {
                             }),
                           }),
                         });                        
-                        setStyleCache(styleCache => ({...styleCache, size: style}))
+                        // setStyleCache(styleCache => ({...styleCache, size: style}))
   
                       }
                     }

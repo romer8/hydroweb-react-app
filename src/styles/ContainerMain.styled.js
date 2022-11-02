@@ -6,6 +6,7 @@ export const ContainerFlex = styled.div`
     width:100%;
     background: #efefef;
     padding: 0 0px;
+    overflow-y: hidden;
 `;
 // display:flex;
 // position: absolute;

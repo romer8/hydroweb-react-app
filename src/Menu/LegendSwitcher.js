@@ -45,6 +45,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
     
       <LegendSwitcher>
         {xyData.map((item,index)=>{
+                console.log(xyData);
                 if(isHydroDataOn && item['dataKey'].startsWith('Water Level')) {
                     if(item['dataKey'] == 'Water Level Minimun' || item['dataKey'] == 'Water Level Maximun'){
                         return(
