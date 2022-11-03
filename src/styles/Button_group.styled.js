@@ -2,6 +2,19 @@ import styled from "styled-components";
 
 
 export const ButtonGroup = styled.div`
+    #check_hydroweb{
+        display: ${props => (props.isSuccessfulHydroWeb ? 'inline' : 'none')};
+    }
+    #check_historical_sim{
+        display: ${props => (props.isSuccessfulHistoricalSimulation ? 'inline' : 'none')};
+    }
+    #check_historical_bias{
+        display: ${props => (props.isSuccessfulHistoricalBiasCorrection ? 'inline' : 'none')};
+    }
+    #check_forecast_bias{
+        display: ${props => (props.isSuccessfulForecastBiasCorrection ? 'inline' : 'none')};
+    }
+
     .multi-button {
 
         .numberCircle{

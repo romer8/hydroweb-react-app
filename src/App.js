@@ -62,6 +62,11 @@ const App = () => {
   const [isForecastBiasCorrectedDataPlot, setIsForecastBiasCorrectedDataPlot] = useState(false)
   const socketRef = useRef();
   const [isError, setIsError] = React.useState(false)
+  const [isSuccessfulHydroWeb, setIsSuccessfulHydroWeb] = useState(false);
+  const [isSuccessfulHistoricalSimulation, setIsSuccessfulHistoricalSimulation] = useState(false);
+  const [isSuccessfulHistoricalBiasCorrection, setIsSuccessfulHistoricalBiasCorrection] = useState(false);
+  const [isSuccessfulForecastBiasCorrection, setIsSuccessfulForecastBiasCorrection] = useState(false);
+
 
   var ws = 'ws://' + 'localhost:8000/apps/hydroweb' + '/data-notification/notifications/ws/';
 
@@ -222,6 +227,8 @@ const getStyle = (feature) => {
         let command = data['command'];
         console.log(data);
         if (command == "Data_Downloaded"){
+        // if (command == "Data_Downloaded" && isForecastOn == false){
+
           socketRef.current.send(
             JSON.stringify({
               type: "plot_hs_data",
@@ -231,6 +238,10 @@ const getStyle = (feature) => {
             })
           );
         }
+        // if (command == "Data_Downloaded" && isForecastOn == true){
+        //   setIsForecastBiasCorrectedDataPlot(true);
+        // }
+
         if (command == "Plot_Data"){
           var found = dataObject.some(p => p.dataKey == 'Historical Simulation');
           if(!found){
@@ -247,6 +258,7 @@ const getStyle = (feature) => {
   
             // setDataGeoglows(dataHistorical);
             setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
+            setIsSuccessfulHistoricalSimulation(true);
           }
         }
         if(command == "Bias_Data_Downloaded"){
@@ -295,6 +307,9 @@ const getStyle = (feature) => {
   
             }
             setDataObject(dataObject => [...dataObject,normal_bc_data,min_bc_data,max_bc_data ]);
+            setIsSuccessfulHistoricalSimulation(true);
+            setIsSuccessfulHistoricalBiasCorrection(true);
+
           }
 
 
@@ -457,6 +472,7 @@ const getStyle = (feature) => {
               }
               // setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
               setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
+              setIsSuccessfulForecastBiasCorrection(true);
 
             }
           }
@@ -478,6 +494,7 @@ const getStyle = (feature) => {
 	}, []);
   
   useEffect(() => {
+    // setDataObject([]);
     setLoading(true);
     console.log("Hydroweb data activated",selectedFeature)
 
@@ -553,10 +570,16 @@ const getStyle = (feature) => {
 
           setLoading(false);
           setIsFullMap(false);
+          setIsSuccessfulHydroWeb(true);
+          setIsSuccessfulHistoricalSimulation(false);
+          setIsSuccessfulHistoricalBiasCorrection(false);
+          setIsSuccessfulForecastBiasCorrection(false);
+
 
       } catch (error) {
         console.error(error.message);
         setLoading(false);
+        setIsSuccessfulHydroWeb(false);
 
       }
     }
@@ -732,6 +755,8 @@ const getStyle = (feature) => {
             // setIsHydroDataOn(false);
             // setIsGeoglowsActive(false);
             setLoading(false);
+            setIsForecastBiasCorrectedDataPlot(false);
+
 
         } catch (error) {
           console.error(error.message);
@@ -892,7 +917,24 @@ const getStyle = (feature) => {
         </Map>
         {/* <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }  executeGeoglows={executeGeoglows} isFullMap={ isFullMap } /> */}
 
-          <LowerMenuWrapper xyData ={dataObject}  executeGeoglows={executeGeoglows} executeBiasCorrection={executeBiasCorrection} executeHydroWebData={executeHydroWebData} executeForecast={executeForecast} setDataObject = {setDataObject} isFullMap={ isFullMap } isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn}/>  
+          <LowerMenuWrapper 
+            xyData ={dataObject}  
+            executeGeoglows={executeGeoglows} 
+            executeBiasCorrection={executeBiasCorrection} 
+            executeHydroWebData={executeHydroWebData} 
+            executeForecast={executeForecast} 
+            setDataObject = {setDataObject} 
+            isFullMap={ isFullMap } 
+            isHydroDataOn={isHydroDataOn} 
+            isGeoglowsActive={isGeoglowsActive} 
+            isBiasCorrectionOn={isBiasCorrectionOn} 
+            isForecastOn={isForecastOn}
+            isSuccessfulHydroWeb={isSuccessfulHydroWeb}
+            isSuccessfulHistoricalSimulation = {isSuccessfulHistoricalSimulation}
+            isSuccessfulHistoricalBiasCorrection = {isSuccessfulHistoricalBiasCorrection}
+            isSuccessfulForecastBiasCorrection = {isSuccessfulForecastBiasCorrection}
+
+          />  
         
 
         

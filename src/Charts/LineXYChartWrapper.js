@@ -449,7 +449,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
                     return (
                       
-                      <LineSeries
+                      <AnimatedLineSeries
                         key={lineData['dataKey']}
                         stroke={lineData['color_fill']}
                         dataKey={lineData['dataKey']}
@@ -464,7 +464,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
                     return (
                       
-                      <AreaSeries
+                      <AnimatedAreaSeries
                         key={lineData['dataKey']}
                         dataKey={lineData['dataKey']}
                         data={lineData['data']}
