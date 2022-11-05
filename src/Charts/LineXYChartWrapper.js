@@ -25,7 +25,7 @@ import { ParentSize } from '@visx/responsive';
 import { ChartContainer } from "../styles/ChartContainer.styled";
 import { ColoredSquare } from "../styles/ColoredSquare.styled";
 import { TooltipContainer } from "../styles/TooltipContainer.styled";
-import { useState, useContext,useEffect } from "react";
+import { useState, useContext,useEffect, useMemo } from "react";
 
 const tickLabelOffset = 10;
 
@@ -99,12 +99,11 @@ const accesor_tooltip = {
   y0Accessor:(d) => d.y0 ? d.yo : ""
 }
 const normal_accesors = {
-  // xAccessor: (d) => d.x,
-  xAccessor: (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`),
+  xAccessor: (d) => !d?.x.includes(":") ? new Date(`${d?.x}T00:00:00`) : new Date(`${d?.x.replace(' ','T')}`),
   yAccessor: (d) => d.y
 }
 const normal_accesors_area = {
-  xAccessor: (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`),
+  xAccessor: (d) => !d?.x.includes(":") ? new Date(`${d?.x}T00:00:00`) : new Date(`${d?.x.replace(' ','T')}`),
   yAccessor: (d) => d.y,
   y0Accessor:(d) => d.y0
 }
@@ -148,100 +147,160 @@ const ChartBackground = ( patternId ) => {
 
 function pad2(n) { return n < 10 ? '0' + n : n }
 
+
+
 // const LineXYChartWrapper = ({ xyData, xyMin, xyMax }) => {
 const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle }) => {
   const [backupData, setBackupData] = useState([]);
-  // const [minDateXScale, setMinDateXScale] = useState("");
-  // const [maxDateXScale, setMaxDateXScale] = useState("");
 
-  
-  // useEffect(() => {
-  //   console.log("useEffect XYCHART")
-  //   //we only need to do this for forecast if it is on
-  //   if(isForecastOn){
-  //     var result = xyData.filter(function(serie_line_or_area) {
-  //       if(serie_line_or_area.dataKey.includes('Forecast') && legendToggle[serie_line_or_area.dataKey] ){
-  //         // console.log("hey")
-  //         return serie_line_or_area;
-  //       }
-  //     });
-  //     // get the minimun//
-  //     console.log(result)
-  //     var minimun_dates_array = []
+  const loopThroughData = (xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle) =>{
+    return (
+        xyData.map(function(lineData) {
+          // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
+          if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level') && legendToggle[`${lineData['dataKey']}`]){
+            // console.log("Hydroweb Data",isHydroDataOn)
+            if(!lineData['dataKey'].includes('-')){
+              console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
+              return (
+                
+                <AnimatedLineSeries
+                  key={lineData['dataKey']}
+                  stroke={lineData['color_fill']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+                  colorAccessor ={(_)=>lineData['color_fill']}
+              />
+             );
+            }
+            else{
+      
+              return (
+                
+                <AnimatedAreaSeries
+                  key={lineData['dataKey']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors_area}
+                  curve={curveCardinal}
+                  fill={lineData['color_fill']}
+                  stroke={lineData['color_fill']}
+                  fillOpacity={0.3}
+                  strokeOpacity={0.3}
+                />
+              
+      
+             );
+            }
+      
+        
+          }
+          if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
+            console.log("Historical Simulation",isGeoglowsActive)
+            return (
+              legendToggle[`${lineData['dataKey']}`] &&
+              <AnimatedLineSeries
+                key={lineData['dataKey']}
+                dataKey={lineData['dataKey']}
+                data={lineData['data']}
+                {...normal_accesors}
+                colorAccessor ={(_)=>lineData['color_fill']}
+                curve={curveCardinal}
+                stroke={lineData['color_fill']}
+            />
+            );
+          }
+          if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
+            console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
+            if(lineData['dataKey'].includes('Mean')){
+              return (
+                legendToggle[`${lineData['dataKey']}`] &&
+      
+                <AnimatedLineSeries
+                  key={lineData['dataKey']}
+                  // stroke={lineData['stroke']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+                  colorAccessor ={(_)=>lineData['color_fill']}
+              />
+              );
+            }
+            else{
+              return (
+                legendToggle[`${lineData['dataKey']}`] &&
+      
+                <AnimatedLineSeries
+                  key={lineData['dataKey']}
+                  // stroke={lineData['stroke']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+                  colorAccessor ={(_)=>lineData['color_fill']}
+                  strokeOpacity={0.5}
+      
+              />
+              );
+            }
+      
+          }
+          if(isForecastOn && lineData['dataKey'].includes('Forecast')){
+            console.log("Hydroweb Forecast Bias Corrected",isForecastOn)
+            // console.log(lineData['dataKey'])
+            // console.log(lineData['data'])
+            if(lineData['dataKey'].includes('-')){
+              console.log(lineData['color_fill'])
+              return (
+      
+                legendToggle[`${lineData['dataKey']}`] &&
+      
+                <AnimatedAreaSeries
+                  key={lineData['dataKey']}
+                  stroke={lineData['color_fill']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors_area}
+                  curve={curveCardinal}
+                  fillOpacity={0.3}
+                  strokeOpacity={0.3}
+                  fill={lineData['color_fill']}
+      
+              />
+              );
+            }
+            else{
+      
+              return (
+      
+                legendToggle[`${lineData['dataKey']}`] &&
+      
+                <AnimatedLineSeries
+                  key={lineData['dataKey']}
+                  stroke={lineData['color_fill']}
+                  dataKey={lineData['dataKey']}
+                  data={lineData['data']}
+                  {...normal_accesors}
+                  curve={curveCardinal}
+                  colorAccessor ={(_)=>lineData['color_fill']}
+                  // strokeOpacity={0.3}
+      
+              />
+              );
+            }
+      
+          }
+      
+        })
+      
+    )
 
-  //     var minimun_dates = result.filter(function(single_result){
-  //       const minDate = new Date(
-  //         Math.min(
-  //           ...single_result['data'].map(element => {
-                      
-  //             let [y,M,d,h,m,s] = element.x.split(/[- :]/);
-  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-  //             return new Date(newDate);
-  //           }),
-  //         ),
-  //       );
-  //       // console.log(new Date())
-  //       var new_min_date_format = minDate.getFullYear().toString()+ "-" + pad2(minDate.getMonth() + 1) + "-" + pad2(minDate.getDate()) +" "+ pad2( minDate.getHours() ) +":"+ pad2( minDate.getMinutes() ) + ":"+ pad2( minDate.getSeconds() )
-  //       minimun_dates_array.push(new_min_date_format)
+  }
+  const getData = useMemo(() =>loopThroughData(xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle), [xyData] )
 
-  //       return minDate
-  //     })
-  //       const minDate_final = new Date(
 
-  //         Math.min(
-  //           ...minimun_dates_array.map(element => {
-                      
-  //             let [y,M,d,h,m,s] = element.split(/[- :]/);
-  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-  //             return new Date(newDate);
-  //           }),
-  //         ),
-  //       );
-  //       var new_min_date_final_string = minDate_final.getFullYear().toString()+ "-" + pad2(minDate_final.getMonth() + 1) + "-" + pad2(minDate_final.getDate()) +" "+ pad2( minDate_final.getHours() ) +":"+ pad2( minDate_final.getMinutes() ) + ":"+ pad2(minDate_final.getSeconds() )
-  //       setMinDateXScale(new_min_date_final_string)
-
-  //     // get the maximun//
-  //     var maximun_dates_array = []
-
-  //     var maximun_dates = result.filter(function(single_result){
-  //       const maxDate = new Date(
-  //         Math.max(
-  //           ...single_result['data'].map(element => {
-                      
-  //             let [y,M,d,h,m,s] = element.x.split(/[- :]/);
-  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-  //             return new Date(newDate);
-  //           }),
-  //         ),
-  //       );
-  //       // console.log(new Date())
-  //       var new_max_date_format = maxDate.getFullYear().toString()+ "-" + pad2(maxDate.getMonth() + 1) + "-" + pad2(maxDate.getDate()) +" "+ pad2( maxDate.getHours() ) +":"+ pad2( maxDate.getMinutes() ) + ":"+ pad2( maxDate.getSeconds() )
-  //       maximun_dates_array.push(new_max_date_format)
-
-  //       return maxDate
-  //     })
-  //       const maxDate_final = new Date(
-
-  //         Math.max(
-  //           ...maximun_dates_array.map(element => {
-                      
-  //             let [y,M,d,h,m,s] = element.split(/[- :]/);
-  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
-  //             return new Date(newDate);
-  //           }),
-  //         ),
-  //       );
-  //       var new_max_date_final_string = maxDate_final.getFullYear().toString()+ "-" + pad2(maxDate_final.getMonth() + 1) + "-" + pad2(maxDate_final.getDate()) +" "+ pad2( maxDate_final.getHours() ) +":"+ pad2( maxDate_final.getMinutes() ) + ":"+ pad2(maxDate_final.getSeconds() )
-  //       setMaxDateXScale(new_max_date_final_string)
-  //       console.log(minDateXScale, maxDateXScale)
-  //       console.log(new_min_date_final_string, new_max_date_final_string)
-
-  //   }
-
-  //   return () => {
-
-  //   }
-  // }, [legendToggle])
   
 
   const legendLabelStyle = (margin) => {
@@ -441,199 +500,23 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                 labelOffset={30}
                 tickLabelProps={() => ({ dy: -10 })}
               />
-              {xyData.map(function(lineData) {
-                // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
-                if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level') && legendToggle[`${lineData['dataKey']}`]){
-                  // console.log("Hydroweb Data",isHydroDataOn)
-                  if(!lineData['dataKey'].includes('-')){
-                    console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
-                    return (
-                      
-                      <AnimatedLineSeries
-                        key={lineData['dataKey']}
-                        stroke={lineData['color_fill']}
-                        dataKey={lineData['dataKey']}
-                        data={lineData['data']}
-                        {...normal_accesors}
-                        curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_fill']}
-                    />
-                   );
-                  }
-                  else{
-
-                    return (
-                      
-                      <AnimatedAreaSeries
-                        key={lineData['dataKey']}
-                        dataKey={lineData['dataKey']}
-                        data={lineData['data']}
-                        {...normal_accesors_area}
-                        curve={curveCardinal}
-                        fill={lineData['color_fill']}
-                        stroke={lineData['color_fill']}
-                        fillOpacity={0.3}
-                        strokeOpacity={0.3}
-                      />
-                    
-
-                   );
-                  }
-    
-              
-                }
-                if(isGeoglowsActive && lineData['dataKey'] == "Historical Simulation"){
-                  console.log("Historical Simulation",isGeoglowsActive)
-                  return (
-                    legendToggle[`${lineData['dataKey']}`] &&
-                    <AnimatedLineSeries
-                      key={lineData['dataKey']}
-                      dataKey={lineData['dataKey']}
-                      data={lineData['data']}
-                      {...normal_accesors}
-                      colorAccessor ={(_)=>lineData['color_fill']}
-                      curve={curveCardinal}
-                      stroke={lineData['color_fill']}
-                  />
-                  );
-                }
-                if(isBiasCorrectionOn && lineData['dataKey'].startsWith('Bias Corrected')){
-                  console.log("Hydroweb Bias Corrected",isBiasCorrectionOn)
-                  if(lineData['dataKey'].includes('Mean')){
-                    return (
-                      legendToggle[`${lineData['dataKey']}`] &&
-      
-                      <AnimatedLineSeries
-                        key={lineData['dataKey']}
-                        // stroke={lineData['stroke']}
-                        dataKey={lineData['dataKey']}
-                        data={lineData['data']}
-                        {...normal_accesors}
-                        curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_fill']}
-                    />
-                    );
-                  }
-                  else{
-                    return (
-                      legendToggle[`${lineData['dataKey']}`] &&
-      
-                      <AnimatedLineSeries
-                        key={lineData['dataKey']}
-                        // stroke={lineData['stroke']}
-                        dataKey={lineData['dataKey']}
-                        data={lineData['data']}
-                        {...normal_accesors}
-                        curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_fill']}
-                        strokeOpacity={0.5}
-      
-                    />
-                    );
-                  }
-    
-                }
-                if(isForecastOn && lineData['dataKey'].includes('Forecast')){
-                  console.log("Hydroweb Forecast Bias Corrected",isForecastOn)
-                  // console.log(lineData['dataKey'])
-                  // console.log(lineData['data'])
-                  if(lineData['dataKey'].includes('-')){
-                    console.log(lineData['color_fill'])
-                    return (
-     
-                      legendToggle[`${lineData['dataKey']}`] &&
-      
-                      <AnimatedAreaSeries
-                        key={lineData['dataKey']}
-                        stroke={lineData['color_fill']}
-                        dataKey={lineData['dataKey']}
-                        data={lineData['data']}
-                        {...normal_accesors_area}
-                        curve={curveCardinal}
-                        fillOpacity={0.3}
-                        strokeOpacity={0.3}
-                        fill={lineData['color_fill']}
-
-                    />
-                    );
-                  }
-                  else{
-
-                    return (
-     
-                      legendToggle[`${lineData['dataKey']}`] &&
-      
-                      <AnimatedLineSeries
-                        key={lineData['dataKey']}
-                        stroke={lineData['color_fill']}
-                        dataKey={lineData['dataKey']}
-                        data={lineData['data']}
-                        {...normal_accesors}
-                        curve={curveCardinal}
-                        colorAccessor ={(_)=>lineData['color_fill']}
-                        // strokeOpacity={0.3}
-    
-                    />
-                    );
-                  }
-    
-                }
+              {getData}
         
-              })}
-              {/* <AnimatedLineSeries
-                stroke="#2B4865"
-                dataKey="Water Level Value"
-                data={xyData}
-                // xAccessor={accessors_fin.xAccessor['val']}
-                // yAccessor={accessors_fin.yAccessor['val']}
-                {...normal_accesors}
-                curve={curveCardinal}
-        
-              />
-        
-              <AnimatedLineSeries
-                stroke="#256D85"
-                dataKey="Maximun"
-                data={xyMax}
-                {...normal_accesors}
-                curve={curveCardinal}
-              />
-              <AnimatedLineSeries
-                stroke="#8FE3CF"
-                dataKey="Minimun"
-                data={xyMin}
-                {...normal_accesors}
-                curve={curveCardinal}
-              /> */}
-              {/* <AnimatedLineSeries
-                stroke="#0000"
-                dataKey="Historical Simulation"
-                data={xyHistorical}
-                {...normal_accesors}
-                curve={curveCardinal}
-              /> */}
-        
-        
+{/*         
             <Tooltip
             
                     showVerticalCrosshair
                     snapTooltipToDatumX
                     // showSeriesGlyphs
-                    glyphStyle={{
-                      fill: "#008561",
-                      strokeWidth: 0
-                    }}
+                    // glyphStyle={{
+                    //   fill: "#008561",
+                    //   strokeWidth: 0
+                    // }}
                     renderTooltip={({ tooltipData, colorScale }) =>
 
                       tooltipData.nearestDatum.key && (
                         <>
-                          {/* <div style={{ color: colorScaleCasero(xyData,tooltipData) }}>
-                            {tooltipData.nearestDatum.key}
-                          </div> */}
-                          
                           {
-                            // (d) => new Date(`${d.x}T00:00:00`)
-                            // (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`)
 
                             accesor_tooltip.xAccessor(tooltipData.nearestDatum.datum)
                           }
@@ -670,9 +553,6 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                             
                             })
                             )
-                          // normal_accesors.yAccessor(
-                          //   tooltipData.datumByKey[tooltipData.nearestDatum.key].datum
-                          // ).toFixed(2)
                           
                           }
                         </>
@@ -680,7 +560,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     
    
                     }
-                  />
+                  /> */}
         
         
             </XYChart>
@@ -702,3 +582,105 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
 export default LineXYChartWrapper;
 
+                          // {/* <div style={{ color: colorScaleCasero(xyData,tooltipData) }}>
+                          //   {tooltipData.nearestDatum.key}
+                          // </div> */}
+                          
+                          // {
+                          //   // (d) => new Date(`${d.x}T00:00:00`)
+                          //   // (d) => !d.x.includes(":") ? new Date(`${d.x}T00:00:00`) : new Date(`${d.x.replace(' ','T')}`)
+
+                          //   accesor_tooltip.xAccessor(tooltipData.nearestDatum.datum)
+                          // }
+
+  // const [minDateXScale, setMinDateXScale] = useState("");
+  // const [maxDateXScale, setMaxDateXScale] = useState("");
+
+  
+  // useEffect(() => {
+  //   console.log("useEffect XYCHART")
+  //   //we only need to do this for forecast if it is on
+  //   if(isForecastOn){
+  //     var result = xyData.filter(function(serie_line_or_area) {
+  //       if(serie_line_or_area.dataKey.includes('Forecast') && legendToggle[serie_line_or_area.dataKey] ){
+  //         // console.log("hey")
+  //         return serie_line_or_area;
+  //       }
+  //     });
+  //     // get the minimun//
+  //     console.log(result)
+  //     var minimun_dates_array = []
+
+  //     var minimun_dates = result.filter(function(single_result){
+  //       const minDate = new Date(
+  //         Math.min(
+  //           ...single_result['data'].map(element => {
+                      
+  //             let [y,M,d,h,m,s] = element.x.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       // console.log(new Date())
+  //       var new_min_date_format = minDate.getFullYear().toString()+ "-" + pad2(minDate.getMonth() + 1) + "-" + pad2(minDate.getDate()) +" "+ pad2( minDate.getHours() ) +":"+ pad2( minDate.getMinutes() ) + ":"+ pad2( minDate.getSeconds() )
+  //       minimun_dates_array.push(new_min_date_format)
+
+  //       return minDate
+  //     })
+  //       const minDate_final = new Date(
+
+  //         Math.min(
+  //           ...minimun_dates_array.map(element => {
+                      
+  //             let [y,M,d,h,m,s] = element.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       var new_min_date_final_string = minDate_final.getFullYear().toString()+ "-" + pad2(minDate_final.getMonth() + 1) + "-" + pad2(minDate_final.getDate()) +" "+ pad2( minDate_final.getHours() ) +":"+ pad2( minDate_final.getMinutes() ) + ":"+ pad2(minDate_final.getSeconds() )
+  //       setMinDateXScale(new_min_date_final_string)
+
+  //     // get the maximun//
+  //     var maximun_dates_array = []
+
+  //     var maximun_dates = result.filter(function(single_result){
+  //       const maxDate = new Date(
+  //         Math.max(
+  //           ...single_result['data'].map(element => {
+                      
+  //             let [y,M,d,h,m,s] = element.x.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       // console.log(new Date())
+  //       var new_max_date_format = maxDate.getFullYear().toString()+ "-" + pad2(maxDate.getMonth() + 1) + "-" + pad2(maxDate.getDate()) +" "+ pad2( maxDate.getHours() ) +":"+ pad2( maxDate.getMinutes() ) + ":"+ pad2( maxDate.getSeconds() )
+  //       maximun_dates_array.push(new_max_date_format)
+
+  //       return maxDate
+  //     })
+  //       const maxDate_final = new Date(
+
+  //         Math.max(
+  //           ...maximun_dates_array.map(element => {
+                      
+  //             let [y,M,d,h,m,s] = element.split(/[- :]/);
+  //             let newDate =  new Date(y,parseInt(M)-1,d,h,parseInt(m),s);
+  //             return new Date(newDate);
+  //           }),
+  //         ),
+  //       );
+  //       var new_max_date_final_string = maxDate_final.getFullYear().toString()+ "-" + pad2(maxDate_final.getMonth() + 1) + "-" + pad2(maxDate_final.getDate()) +" "+ pad2( maxDate_final.getHours() ) +":"+ pad2( maxDate_final.getMinutes() ) + ":"+ pad2(maxDate_final.getSeconds() )
+  //       setMaxDateXScale(new_max_date_final_string)
+  //       console.log(minDateXScale, maxDateXScale)
+  //       console.log(new_min_date_final_string, new_max_date_final_string)
+
+  //   }
+
+  //   return () => {
+
+  //   }
+  // }, [legendToggle])
