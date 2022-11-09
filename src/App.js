@@ -792,7 +792,7 @@ const getStyle = (feature) => {
         />
         {/* <JobsMenu /> */}
       <SplitContainer >
-        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} >
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} selectedFeature ={selectedFeature} >
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}
@@ -916,7 +916,7 @@ const getStyle = (feature) => {
           </Controls>
         </Map>
         {/* <LowerMenuWrapper xyData={ dataStation } xyMin= { minDataStation } xyMax={ maxDataStation }  executeGeoglows={executeGeoglows} isFullMap={ isFullMap } /> */}
-
+          
           <LowerMenuWrapper 
             xyData ={dataObject}  
             executeGeoglows={executeGeoglows} 

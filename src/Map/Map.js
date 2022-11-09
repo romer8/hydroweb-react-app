@@ -5,7 +5,7 @@ import * as ol from "ol";
 import * as olExtent from 'ol/extent';
 
 import { MapContainer } from '../styles/Map.styled'
-const Map = ({ children, zoom, center,setSelectedFeature, isFullMap, setSelectedGeoglows, setIsHydroDataOn }) => {
+const Map = ({ children, zoom, center,setSelectedFeature, isFullMap, setSelectedGeoglows, setIsHydroDataOn, selectedFeature }) => {
 	const mapRef = useRef();
 	const [map, setMap] = useState(null);
 
@@ -56,7 +56,9 @@ const Map = ({ children, zoom, center,setSelectedFeature, isFullMap, setSelected
 					// console.log(multipleFeatures);
 					setSelectedFeature(multipleFeatures[0].get("comid"))
 					setSelectedGeoglows(multipleFeatures[0].get("comid_geoglows"))
-					setIsHydroDataOn(true)
+
+					var reloadme = selectedFeature !== multipleFeatures[0].get("comid") ? true: false;
+					setIsHydroDataOn(reloadme)
 
 				}
 				// if multiple features just zoom in
