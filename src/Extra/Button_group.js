@@ -21,7 +21,7 @@ const Button_group = ({ executeGeoglows, executeBiasCorrection,executeHydroWebDa
         <div className="multi-button">
             <button onClick={executeHydroWebData} id="hydroweb_data"> 
               <span className="numberCircle">1</span> 
-              Hydroweb Data
+              <span>Hydroweb Data</span>
               <FontAwesomeIcon icon={faCircleCheck} id="check_hydroweb" /> 
             </button>
             <button onClick={executeGeoglows} id="historical_simulation">
