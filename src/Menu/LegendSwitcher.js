@@ -3,13 +3,14 @@ import { LegendSwitcher } from "../styles/LegendSwitcher.styled";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleDown } from '@fortawesome/free-regular-svg-icons'
+import { useMemo } from "react";
 
 
 const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn, legendToggle,setLegendToggle}) => {
     const legendGlyphSize = 15;
     
     const toggleOffOn = (e)=>{
-        console.log("hey")
+        
         // e.preventDefault();
         const dataKey = e.target.value
         setLegendToggle(legendToggle => ({...legendToggle, [`${dataKey}`]: !legendToggle[`${dataKey}`]}))
@@ -39,52 +40,79 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
             setLegendToggle(legendToggle => ({...legendToggle, [`High Resolution Minimum (1st Days Forecasts Records)`]: !legendToggle[`High Resolution Minimum (1st Days Forecasts Records)`]}))
             setLegendToggle(legendToggle => ({...legendToggle, [`High Resolution Maximum (1st Days Forecasts Records)`]: !legendToggle[`High Resolution Maximum (1st Days Forecasts Records)`]}))         
         }
-
     }
-  return(
-    
-      <LegendSwitcher>
-        {xyData.map((item,index)=>{
-                console.log(xyData);
-                if(isHydroDataOn && item['dataKey'].startsWith('Water Level')) {
-                    if(item['dataKey'] == 'Water Level Minimun' || item['dataKey'] == 'Water Level Maximun'){
-                        return(
-                            <div key={item['dataKey']} className="hiddenElement">
-                                {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="iconColorLegend">
-                                    <FontAwesomeIcon icon={faCircleDown} />
-                                </button>
-                            </div>
-                        )
-                    }
-                    else{
-                        return(
-                            <div key={item['dataKey']}>
-                                {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="">
-                                    <FontAwesomeIcon icon={faCircleDown} />
-                                </button>
-                                
-                            </div>
-                        )
-                    }
-
+   const loopThroughData = (xyData, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn, legendToggle)=>{
+    return(
+        xyData.map((item,index)=>{
+            console.log(xyData);
+            if(isHydroDataOn && item['dataKey'].startsWith('Water Level')) {
+                if(item['dataKey'] == 'Water Level Minimun' || item['dataKey'] == 'Water Level Maximun'){
+                    return(
+                        <div key={item['dataKey']} className="hiddenElement">
+                            {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                            </svg>
+                            <span className="legendText">{item.dataKey}</span>
+                            <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <button className="iconColorLegend" onclick="iconColorLegend">
+                                <FontAwesomeIcon icon={faCircleDown} />
+                            </button>
+                        </div>
+                    )
                 }
-                if(isGeoglowsActive && item['dataKey'] === "Historical Simulation"){
+                else{
                     return(
                         <div key={item['dataKey']}>
+                            {/* <input value={item.dataKey} type="checkbox" onClick={toggleOffOn(item.dataKey)} /> */}
                             <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize}  opacity="0.5" />
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                            </svg>
+                            <span className="legendText">{item.dataKey}</span>
+                            <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <button className="iconColorLegend" onclick="">
+                                <FontAwesomeIcon icon={faCircleDown} />
+                            </button>
+                            
+                        </div>
+                    )
+                }
+
+            }
+            if(isGeoglowsActive && item['dataKey'] === "Historical Simulation"){
+                return(
+                    <div key={item['dataKey']}>
+                        <svg width={legendGlyphSize} height={legendGlyphSize}>
+                            <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize}  opacity="0.5" />
+                        </svg>
+                        <span className="legendText">{item.dataKey}</span>
+                        <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                        <button className="iconColorLegend" onclick="">
+                            <FontAwesomeIcon icon={faCircleDown} />
+                        </button>
+                    </div>
+                )
+            }
+            if(isBiasCorrectionOn && item['dataKey'].startsWith('Bias Corrected')){
+                return(
+                    <div key={item['dataKey']}>
+                        <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                        </svg>
+                        <span className="legendText">{item.dataKey}</span>
+                        <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                        <button className="iconColorLegend" onclick="">
+                            <FontAwesomeIcon  icon={faCircleDown} />
+                        </button>
+                    </div>
+                )
+            }
+            if(isForecastOn && item['dataKey'].includes('Forecast')){
+                if(item['dataKey'] == 'Forecast 25 Percentile StreamFlow' || item['dataKey'] == 'Forecast 75 Percentile StreamFlow'){
+                    return(
+                        <div key={item['dataKey']} className="hiddenElement">
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
@@ -94,96 +122,74 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                         </div>
                     )
                 }
-                if(isBiasCorrectionOn && item['dataKey'].startsWith('Bias Corrected')){
+                else if (item['dataKey'] == 'Forecast Maximun StreamFlow' || item['dataKey'] == 'Forecast Minimun StreamFlow'){
                     return(
-                        <div key={item['dataKey']}>
+                        <div key={item['dataKey']} className="hiddenElement">
                             <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
                             <button className="iconColorLegend" onclick="">
-                                <FontAwesomeIcon  icon={faCircleDown} />
+                                <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                         </div>
                     )
                 }
-                if(isForecastOn && item['dataKey'].includes('Forecast')){
-                    if(item['dataKey'] == 'Forecast 25 Percentile StreamFlow' || item['dataKey'] == 'Forecast 75 Percentile StreamFlow'){
-                        return(
-                            <div key={item['dataKey']} className="hiddenElement">
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="">
-                                    <FontAwesomeIcon icon={faCircleDown} />
-                                </button>
-                            </div>
-                        )
-                    }
-                    else if (item['dataKey'] == 'Forecast Maximun StreamFlow' || item['dataKey'] == 'Forecast Minimun StreamFlow'){
-                        return(
-                            <div key={item['dataKey']} className="hiddenElement">
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="">
-                                    <FontAwesomeIcon icon={faCircleDown} />
-                                </button>
-                            </div>
-                        )
-                    }
-                    else if (item['dataKey'] == '1st Days Forecasts Maximun Records' || item['dataKey'] == '1st Days Forecasts Minimun Records'){
-                        return(
-                            <div key={item['dataKey']} className="hiddenElement">
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="">
-                                    <FontAwesomeIcon icon={faCircleDown} />
-                                </button>
-                            </div>
-                        )
-                    }
-                    else if (item['dataKey'] == 'High Resolution Maximum (1st Days Forecasts Records)' || item['dataKey'] == 'High Resolution Minimum (1st Days Forecasts Records)'){
-                        return(
-                            <div key={item['dataKey']} className="hiddenElement">
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="">
-                                    <FontAwesomeIcon icon={faCircleDown} />
-                                </button>
-                            </div>
-                        )
-                    }
-                    else{
-                        return(
-                            <div key={item['dataKey']}>
-                                <svg width={legendGlyphSize} height={legendGlyphSize}>
-                                    <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
-                                </svg>
-                                <span className="legendText">{item.dataKey}</span>
-                                <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                                <button className="iconColorLegend" onclick="">
-                                <FontAwesomeIcon  icon={faCircleDown} />
-                                </button>
-                            </div>
-                        )
-                    }
-
+                else if (item['dataKey'] == '1st Days Forecasts Maximun Records' || item['dataKey'] == '1st Days Forecasts Minimun Records'){
+                    return(
+                        <div key={item['dataKey']} className="hiddenElement">
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                            </svg>
+                            <span className="legendText">{item.dataKey}</span>
+                            <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <button className="iconColorLegend" onclick="">
+                                <FontAwesomeIcon icon={faCircleDown} />
+                            </button>
+                        </div>
+                    )
                 }
+                else if (item['dataKey'] == 'High Resolution Maximum (1st Days Forecasts Records)' || item['dataKey'] == 'High Resolution Minimum (1st Days Forecasts Records)'){
+                    return(
+                        <div key={item['dataKey']} className="hiddenElement">
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                            </svg>
+                            <span className="legendText">{item.dataKey}</span>
+                            <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <button className="iconColorLegend" onclick="">
+                                <FontAwesomeIcon icon={faCircleDown} />
+                            </button>
+                        </div>
+                    )
+                }
+                else{
+                    return(
+                        <div key={item['dataKey']}>
+                            <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                <rect fill={item.color_fill} width={legendGlyphSize} height={legendGlyphSize} />
+                            </svg>
+                            <span className="legendText">{item.dataKey}</span>
+                            <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
+                            <button className="iconColorLegend" onclick="">
+                            <FontAwesomeIcon  icon={faCircleDown} />
+                            </button>
+                        </div>
+                    )
+                }
+
             }
-        )
         }
+        )
+    )
+   }
+  const getData = useMemo(() =>loopThroughData(xyData, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn, legendToggle), [xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn,legendToggle] )
+
+  return(
+    
+      <LegendSwitcher>
+        {getData}
       </LegendSwitcher>
 
 
