@@ -4,7 +4,7 @@ import { LineXYChartWrapper } from "../Charts";
 import Button_group from "../Extra/Button_group"
 import LegendSwitcherWrapper from "../Menu/LegendSwitcher";
 
-const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,executeHydroWebData,executeForecast, setDataObject, isFullMap,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn,isSuccessfulHydroWeb,isSuccessfulHistoricalSimulation,isSuccessfulHistoricalBiasCorrection,isSuccessfulForecastBiasCorrection}) => {
+const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,executeHydroWebData,executeForecast, setDataObject, isFullMap,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn,isSuccessfulHydroWeb,isSuccessfulHistoricalSimulation,isSuccessfulHistoricalBiasCorrection,isSuccessfulForecastBiasCorrection, downloadData}) => {
   
 
   const[legendToggle, setLegendToggle] = useState({
@@ -51,7 +51,7 @@ const LowerMenuWrapper = ({ xyData, executeGeoglows, executeBiasCorrection,execu
           />
           <div id="graph_and_legend">
             <LineXYChartWrapper xyData={xyData} setDataObject={setDataObject} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn} legendToggle={legendToggle} />
-            <LegendSwitcherWrapper xyData={xyData} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn}  legendToggle={legendToggle} setLegendToggle = {setLegendToggle}/>
+            <LegendSwitcherWrapper xyData={xyData} isHydroDataOn={isHydroDataOn} isGeoglowsActive={isGeoglowsActive} isBiasCorrectionOn={isBiasCorrectionOn} isForecastOn={isForecastOn}  legendToggle={legendToggle} setLegendToggle = {setLegendToggle} downloadData = {downloadData}/>
           </div>
         
         {/* <LineXYChartWrapper xyData={xyData} xyMin= { xyMin } xyMax={ xyMax } /> */}

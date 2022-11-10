@@ -24,6 +24,66 @@ import Loader_wrapper from "./Extra/Loader_wrapper";
 
 import { WebSocketWrapper } from "./WebsocketWrapper";
 import {ErrorBoundary} from 'react-error-boundary'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+
+
+
+function JSON2CSV(objArray) {
+  var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+
+  var str = '';
+  var line = '';
+
+  // get all distinct keys      
+  let titles = [];
+  for (var i = 0; i < array.length; i++) {
+    let obj = array[i];
+    Object.entries(obj).forEach(([key,value])=>{
+      //console.log('key=', key, "   val=", value );
+      if (titles.includes(key) ) {
+        console.log (key , 'exists');
+        // null;
+      }
+      else {
+        titles.push(key);
+      }
+    })
+  }
+  let htext =  '"' + titles.join('","') + '"';
+  console.log('header:', htext);
+  // add to str
+  str += htext + '\r\n';
+  //
+  // lines
+  for (var i = 0; i < array.length; i++) {
+    var line = '';
+    // get values by header order
+    for (var j = 0; j < titles.length; j++) {
+      // match keys with current header
+      let obj = array[i];
+      let keyfound = 0;    
+      // each key/value pair
+      Object.entries(obj).forEach(([key,value])=>{
+        if (key == titles[j]) {
+          // console.log('equal tit=', titles[j] , ' e key ', key ); // matched key with header
+          line += ',"' + value +  '"';
+          keyfound = 1; 
+          return false;
+        }
+
+      })
+      if (keyfound == 0) {
+        line += ',"'  +  '"';   // add null value for this key
+      } // end loop of header values
+
+    }
+
+    str += line.slice(1) + '\r\n';
+  }
+  return str;
+}
+
 
 function ErrorFallback({error, resetErrorBoundary}) {
   return (
@@ -70,6 +130,85 @@ const App = () => {
 
   var ws = 'ws://' + 'localhost:8000/apps/hydroweb' + '/data-notification/notifications/ws/';
 
+  const downloadData = (type_data) => {
+    const service_link = 'http://127.0.0.1:8000/apps/hydroweb/download/';
+    const Mydata = {
+      'product': selectedFeature,
+      'type_data': type_data,
+      'reach_id': selectedGeoglows
+    }
+    // axios.get(service_link, )
+    // debugger()
+    if(type_data.includes('Forecast')){
+      if(dataObject.length > 0){
+        debugger
+        // var jsonData = dataObject?.map( x=>x.dataKey === type_data )[0]['data']
+        const jsonData = dataObject.filter(item => item.dataKey === type_data)[0]['data']
+
+        var csv = JSON2CSV(jsonData);
+        var downloadLink = document.createElement("a");
+        var blob = new Blob(["\ufeff", csv]);
+        var url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.download = `${type_data}.csv`;
+  
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      }
+
+    }
+    else{
+      axios.post(service_link,Mydata,{responseType: 'blob'}).then(function (response) {
+        if (!window.navigator.msSaveOrOpenBlob){
+          // BLOB NAVIGATOR
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `${type_data}.csv`);
+          document.body.appendChild(link);
+          link.click();
+        }else{
+          // BLOB FOR EXPLORER 11
+          const url = window.navigator.msSaveOrOpenBlob(new Blob([response.data]),`${type_data}.csv`);
+        }
+  
+    });
+    }
+
+}
+
+  const notifyStations = (mssge) => toast(mssge,{   
+    position: "top-right",
+    autoClose: 500,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",}
+  );
+  const notifyData = (mssge) => toast(mssge,{   
+    position: "top-right",
+    autoClose: 500,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+    }
+  );
+
+  const updateNotify = (mssge,id) => toast.update(id, 
+    { 
+      render: mssge,
+      type: "success", 
+      // autoClose: 500
+      isLoading: false 
+    }
+  );
+
 
   const [virtualStations, setVirtualStations] = useState(
     {
@@ -93,7 +232,7 @@ const App = () => {
     setShowLayer1(event.target.checked)
   }
 
-  const onclickFeature = (e) => {
+  const onClickFeature = (e) => {
     console.log(e)
   }
 
@@ -206,9 +345,11 @@ const getStyle = (feature) => {
           setVirtualStations(response)
           setLoading(false);
           setShowLayer1(true);
-
+          notifyStations('Stations Loaded');
       } catch (error) {
         console.error(error.message);
+        notifyStations('Problem Loading Stations');
+
       }
       setLoading(false);
     }
@@ -259,6 +400,8 @@ const getStyle = (feature) => {
             // setDataGeoglows(dataHistorical);
             setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
             setIsSuccessfulHistoricalSimulation(true);
+            
+
           }
         }
         if(command == "Bias_Data_Downloaded"){
@@ -494,6 +637,7 @@ const getStyle = (feature) => {
 	}, []);
   
   useEffect(() => {
+
     // setDataObject([]);
     setLoading(true);
     console.log("Hydroweb data activated",selectedFeature)
@@ -509,8 +653,12 @@ const getStyle = (feature) => {
     // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
     const fetchData= async () =>{
+      const hydroweb_toast = toast.loading("Loading Hydroweb Water Level Data ...");
+
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
+
+
           console.log(response)
           // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
 
@@ -574,6 +722,8 @@ const getStyle = (feature) => {
           setIsSuccessfulHistoricalSimulation(false);
           setIsSuccessfulHistoricalBiasCorrection(false);
           setIsSuccessfulForecastBiasCorrection(false);
+          // updateNotify("Successfully Loaded Hydroweb water Level Data",hydroweb_toast);
+          toast.update(hydroweb_toast, { render: "Successfully Loaded Hydroweb water Level Data", type: "success", isLoading: false });
 
 
       } catch (error) {
@@ -584,14 +734,21 @@ const getStyle = (feature) => {
       }
     }
     if(selectedFeature !== ""){
-      fetchData();
-      
+      if(isHydroDataOn){
+        fetchData();
+
+      }
+      // const hydroweb_toast = notifyData("Loading Hydroweb Water Level Data ...");
+      // updateNotify("Successfully Loaded Hydroweb water Level Data",hydroweb_toast);
+
     }
     else{
 
       console.log("Not Requesting data")
     }
-
+    return () => {
+      // setIsHydroDataOn(false);
+    }
 	}, [selectedFeature]);
 
   useEffect(() => {
@@ -613,22 +770,26 @@ const getStyle = (feature) => {
     // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/saveHistoricalSimulationData/';
 
-    const fetchData= async () =>{
+    const fetchData= async (hs_toast) =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
-          // setIsGeoglowsActive(true);
           // setIsHydroDataOn(false);
           // setIsBiasCorrectionOn(false);
+          // setIsForecastBiasCorrectedDataPlot(false)
+          // setIsGeoglowsActive(true);
+          // setLoading(false);
+          setIsGeoglowsActive(true);
           setLoading(false);
-
+          updateNotify("Successfully Loaded GEOGloWS Historical Simulation Data",hs_toast);
       } catch (error) {
         console.error(error.message);
         setLoading(false);
-
       }
     }
     if(selectedFeature !== ""){
-      fetchData();
+      var hs_toast = notifyData("Loading GEOGloWS Historical Simulation Data ...");
+
+      fetchData(hs_toast);
       
     }
     else{
@@ -659,13 +820,15 @@ const getStyle = (feature) => {
     // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/executeBiasCorrection/';
 
-    const fetchData= async () =>{
+    const fetchData= async (bhs_toast) =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
           // setIsBiasCorrectionOn(true);
           // setIsHydroDataOn(false);
           // setIsGeoglowsActive(false);
           setLoading(false);
+          updateNotify("Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data ...",bhs_toast);
+
 
       } catch (error) {
         console.error(error.message);
@@ -674,7 +837,9 @@ const getStyle = (feature) => {
       }
     }
     if(selectedFeature !== ""){
-      fetchData();
+      var bhs_toast = notifyData("Loading GEOGloWS Historical Simulation Bias Corrected Data ...");
+
+      fetchData(bhs_toast);
       
     }
     else{
@@ -732,6 +897,7 @@ const getStyle = (feature) => {
 	}, [lisForecast]);
 
 
+
   useEffect(() => {
     console.log("Forecast Bias Correction data Save activated",selectedGeoglows,selectedFeature)
 
@@ -773,6 +939,9 @@ const getStyle = (feature) => {
         console.log("Not Requesting data")
       }
     }
+    return () =>{
+      setIsForecastBiasCorrectedDataPlot(false)
+    }
 
 	}, [isForecastBiasCorrectedDataPlot]);
 
@@ -784,7 +953,7 @@ const getStyle = (feature) => {
         onReset={() => {setIsError(false);setDataObject({})}}
         resetKeys={[isError,dataObject]}>
       <Loader_wrapper loading={ loading }/>
-      
+      <ToastContainer limit={1} />
       <ContainerFlex>
         <SideMenuWrapper 
           onLayer = { onOffLayer}
@@ -933,6 +1102,7 @@ const getStyle = (feature) => {
             isSuccessfulHistoricalSimulation = {isSuccessfulHistoricalSimulation}
             isSuccessfulHistoricalBiasCorrection = {isSuccessfulHistoricalBiasCorrection}
             isSuccessfulForecastBiasCorrection = {isSuccessfulForecastBiasCorrection}
+            downloadData = {downloadData}
 
           />  
         
@@ -949,4 +1119,4 @@ const getStyle = (feature) => {
   );
 };
 
-export default App;
+export default React.memo(App);

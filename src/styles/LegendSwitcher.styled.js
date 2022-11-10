@@ -85,5 +85,8 @@ export const LegendSwitcher = styled.div`
         display:none;
     }
 
+    button{
+        cursor: pointer;
+    }
 `;
 

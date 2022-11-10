@@ -7,12 +7,16 @@ import {
   AreaSeries,
   AnimatedAreaSeries,
   Tooltip,
+  defaultStyles,
   XYChart,
   DataContext,
   DataProvider,
   darkTheme as dt,
   buildChartTheme
 } from "@visx/xychart";
+
+
+
 import { ThemeConfig } from '@visx/xychart/lib/theme/buildChartTheme'
 
 import { PatternLines } from "@visx/pattern";
@@ -23,9 +27,7 @@ import { curveCardinal } from '@visx/curve';
 import { ParentSize } from '@visx/responsive';
 
 import { ChartContainer } from "../styles/ChartContainer.styled";
-import { ColoredSquare } from "../styles/ColoredSquare.styled";
-import { TooltipContainer } from "../styles/TooltipContainer.styled";
-import { useState, useContext,useEffect, useMemo } from "react";
+import { useState, useContext, useMemo, React } from "react";
 
 const tickLabelOffset = 10;
 
@@ -155,42 +157,43 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
 
   const loopThroughData = (xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle) =>{
     return (
-        xyData.map(function(lineData) {
+        xyData?.map(function(lineData) {
           // console.log(lineData)isHydroDataOn && item['dataKey'].startsWith('Water Level')
           if(isHydroDataOn && lineData['dataKey'].startsWith('Water Level') && legendToggle[`${lineData['dataKey']}`]){
             // console.log("Hydroweb Data",isHydroDataOn)
             if(!lineData['dataKey'].includes('-')){
               console.log(lineData['dataKey'],legendToggle[`${lineData['dataKey']}`])
               return (
+                  
+                    <AnimatedLineSeries
+                    key={lineData['dataKey']}
+                    stroke={lineData['color_fill']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors}
+                    curve={curveCardinal}
+                    colorAccessor ={(_)=>lineData['color_fill']}
+                  />              
+
                 
-                <AnimatedLineSeries
-                  key={lineData['dataKey']}
-                  stroke={lineData['color_fill']}
-                  dataKey={lineData['dataKey']}
-                  data={lineData['data']}
-                  {...normal_accesors}
-                  curve={curveCardinal}
-                  colorAccessor ={(_)=>lineData['color_fill']}
-              />
+
              );
             }
             else{
       
               return (
-                
-                <AnimatedAreaSeries
-                  key={lineData['dataKey']}
-                  dataKey={lineData['dataKey']}
-                  data={lineData['data']}
-                  {...normal_accesors_area}
-                  curve={curveCardinal}
-                  fill={lineData['color_fill']}
-                  stroke={lineData['color_fill']}
-                  fillOpacity={0.3}
-                  strokeOpacity={0.3}
-                />
-              
-      
+                  <AnimatedAreaSeries
+                    key={lineData['dataKey']}
+                    dataKey={lineData['dataKey']}
+                    data={lineData['data']}
+                    {...normal_accesors_area}
+                    curve={curveCardinal}
+                    fill={lineData['color_fill']}
+                    stroke={lineData['color_fill']}
+                    fillOpacity={0.3}
+                    strokeOpacity={0.3}
+                  />
+     
              );
             }
       
@@ -200,7 +203,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             console.log("Historical Simulation",isGeoglowsActive)
             return (
               legendToggle[`${lineData['dataKey']}`] &&
-              <AnimatedLineSeries
+              <LineSeries
                 key={lineData['dataKey']}
                 dataKey={lineData['dataKey']}
                 data={lineData['data']}
@@ -217,7 +220,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               return (
                 legendToggle[`${lineData['dataKey']}`] &&
       
-                <AnimatedLineSeries
+                <LineSeries
                   key={lineData['dataKey']}
                   // stroke={lineData['stroke']}
                   dataKey={lineData['dataKey']}
@@ -232,7 +235,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               return (
                 legendToggle[`${lineData['dataKey']}`] &&
       
-                <AnimatedLineSeries
+                <LineSeries
                   key={lineData['dataKey']}
                   // stroke={lineData['stroke']}
                   dataKey={lineData['dataKey']}
@@ -298,7 +301,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
     )
 
   }
-  const getData = useMemo(() =>loopThroughData(xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle), [xyData] )
+  const getData = useMemo(() =>loopThroughData(xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn, legendToggle), [xyData,isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn,isForecastOn,legendToggle] )
 
 
   
@@ -437,7 +440,9 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
             // of XYChart, which would then require the legend to be SVG-based
             // because HTML cannot be a child of SVG
             xScale={{ 
-              type: "time"
+              type: "utc",
+              zero: false,
+
               // domain: [minDateXScale, maxDateXScale]
 
             }}
@@ -502,16 +507,16 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
               />
               {getData}
         
-{/*         
+        
             <Tooltip
-            
+
                     showVerticalCrosshair
                     snapTooltipToDatumX
                     // showSeriesGlyphs
-                    // glyphStyle={{
-                    //   fill: "#008561",
-                    //   strokeWidth: 0
-                    // }}
+                    glyphStyle={{
+                      fill: "#008561",
+                      strokeWidth: 0
+                    }}
                     renderTooltip={({ tooltipData, colorScale }) =>
 
                       tooltipData.nearestDatum.key && (
@@ -560,7 +565,7 @@ const LineXYChartWrapper = ({ xyData, setDataObject, isHydroDataOn, isGeoglowsAc
                     
    
                     }
-                  /> */}
+                  />
         
         
             </XYChart>

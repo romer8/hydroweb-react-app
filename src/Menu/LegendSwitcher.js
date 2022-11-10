@@ -6,9 +6,13 @@ import { faCircleDown } from '@fortawesome/free-regular-svg-icons'
 import { useMemo } from "react";
 
 
-const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn, legendToggle,setLegendToggle}) => {
+const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBiasCorrectionOn, isForecastOn, legendToggle,setLegendToggle, downloadData}) => {
     const legendGlyphSize = 15;
     
+    const downloadData2 = (type_data)=>{
+        downloadData(type_data)
+    }
+
     const toggleOffOn = (e)=>{
         
         // e.preventDefault();
@@ -55,7 +59,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="iconColorLegend">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                                 <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                         </div>
@@ -70,7 +74,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                                 <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                             
@@ -87,7 +91,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                         </svg>
                         <span className="legendText">{item.dataKey}</span>
                         <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                        <button className="iconColorLegend" onclick="">
+                        <button className="iconColorLegend" onClick={()=> downloadData2(item['dataKey'])}>
                             <FontAwesomeIcon icon={faCircleDown} />
                         </button>
                     </div>
@@ -101,7 +105,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                         </svg>
                         <span className="legendText">{item.dataKey}</span>
                         <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                        <button className="iconColorLegend" onclick="">
+                        <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                             <FontAwesomeIcon  icon={faCircleDown} />
                         </button>
                     </div>
@@ -116,7 +120,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                                 <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                         </div>
@@ -130,7 +134,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                                 <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                         </div>
@@ -144,7 +148,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                                 <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                         </div>
@@ -158,7 +162,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                                 <FontAwesomeIcon icon={faCircleDown} />
                             </button>
                         </div>
@@ -172,7 +176,7 @@ const LegendSwitcherWrapper = ({ xyData, isHydroDataOn, isGeoglowsActive, isBias
                             </svg>
                             <span className="legendText">{item.dataKey}</span>
                             <input value={item.dataKey} type="checkbox"  className="cm-toggle" checked={legendToggle[`${item.dataKey}`]} onChange={toggleOffOn}/>
-                            <button className="iconColorLegend" onclick="">
+                            <button className="iconColorLegend" onClick={() => downloadData2(item['dataKey'])}>
                             <FontAwesomeIcon  icon={faCircleDown} />
                             </button>
                         </div>

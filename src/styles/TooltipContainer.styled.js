@@ -6,6 +6,7 @@ export const TooltipContainer = styled.div`
   font-size: 12px;
   border-radius: 4px;
   color: #222222;
+  z-index: 999999;
 
   .date {
     font-size: 12px;
