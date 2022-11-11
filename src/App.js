@@ -178,37 +178,6 @@ const App = () => {
 
 }
 
-  const notifyStations = (mssge) => toast(mssge,{   
-    position: "top-right",
-    autoClose: 500,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",}
-  );
-  const notifyData = (mssge) => toast(mssge,{   
-    position: "top-right",
-    autoClose: 500,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-    }
-  );
-
-  const updateNotify = (mssge,id) => toast.update(id, 
-    { 
-      render: mssge,
-      type: "success", 
-      // autoClose: 500
-      isLoading: false 
-    }
-  );
-
 
   const [virtualStations, setVirtualStations] = useState(
     {
@@ -345,15 +314,18 @@ const getStyle = (feature) => {
           setVirtualStations(response)
           setLoading(false);
           setShowLayer1(true);
-          notifyStations('Stations Loaded');
       } catch (error) {
         console.error(error.message);
-        notifyStations('Problem Loading Stations');
 
       }
       setLoading(false);
     }
-    fetchStations();
+    toast.promise(fetchStations, {
+      pending: 'Loading Stations ...',
+      success: 'Successfully Stations 👌',
+      error: 'Failed to Retrieve Stations',
+    });
+    // fetchStations();
     // socketRef.current = new WebSocketWrapper();
     // socketRef.current.startWS(ws);
     socketRef.current = new WebSocket(ws);
@@ -653,11 +625,9 @@ const getStyle = (feature) => {
     // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
     const fetchData= async () =>{
-      const hydroweb_toast = toast.loading("Loading Hydroweb Water Level Data ...");
 
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
-
 
           console.log(response)
           // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
@@ -722,8 +692,6 @@ const getStyle = (feature) => {
           setIsSuccessfulHistoricalSimulation(false);
           setIsSuccessfulHistoricalBiasCorrection(false);
           setIsSuccessfulForecastBiasCorrection(false);
-          // updateNotify("Successfully Loaded Hydroweb water Level Data",hydroweb_toast);
-          toast.update(hydroweb_toast, { render: "Successfully Loaded Hydroweb water Level Data", type: "success", isLoading: false });
 
 
       } catch (error) {
@@ -735,11 +703,14 @@ const getStyle = (feature) => {
     }
     if(selectedFeature !== ""){
       if(isHydroDataOn){
-        fetchData();
+        toast.promise(fetchData, {
+          pending: 'Loading Hydroweb Water Level Data ...',
+          success: 'Successfully Loaded Hydroweb Water Level Data 👌',
+          error: 'Failed to Retrieve Hydroweb Water Level Data',
+        });
 
       }
-      // const hydroweb_toast = notifyData("Loading Hydroweb Water Level Data ...");
-      // updateNotify("Successfully Loaded Hydroweb water Level Data",hydroweb_toast);
+
 
     }
     else{
@@ -770,7 +741,7 @@ const getStyle = (feature) => {
     // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/saveHistoricalSimulationData/';
 
-    const fetchData= async (hs_toast) =>{
+    const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
           // setIsHydroDataOn(false);
@@ -780,16 +751,19 @@ const getStyle = (feature) => {
           // setLoading(false);
           setIsGeoglowsActive(true);
           setLoading(false);
-          updateNotify("Successfully Loaded GEOGloWS Historical Simulation Data",hs_toast);
       } catch (error) {
         console.error(error.message);
         setLoading(false);
       }
     }
     if(selectedFeature !== ""){
-      var hs_toast = notifyData("Loading GEOGloWS Historical Simulation Data ...");
 
-      fetchData(hs_toast);
+      fetchData();
+      toast.promise(fetchData, {
+        pending: 'Loading GEOGloWS Historical Simulation Data ...',
+        success: 'Successfully Loaded GEOGloWS Historical Simulation Data 👌',
+        error: 'Failed to Retrieve GEOGloWS Historical Simulation Data',
+      });
       
     }
     else{
@@ -820,14 +794,13 @@ const getStyle = (feature) => {
     // console.log(Mydata);
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/executeBiasCorrection/';
 
-    const fetchData= async (bhs_toast) =>{
+    const fetchData= async () =>{
       try {
           const {data: response} = await axios.post(service_link,Mydata,config);
           // setIsBiasCorrectionOn(true);
           // setIsHydroDataOn(false);
           // setIsGeoglowsActive(false);
           setLoading(false);
-          updateNotify("Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data ...",bhs_toast);
 
 
       } catch (error) {
@@ -837,9 +810,12 @@ const getStyle = (feature) => {
       }
     }
     if(selectedFeature !== ""){
-      var bhs_toast = notifyData("Loading GEOGloWS Historical Simulation Bias Corrected Data ...");
 
-      fetchData(bhs_toast);
+      toast.promise(fetchData, {
+        pending: 'Loading GEOGloWS Historical Simulation Bias Corrected Data ...',
+        success: 'Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data 👌',
+        error: 'Failed to Retrieve GEOGloWS Historical Simulation Bias Corrected Data',
+      });
       
     }
     else{
@@ -886,7 +862,12 @@ const getStyle = (feature) => {
       }
     }
     if(selectedFeature !== ""){
-      fetchData();
+      // fetchData();
+      toast.promise(fetchData, {
+        pending: 'Saving GEOGloWS Forecast Data ...',
+        success: 'Successfully Saved GEOGloWS Forecast Data 👌',
+        error: 'Failed Saved GEOGloWS Forecast Data',
+      });
       
     }
     else{
@@ -932,6 +913,11 @@ const getStyle = (feature) => {
       }
       if(selectedFeature !== ""){
         fetchData();
+        toast.promise(fetchData, {
+          pending: 'Executing Bias Correction to GEOGloWS Forecast Data ...',
+          success: 'Successfully Retrieved Bias Corrected GEOGloWS Forecast Data 👌',
+          error: 'Failed to Retrieve Bias Corrected GEOGloWS Forecast Data',
+        });
         
       }
       else{
@@ -953,7 +939,7 @@ const getStyle = (feature) => {
         onReset={() => {setIsError(false);setDataObject({})}}
         resetKeys={[isError,dataObject]}>
       <Loader_wrapper loading={ loading }/>
-      <ToastContainer limit={1} />
+      <ToastContainer limit={1} autoClose={1000} theme={"dark"}/>
       <ContainerFlex>
         <SideMenuWrapper 
           onLayer = { onOffLayer}
