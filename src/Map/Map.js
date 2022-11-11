@@ -59,6 +59,7 @@ const Map = ({ children, zoom, center,setSelectedFeature, isFullMap, setSelected
 
 					var reloadme = selectedFeature !== multipleFeatures[0].get("comid") ? true: false;
 					setIsHydroDataOn(reloadme)
+					
 
 				}
 				// if multiple features just zoom in

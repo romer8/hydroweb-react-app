@@ -65,7 +65,7 @@ function JSON2CSV(objArray) {
       let keyfound = 0;    
       // each key/value pair
       Object.entries(obj).forEach(([key,value])=>{
-        if (key == titles[j]) {
+        if (key === titles[j]) {
           // console.log('equal tit=', titles[j] , ' e key ', key ); // matched key with header
           line += ',"' + value +  '"';
           keyfound = 1; 
@@ -73,7 +73,7 @@ function JSON2CSV(objArray) {
         }
 
       })
-      if (keyfound == 0) {
+      if (keyfound === 0) {
         line += ',"'  +  '"';   // add null value for this key
       } // end loop of header values
 
@@ -100,9 +100,9 @@ const App = () => {
   const [zoom, setZoom] = useState(mapConfig.zoom);
   const [showLayer1, setShowLayer1] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [clusterDistance, setClusterDistance] = useState(50);
-  const [minClusterDistance, setMinClusterDistance] = useState(50);
-  const [styleCache, setStyleCache] = useState({});
+  // const [clusterDistance, setClusterDistance] = useState(50);
+  // const [minClusterDistance, setMinClusterDistance] = useState(50);
+  // const [styleCache, setStyleCache] = useState({});
   const [selectedFeature, setSelectedFeature] = useState("");
   const [selectedGeoglows, setSelectedGeoglows] = useState("")
   // const [dataStation, setDataStation] = useState([]);
@@ -127,6 +127,9 @@ const App = () => {
   const [isSuccessfulHistoricalBiasCorrection, setIsSuccessfulHistoricalBiasCorrection] = useState(false);
   const [isSuccessfulForecastBiasCorrection, setIsSuccessfulForecastBiasCorrection] = useState(false);
 
+  const clusterDistance = 50;
+  const minClusterDistance = 50;
+  const styleCache = {};
 
   var ws = 'ws://' + 'localhost:8000/apps/hydroweb' + '/data-notification/notifications/ws/';
 
@@ -215,7 +218,7 @@ const App = () => {
     // console.log(isGeoglowsActive);
     var new_job = `${selectedFeature}-->${selectedGeoglows}`;
     console.log(new_job)
-    var found = listGeoglowsApiCalls.some(p => p == new_job)
+    var found = listGeoglowsApiCalls.some(p => p = new_job)
     console.log(found)
     if(!found){
       setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
@@ -236,7 +239,7 @@ const App = () => {
     console.log(isBiasCorrectionOn);
     var new_job = `${selectedFeature}-->${selectedGeoglows}`;
     console.log(new_job)
-    var found = listBiasCorrection.some(p => p == new_job)
+    var found = listBiasCorrection.some(p => p === new_job)
     console.log(found)
     if(!found){
       setListBiasCorrection(listBiasCorrection => [...listBiasCorrection, new_job]);
@@ -267,7 +270,7 @@ const App = () => {
     console.log(isForecastOn);
     var new_job = `${selectedFeature}-->${selectedGeoglows}`;
     console.log(new_job)
-    var found = lisForecast.some(p => p == new_job)
+    var found = lisForecast.some(p => p === new_job)
     console.log(found)
     if(!found){
       setListForecast(lisForecast => [...lisForecast, new_job]);
@@ -339,7 +342,7 @@ const getStyle = (feature) => {
         let product2 = data['product'];
         let command = data['command'];
         console.log(data);
-        if (command == "Data_Downloaded"){
+        if (command === "Data_Downloaded"){
         // if (command == "Data_Downloaded" && isForecastOn == false){
 
           socketRef.current.send(
@@ -355,8 +358,8 @@ const getStyle = (feature) => {
         //   setIsForecastBiasCorrectedDataPlot(true);
         // }
 
-        if (command == "Plot_Data"){
-          var found = dataObject.some(p => p.dataKey == 'Historical Simulation');
+        if (command === "Plot_Data"){
+          var found = dataObject.some(p => p.dataKey === 'Historical Simulation');
           if(!found){
             console.log("ADDING THE HISTORICAL SIMULATION DATA")
             let dataHistorical = JSON.parse(data['data']);
@@ -376,7 +379,7 @@ const getStyle = (feature) => {
 
           }
         }
-        if(command == "Bias_Data_Downloaded"){
+        if(command === "Bias_Data_Downloaded"){
           socketRef.current.send(
             JSON.stringify({
               type: "plot_bias_corrected_data",
@@ -386,8 +389,8 @@ const getStyle = (feature) => {
             })
           );
         }
-        if (command == "Plot_Bias_Corrected_Data"){
-          var found = dataObject.some(p => p.dataKey == 'Bias Corrected Mean Level');
+        if (command === "Plot_Bias_Corrected_Data"){
+          var found = dataObject.some(p => p.dataKey === 'Bias Corrected Mean Level');
           console.log(found)
           if(!found){
             console.log("ADDING THE BIAS CORRECTED FORECAST ENSEMBLE SIMULATION DATA")
@@ -430,9 +433,9 @@ const getStyle = (feature) => {
 
         }
         
-        if(command == "Plot_Forecast_Ensemble_Bias_Data_Downloaded"){
+        if(command === "Plot_Forecast_Ensemble_Bias_Data_Downloaded"){
           setIsForecastBiasCorrectedDataPlot(false);
-          var found = dataObject.some(p => p.dataKey == 'Mean Ensemble');
+          var found = dataObject.some(p => p.dataKey === 'Mean Ensemble');
           console.log(found)
           if(!found){
             console.log("ADDING THE BIAS CORRECTED HISTORICAL SIMULATION DATA")
@@ -510,7 +513,7 @@ const getStyle = (feature) => {
           
           }
         }
-        if(command == "Plot_Forecast_Records_Bias_Data_Downloaded"){
+        if(command === "Plot_Forecast_Records_Bias_Data_Downloaded"){
           setIsForecastBiasCorrectedDataPlot(false);
           var found = dataObject.some(p => p.dataKey.includes('Records'));
           console.log(found)
@@ -630,14 +633,7 @@ const getStyle = (feature) => {
           const {data: response} = await axios.post(service_link,Mydata,config);
 
           console.log(response)
-          // const newArrayMax = array.map(({dropAttr1, dropAttr2, ...keepAttrs}) => keepAttrs)
 
-          // const {data: response} = await axios.post(service_link);
-          // console.log(response)
-          // setDataStation(response['data'])
-          // setDataStation(response['data']['val'])
-          // setMinDataStation(response['data']['min'])
-          // setMaxDataStation(response['data']['max'])
           const normal_data = {
             // stroke:"#2B4865",
             dataKey:"Water Level Mean Value",
@@ -675,6 +671,10 @@ const getStyle = (feature) => {
           //   minimun: min_data,
           //   maximun: max_data
           // }
+          // setIsBiasCorrectionOn(false)
+          // setIsForecastOn(false)
+          // setIsGeoglowsActive(false)
+
           const data_list =[normal_data,min_max_data,min_data,max_data]
           // const data_list =[normal_data,min_data,max_data]
 
@@ -684,6 +684,7 @@ const getStyle = (feature) => {
           // console.log(response['data']['val'])
           // console.log(response['data']['max'])
           // console.log(response['data']['min'])
+
 
 
           setLoading(false);
@@ -702,14 +703,15 @@ const getStyle = (feature) => {
       }
     }
     if(selectedFeature !== ""){
-      if(isHydroDataOn){
+      
+        // fetchData()
         toast.promise(fetchData, {
           pending: 'Loading Hydroweb Water Level Data ...',
           success: 'Successfully Loaded Hydroweb Water Level Data 👌',
           error: 'Failed to Retrieve Hydroweb Water Level Data',
         });
 
-      }
+      
 
 
     }
@@ -758,7 +760,7 @@ const getStyle = (feature) => {
     }
     if(selectedFeature !== ""){
 
-      fetchData();
+      // fetchData();
       toast.promise(fetchData, {
         pending: 'Loading GEOGloWS Historical Simulation Data ...',
         success: 'Successfully Loaded GEOGloWS Historical Simulation Data 👌',
@@ -810,7 +812,7 @@ const getStyle = (feature) => {
       }
     }
     if(selectedFeature !== ""){
-
+      // fetchData()
       toast.promise(fetchData, {
         pending: 'Loading GEOGloWS Historical Simulation Bias Corrected Data ...',
         success: 'Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data 👌',
@@ -912,7 +914,7 @@ const getStyle = (feature) => {
         }
       }
       if(selectedFeature !== ""){
-        fetchData();
+        // fetchData();
         toast.promise(fetchData, {
           pending: 'Executing Bias Correction to GEOGloWS Forecast Data ...',
           success: 'Successfully Retrieved Bias Corrected GEOGloWS Forecast Data 👌',
@@ -1105,4 +1107,4 @@ const getStyle = (feature) => {
   );
 };
 
-export default React.memo(App);
+export default App;
