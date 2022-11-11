@@ -95,6 +95,12 @@ function ErrorFallback({error, resetErrorBoundary}) {
   )
 }
 
+const clusterDistance = 50;
+const minClusterDistance = 50;
+const styleCache = {};
+
+const ws = 'ws://' + 'localhost:8000/apps/hydroweb' + '/data-notification/notifications/ws/';
+
 const App = () => {
   const [center, setCenter] = useState(mapConfig.center);
   const [zoom, setZoom] = useState(mapConfig.zoom);
@@ -127,11 +133,7 @@ const App = () => {
   const [isSuccessfulHistoricalBiasCorrection, setIsSuccessfulHistoricalBiasCorrection] = useState(false);
   const [isSuccessfulForecastBiasCorrection, setIsSuccessfulForecastBiasCorrection] = useState(false);
 
-  const clusterDistance = 50;
-  const minClusterDistance = 50;
-  const styleCache = {};
 
-  var ws = 'ws://' + 'localhost:8000/apps/hydroweb' + '/data-notification/notifications/ws/';
 
   const downloadData = (type_data) => {
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/download/';
@@ -304,6 +306,277 @@ const getStyle = (feature) => {
     }
     
   }
+  useEffect(()=>{
+    if(!socketRef.current) return;
+    socketRef.current.onmessage = function (e) {
+      let data = JSON.parse(e.data);
+      let reach_id2 = data['reach_id'];
+      let product2 = data['product'];
+      let command = data['command'];
+      console.log(data);
+      if (command === "Data_Downloaded"){
+      // if (command == "Data_Downloaded" && isForecastOn == false){
+
+        socketRef.current.send(
+          JSON.stringify({
+            type: "plot_hs_data",
+            reach_id:reach_id2,
+            product: product2
+
+          })
+        );
+      }
+      // if (command == "Data_Downloaded" && isForecastOn == true){
+      //   setIsForecastBiasCorrectedDataPlot(true);
+      // }
+
+      if (command === "Plot_Data"){
+        var found = dataObject.filter(p => p.dataKey === 'Historical Simulation').length > 0  ? true : false;
+        if(!found){
+          console.log("ADDING THE HISTORICAL SIMULATION DATA")
+          let dataHistorical = JSON.parse(data['data']);
+          const dataHistoricalObject = {
+            color_fill: graph_styles["Historical Simulation"],
+            dataKey:"Historical Simulation",
+            key:"Historical Simulation",
+            data:dataHistorical,
+            visible:isGeoglowsActive
+          }
+          console.log(dataHistoricalObject)
+        
+          setDataObject(dataObject => [...dataObject,dataHistoricalObject ])
+          // setDataGeoglows(dataHistorical);
+
+          setIsSuccessfulHistoricalSimulation(true);
+          
+
+        }
+      }
+      if(command === "Bias_Data_Downloaded"){
+        socketRef.current.send(
+          JSON.stringify({
+            type: "plot_bias_corrected_data",
+            reach_id:reach_id2,
+            product: product2
+
+          })
+        );
+      }
+      if (command === "Plot_Bias_Corrected_Data"){
+        // var found = dataObject.some(p => p.dataKey === 'Bias Corrected Mean Level');
+        var found = dataObject.filter(p => p.dataKey === 'Bias Corrected Mean Level').length > 0 ? true : false;
+
+        if(!found){
+          console.log("ADDING THE BIAS CORRECTED FORECAST ENSEMBLE SIMULATION DATA")
+
+          let dataBiasCorrrected = data['data'];
+
+          console.log(dataBiasCorrrected)
+
+          // setDataGeoglows(dataHistorical);
+          const normal_bc_data = {
+            color_fill:graph_styles["Bias Corrected Mean Level"],
+            dataKey:"Bias Corrected Mean Level",
+            key:"Bias Corrected Mean Level",
+            data:data['data']['val'],
+            visible:isBiasCorrectionOn
+
+          }
+          const min_bc_data = {
+            color_fill:graph_styles['Bias Corrected Minimun Level'],
+            dataKey:"Bias Corrected Minimun Level",
+            key:"Bias Corrected Minimun Level",
+            data:data['data']['val'],
+            visible:isBiasCorrectionOn
+
+          }
+          const max_bc_data = {
+            color_fill:graph_styles['Bias Corrected Maximun Level'],
+            dataKey:"Bias Corrected Maximun Level",
+            key:"Bias Corrected Maximun Level",
+            data:data['data']['max'],
+            visible:isBiasCorrectionOn
+
+          }
+          setDataObject(dataObject => [...dataObject,normal_bc_data,min_bc_data,max_bc_data ]);
+          setIsSuccessfulHistoricalSimulation(true);
+          setIsSuccessfulHistoricalBiasCorrection(true);
+
+        }
+
+
+      }
+      
+      if(command === "Plot_Forecast_Ensemble_Bias_Data_Downloaded"){
+        setIsForecastBiasCorrectedDataPlot(false);
+        // var found = dataObject.some(p => p.dataKey === 'Mean Ensemble');
+        var found = dataObject.filter(p => p.dataKey === 'Mean Ensemble').length > 0 ? true : false;
+
+        console.log(found)
+        if(!found){
+          console.log("ADDING THE BIAS CORRECTED HISTORICAL SIMULATION DATA")
+
+          let dataForecastBiasCorrrected = data['data'];
+
+          console.log(dataForecastBiasCorrrected)
+
+          // setDataGeoglows(dataHistorical);
+          const mean_ensemble = {
+            color_fill:graph_styles['Forecast Mean StreamFlow'],
+            dataKey:"Forecast Mean StreamFlow",
+            key:"Forecast Mean StreamFlow",
+            data:dataForecastBiasCorrrected['mean'],
+            visible:isForecastOn
+
+          }
+          const max_min_ensemble = {
+            color_fill:graph_styles['Forecast Minimun-Maximun StreamFlow'],
+            dataKey:"Forecast Minimun-Maximun StreamFlow",
+            key:"Forecast Minimun-Maximun StreamFlow",
+            data:dataForecastBiasCorrrected['max_min'],
+            visible:isForecastOn  
+          }
+          const min_ensemble = {
+            color_fill:graph_styles['Forecast Minimun StreamFlow'],
+            dataKey:"Forecast Minimun StreamFlow",
+            Key:"Forecast Minimun StreamFlow",
+            data:dataForecastBiasCorrrected['min'],
+            visible:isForecastOn
+
+          }
+          const max_ensemble = {
+            color_fill:graph_styles['Forecast Maximun StreamFlow'],
+            dataKey:"Forecast Maximun StreamFlow",
+            Key:"Forecast Maximun StreamFlow",
+            data:dataForecastBiasCorrrected['max'],
+            visible:isForecastOn
+          }
+          const p25_ensemble = {
+            dataKey:"Forecast 25 Percentile StreamFlow",
+            key:"Forecast 25 Percentile StreamFlow",
+            data:dataForecastBiasCorrrected['p25'],
+            visible:isForecastOn,
+            color_fill:graph_styles['Forecast 25 Percentile StreamFlow']
+          }
+          const p75_ensemble = {
+            // stroke:"#002500",
+            color_fill:graph_styles['Forecast 75 Percentile StreamFlow'],
+            dataKey:"Forecast 75 Percentile StreamFlow",
+            Key:"Forecast 75 Percentile StreamFlow",
+            data:dataForecastBiasCorrrected['p75'],
+            visible:isForecastOn
+          }
+          const p75_25_ensemble = {
+            // stroke:"#002500",
+            color_fill:graph_styles['Forecast 25-75 Percentile StreamFlow'],
+            dataKey:"Forecast 25-75 Percentile StreamFlow",
+            key:"Forecast 25-75 Percentile StreamFlow",
+            data:dataForecastBiasCorrrected['p75_25'],
+            visible:isForecastOn
+
+          }
+          const high_res_ensemble = {
+            dataKey:"Forecast High Resolution StreamFlow",
+            key:"Forecast High Resolution StreamFlow",
+            data:dataForecastBiasCorrrected['high_res'],
+            visible:isForecastOn,
+            color_fill:graph_styles['Forecast High Resolution StreamFlow']
+
+
+          }
+          // setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
+          setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble,p25_ensemble,p75_ensemble,min_ensemble,max_ensemble ]);
+        
+        }
+      }
+      if(command === "Plot_Forecast_Records_Bias_Data_Downloaded"){
+        setIsForecastBiasCorrectedDataPlot(false);
+        // var found = dataObject.some(p => p.dataKey.includes('Records'));
+        var found = dataObject.filter(p => p.dataKey.includes('Records')).length > 0 ? true : false;
+
+        console.log(found)
+        if(!found){
+          console.log("ADDING THE BIAS CORRECTED FORECAST RECORDS SIMULATION DATA")
+
+          let dataForecastBiasCorrrected = data['data'];
+
+          console.log(dataForecastBiasCorrrected);
+          if(dataForecastBiasCorrrected['record_plot1']){
+            const record_plot1 = {
+              color_fill:graph_styles['1st Days Forecast Records'],
+              dataKey:"1st Days Forecast Records",
+              key:"1st Days Forecast Records",
+              data:dataForecastBiasCorrrected['record_plot1'],
+              visible:isForecastOn
+            }
+            setDataObject(dataObject => [...dataObject,record_plot1]);
+
+          }
+          if(dataForecastBiasCorrrected['max_min_area_record_WL']){
+            // const max_min_record_WL = {
+            //   // stroke:"#FFA15A",
+            //   dataKey:"1st Days Forecasts Records",
+            //   data:dataForecastBiasCorrrected['max_min_record_WL'],
+            //   visible:isForecastOn
+            // }
+            const max_min_area_record_WL = {
+              color_fill:graph_styles['1st Days Forecasts Maximum-Minimum Records'],
+              dataKey:"1st Days Forecasts Maximum-Minimum Records",
+              key:"1st Days Forecasts Maximum-Minimum Records",
+              data:dataForecastBiasCorrrected['max_min_area_record_WL'],
+              visible:isForecastOn
+            }
+            const max_record_WL = {
+              color_fill:graph_styles['1st Days Forecasts Maximun Records'],
+              dataKey:"1st Days Forecasts Maximun Records",
+              key:"1st Days Forecasts Maximun Records",
+              data:dataForecastBiasCorrrected['max_record_WL'],
+              visible:isForecastOn
+            }
+            const min_record_WL = {
+              color_fill:graph_styles['1st Days Forecasts Minimun Records'],
+              dataKey:"1st Days Forecasts Minimun Records",
+              key:"1st Days Forecasts Minimun Records",
+              data:dataForecastBiasCorrrected['min_record_WL'],
+              visible:isForecastOn
+            }
+            // setDataObject(dataObject => [...dataObject,max_min_record_WL,max_record_WL,min_record_WL]);
+            setDataObject(dataObject => [...dataObject,max_min_area_record_WL,max_record_WL,min_record_WL]);
+
+          }
+          if(dataForecastBiasCorrrected['max_min_high_res_WL']){
+            const max_min_high_res_WL = {
+              color_fill:graph_styles['High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)'],
+              dataKey:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
+              key:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
+              data:dataForecastBiasCorrrected['max_min_high_res_WL'],
+              visible:isForecastOn
+            }
+            const max_high_res_WL = {
+              color_fill:graph_styles['High Resolution Maximum (1st Days Forecasts Records)'],
+              dataKey:"High Resolution Maximum (1st Days Forecasts Records)",
+              key:"High Resolution Maximum (1st Days Forecasts Records)",
+              data:dataForecastBiasCorrrected['max_high_res_WL'],
+              visible:isForecastOn
+            }
+            const min_high_res_WL = {
+              color_fill:graph_styles['High Resolution Minimum (1st Days Forecasts Records)'],
+              dataKey:"High Resolution Minimum (1st Days Forecasts Records)",
+              key:"High Resolution Minimum (1st Days Forecasts Records)",
+              data:dataForecastBiasCorrrected['min_high_res_WL'],
+              visible:isForecastOn
+            }
+            // setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
+            setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
+            setIsSuccessfulForecastBiasCorrection(true);
+
+          }
+        }
+
+      }
+
+    };
+  },[isBiasCorrectionOn,isForecastOn,isHydroDataOn,isGeoglowsActive])
   // Adding the geojson layer to the map with stations
   useEffect(() => {
 
@@ -329,276 +602,13 @@ const getStyle = (feature) => {
       error: 'Failed to Retrieve Stations',
     });
     // fetchStations();
-    // socketRef.current = new WebSocketWrapper();
-    // socketRef.current.startWS(ws);
+
+
     socketRef.current = new WebSocket(ws);
       socketRef.current.onopen = () => {
         console.log("WebSocket is Open");
       };
-  
-      socketRef.current.onmessage = function (e) {
-        let data = JSON.parse(e.data);
-        let reach_id2 = data['reach_id'];
-        let product2 = data['product'];
-        let command = data['command'];
-        console.log(data);
-        if (command === "Data_Downloaded"){
-        // if (command == "Data_Downloaded" && isForecastOn == false){
-
-          socketRef.current.send(
-            JSON.stringify({
-              type: "plot_hs_data",
-              reach_id:reach_id2,
-              product: product2
-  
-            })
-          );
-        }
-        // if (command == "Data_Downloaded" && isForecastOn == true){
-        //   setIsForecastBiasCorrectedDataPlot(true);
-        // }
-
-        if (command === "Plot_Data"){
-          var found = dataObject.some(p => p.dataKey === 'Historical Simulation');
-          if(!found){
-            console.log("ADDING THE HISTORICAL SIMULATION DATA")
-            let dataHistorical = JSON.parse(data['data']);
-            const dataHistoricalObject = {
-              color_fill: graph_styles["Historical Simulation"],
-              dataKey:"Historical Simulation",
-              key:"Historical Simulation",
-              data:dataHistorical,
-              visible:isGeoglowsActive
-            }
-            console.log(dataHistoricalObject)
-  
-            // setDataGeoglows(dataHistorical);
-            setDataObject(dataObject => [...dataObject,dataHistoricalObject ]);
-            setIsSuccessfulHistoricalSimulation(true);
-            
-
-          }
-        }
-        if(command === "Bias_Data_Downloaded"){
-          socketRef.current.send(
-            JSON.stringify({
-              type: "plot_bias_corrected_data",
-              reach_id:reach_id2,
-              product: product2
-  
-            })
-          );
-        }
-        if (command === "Plot_Bias_Corrected_Data"){
-          var found = dataObject.some(p => p.dataKey === 'Bias Corrected Mean Level');
-          console.log(found)
-          if(!found){
-            console.log("ADDING THE BIAS CORRECTED FORECAST ENSEMBLE SIMULATION DATA")
-
-            let dataBiasCorrrected = data['data'];
-
-            console.log(dataBiasCorrrected)
-  
-            // setDataGeoglows(dataHistorical);
-            const normal_bc_data = {
-              color_fill:graph_styles["Bias Corrected Mean Level"],
-              dataKey:"Bias Corrected Mean Level",
-              key:"Bias Corrected Mean Level",
-              data:data['data']['val'],
-              visible:isBiasCorrectionOn
-  
-            }
-            const min_bc_data = {
-              color_fill:graph_styles['Bias Corrected Minimun Level'],
-              dataKey:"Bias Corrected Minimun Level",
-              key:"Bias Corrected Minimun Level",
-              data:data['data']['val'],
-              visible:isBiasCorrectionOn
-  
-            }
-            const max_bc_data = {
-              color_fill:graph_styles['Bias Corrected Maximun Level'],
-              dataKey:"Bias Corrected Maximun Level",
-              key:"Bias Corrected Maximun Level",
-              data:data['data']['max'],
-              visible:isBiasCorrectionOn
-  
-            }
-            setDataObject(dataObject => [...dataObject,normal_bc_data,min_bc_data,max_bc_data ]);
-            setIsSuccessfulHistoricalSimulation(true);
-            setIsSuccessfulHistoricalBiasCorrection(true);
-
-          }
-
-
-        }
-        
-        if(command === "Plot_Forecast_Ensemble_Bias_Data_Downloaded"){
-          setIsForecastBiasCorrectedDataPlot(false);
-          var found = dataObject.some(p => p.dataKey === 'Mean Ensemble');
-          console.log(found)
-          if(!found){
-            console.log("ADDING THE BIAS CORRECTED HISTORICAL SIMULATION DATA")
-
-            let dataForecastBiasCorrrected = data['data'];
-
-            console.log(dataForecastBiasCorrrected)
-  
-            // setDataGeoglows(dataHistorical);
-            const mean_ensemble = {
-              color_fill:graph_styles['Forecast Mean StreamFlow'],
-              dataKey:"Forecast Mean StreamFlow",
-              key:"Forecast Mean StreamFlow",
-              data:dataForecastBiasCorrrected['mean'],
-              visible:isForecastOn
-  
-            }
-            const max_min_ensemble = {
-              color_fill:graph_styles['Forecast Minimun-Maximun StreamFlow'],
-              dataKey:"Forecast Minimun-Maximun StreamFlow",
-              key:"Forecast Minimun-Maximun StreamFlow",
-              data:dataForecastBiasCorrrected['max_min'],
-              visible:isForecastOn  
-            }
-            const min_ensemble = {
-              color_fill:graph_styles['Forecast Minimun StreamFlow'],
-              dataKey:"Forecast Minimun StreamFlow",
-              Key:"Forecast Minimun StreamFlow",
-              data:dataForecastBiasCorrrected['min'],
-              visible:isForecastOn
-  
-            }
-            const max_ensemble = {
-              color_fill:graph_styles['Forecast Maximun StreamFlow'],
-              dataKey:"Forecast Maximun StreamFlow",
-              Key:"Forecast Maximun StreamFlow",
-              data:dataForecastBiasCorrrected['max'],
-              visible:isForecastOn
-            }
-            const p25_ensemble = {
-              dataKey:"Forecast 25 Percentile StreamFlow",
-              key:"Forecast 25 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['p25'],
-              visible:isForecastOn,
-              color_fill:graph_styles['Forecast 25 Percentile StreamFlow']
-            }
-            const p75_ensemble = {
-              // stroke:"#002500",
-              color_fill:graph_styles['Forecast 75 Percentile StreamFlow'],
-              dataKey:"Forecast 75 Percentile StreamFlow",
-              Key:"Forecast 75 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['p75'],
-              visible:isForecastOn
-            }
-            const p75_25_ensemble = {
-              // stroke:"#002500",
-              color_fill:graph_styles['Forecast 25-75 Percentile StreamFlow'],
-              dataKey:"Forecast 25-75 Percentile StreamFlow",
-              key:"Forecast 25-75 Percentile StreamFlow",
-              data:dataForecastBiasCorrrected['p75_25'],
-              visible:isForecastOn
-  
-            }
-            const high_res_ensemble = {
-              dataKey:"Forecast High Resolution StreamFlow",
-              key:"Forecast High Resolution StreamFlow",
-              data:dataForecastBiasCorrrected['high_res'],
-              visible:isForecastOn,
-              color_fill:graph_styles['Forecast High Resolution StreamFlow']
-
-  
-            }
-            // setDataObject(dataObject => [...dataObject,mean_ensemble,min_ensemble,max_ensemble,p25_ensemble,p75_ensemble,high_res_ensemble ]);
-            setDataObject(dataObject => [...dataObject,mean_ensemble,max_min_ensemble,p75_25_ensemble,high_res_ensemble,p25_ensemble,p75_ensemble,min_ensemble,max_ensemble ]);
-          
-          }
-        }
-        if(command === "Plot_Forecast_Records_Bias_Data_Downloaded"){
-          setIsForecastBiasCorrectedDataPlot(false);
-          var found = dataObject.some(p => p.dataKey.includes('Records'));
-          console.log(found)
-          if(!found){
-            console.log("ADDING THE BIAS CORRECTED FORECAST RECORDS SIMULATION DATA")
-
-            let dataForecastBiasCorrrected = data['data'];
-
-            console.log(dataForecastBiasCorrrected);
-            if(dataForecastBiasCorrrected['record_plot1']){
-              const record_plot1 = {
-                color_fill:graph_styles['1st Days Forecast Records'],
-                dataKey:"1st Days Forecast Records",
-                key:"1st Days Forecast Records",
-                data:dataForecastBiasCorrrected['record_plot1'],
-                visible:isForecastOn
-              }
-              setDataObject(dataObject => [...dataObject,record_plot1]);
-
-            }
-            if(dataForecastBiasCorrrected['max_min_area_record_WL']){
-              // const max_min_record_WL = {
-              //   // stroke:"#FFA15A",
-              //   dataKey:"1st Days Forecasts Records",
-              //   data:dataForecastBiasCorrrected['max_min_record_WL'],
-              //   visible:isForecastOn
-              // }
-              const max_min_area_record_WL = {
-                color_fill:graph_styles['1st Days Forecasts Maximum-Minimum Records'],
-                dataKey:"1st Days Forecasts Maximum-Minimum Records",
-                key:"1st Days Forecasts Maximum-Minimum Records",
-                data:dataForecastBiasCorrrected['max_min_area_record_WL'],
-                visible:isForecastOn
-              }
-              const max_record_WL = {
-                color_fill:graph_styles['1st Days Forecasts Maximun Records'],
-                dataKey:"1st Days Forecasts Maximun Records",
-                key:"1st Days Forecasts Maximun Records",
-                data:dataForecastBiasCorrrected['max_record_WL'],
-                visible:isForecastOn
-              }
-              const min_record_WL = {
-                color_fill:graph_styles['1st Days Forecasts Minimun Records'],
-                dataKey:"1st Days Forecasts Minimun Records",
-                key:"1st Days Forecasts Minimun Records",
-                data:dataForecastBiasCorrrected['min_record_WL'],
-                visible:isForecastOn
-              }
-              // setDataObject(dataObject => [...dataObject,max_min_record_WL,max_record_WL,min_record_WL]);
-              setDataObject(dataObject => [...dataObject,max_min_area_record_WL,max_record_WL,min_record_WL]);
-
-            }
-            if(dataForecastBiasCorrrected['max_min_high_res_WL']){
-              const max_min_high_res_WL = {
-                color_fill:graph_styles['High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)'],
-                dataKey:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
-                key:"High Resolution Minimum-Maximum Forecast Records (1st Days Forecasts Records)",
-                data:dataForecastBiasCorrrected['max_min_high_res_WL'],
-                visible:isForecastOn
-              }
-              const max_high_res_WL = {
-                color_fill:graph_styles['High Resolution Maximum (1st Days Forecasts Records)'],
-                dataKey:"High Resolution Maximum (1st Days Forecasts Records)",
-                key:"High Resolution Maximum (1st Days Forecasts Records)",
-                data:dataForecastBiasCorrrected['max_high_res_WL'],
-                visible:isForecastOn
-              }
-              const min_high_res_WL = {
-                color_fill:graph_styles['High Resolution Minimum (1st Days Forecasts Records)'],
-                dataKey:"High Resolution Minimum (1st Days Forecasts Records)",
-                key:"High Resolution Minimum (1st Days Forecasts Records)",
-                data:dataForecastBiasCorrrected['min_high_res_WL'],
-                visible:isForecastOn
-              }
-              // setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
-              setDataObject(dataObject => [...dataObject,max_min_high_res_WL,max_high_res_WL,min_high_res_WL]);
-              setIsSuccessfulForecastBiasCorrection(true);
-
-            }
-          }
-
-        }
-
-      };
-  
+    
       socketRef.current.onclose = function () {
         // Try to reconnect in 1 second
         setTimeout(function () {
@@ -612,9 +622,9 @@ const getStyle = (feature) => {
 	}, []);
   
   useEffect(() => {
+    setLoading(true);
 
     // setDataObject([]);
-    setLoading(true);
     console.log("Hydroweb data activated",selectedFeature)
 
     const Mydata = {
@@ -678,8 +688,14 @@ const getStyle = (feature) => {
           const data_list =[normal_data,min_max_data,min_data,max_data]
           // const data_list =[normal_data,min_data,max_data]
 
-
+          // var found = dataObject.filter(p => p.dataKey === "Water Level Mean Value").length > 0  ? true : false;
+          // if(!found || dataObject.length > 4){
+          //   setDataObject(data_list)
+          // }
           setDataObject(data_list)
+
+          // setDataObject(data_list)
+
           // console.log(data_list)
           // console.log(response['data']['val'])
           // console.log(response['data']['max'])
@@ -701,28 +717,37 @@ const getStyle = (feature) => {
         setIsSuccessfulHydroWeb(false);
 
       }
-    }
-    if(selectedFeature !== ""){
       
-        // fetchData()
+    }
+    if(selectedFeature !== "" && isHydroDataOn){
+
+      // var found = dataObject.filter(p => p.dataKey === "Water Level Mean Value").length > 0  ? true : false;
+      if(dataObject.length < 4){
         toast.promise(fetchData, {
           pending: 'Loading Hydroweb Water Level Data ...',
           success: 'Successfully Loaded Hydroweb Water Level Data 👌',
           error: 'Failed to Retrieve Hydroweb Water Level Data',
         });
+      }
 
-      
+      // else{
+        // setLoading(false);
 
+      // }
+        // fetchData()
 
     }
     else{
+      setLoading(false);
 
-      console.log("Not Requesting data")
     }
+  
     return () => {
+      setLoading(false);
+
       // setIsHydroDataOn(false);
     }
-	}, [selectedFeature]);
+	}, [selectedFeature, isHydroDataOn]);
 
   useEffect(() => {
     setLoading(true);
@@ -751,30 +776,37 @@ const getStyle = (feature) => {
           // setIsForecastBiasCorrectedDataPlot(false)
           // setIsGeoglowsActive(true);
           // setLoading(false);
-          setIsGeoglowsActive(true);
+          // setIsGeoglowsActive(true);
           setLoading(false);
+          
       } catch (error) {
         console.error(error.message);
-        setLoading(false);
+        // setLoading(false);
       }
     }
-    if(selectedFeature !== ""){
+    if(selectedFeature !== "" && isGeoglowsActive ){
+      var found = dataObject.filter(p => p.dataKey === 'Historical Simulation').length > 0  ? true : false;
 
+      if (!found){
       // fetchData();
-      toast.promise(fetchData, {
-        pending: 'Loading GEOGloWS Historical Simulation Data ...',
-        success: 'Successfully Loaded GEOGloWS Historical Simulation Data 👌',
-        error: 'Failed to Retrieve GEOGloWS Historical Simulation Data',
-      });
+        toast.promise(fetchData, {
+          pending: 'Loading GEOGloWS Historical Simulation Data ...',
+          success: 'Successfully Loaded GEOGloWS Historical Simulation Data 👌',
+          error: 'Failed to Retrieve GEOGloWS Historical Simulation Data',
+        });
+      }
+      // else{
+        // setLoading(false);
+      // }
+
       
     }
-    else{
+     return ()=>{
+      setLoading(false);
+     }
 
-      console.log("Not Requesting data")
-    }
-
-	}, [listGeoglowsApiCalls]);
-
+	}, [selectedFeature, selectedGeoglows, isGeoglowsActive ]);
+  // listGeoglowsApiCalls
 
   useEffect(() => {
     setLoading(true);
@@ -811,22 +843,29 @@ const getStyle = (feature) => {
 
       }
     }
-    if(selectedFeature !== ""){
-      // fetchData()
-      toast.promise(fetchData, {
-        pending: 'Loading GEOGloWS Historical Simulation Bias Corrected Data ...',
-        success: 'Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data 👌',
-        error: 'Failed to Retrieve GEOGloWS Historical Simulation Bias Corrected Data',
-      });
+    if(selectedFeature !== "" && isBiasCorrectionOn){
+      var found = dataObject.filter(p => p.dataKey === 'Bias Corrected Mean Level').length > 0 ? true : false;
+
+      if(!found){      
+        toast.promise(fetchData, {
+          pending: 'Loading GEOGloWS Historical Simulation Bias Corrected Data ...',
+          success: 'Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data 👌',
+          error: 'Failed to Retrieve GEOGloWS Historical Simulation Bias Corrected Data',
+        });
+      }
+      // else{
+      //   setLoading(false);
+
+      // }
       
     }
-    else{
+    return ()=>{
+      setLoading(false);
+     }
 
-      console.log("Not Requesting data")
-    }
 
-	}, [listBiasCorrection]);
-
+	}, [selectedFeature,selectedGeoglows, isBiasCorrectionOn]);
+  // listBiasCorrection
 
   useEffect(() => {
     setLoading(true);
@@ -863,19 +902,28 @@ const getStyle = (feature) => {
 
       }
     }
-    if(selectedFeature !== ""){
+    if(selectedFeature !== "" && isForecastOn){
       // fetchData();
-      toast.promise(fetchData, {
-        pending: 'Saving GEOGloWS Forecast Data ...',
-        success: 'Successfully Saved GEOGloWS Forecast Data 👌',
-        error: 'Failed Saved GEOGloWS Forecast Data',
-      });
+      // var found = dataObject.filter(p => p.dataKey === 'Mean Ensemble').length > 0 ? true : false;
+      var found_records = dataObject.filter(p => p.dataKey.includes('Forecast') ).length > 0 ? true : false;
+      if(!found_records){
+        
+        toast.promise(fetchData, {
+          pending: 'Saving GEOGloWS Forecast Data ...',
+          success: 'Successfully Saved GEOGloWS Forecast Data 👌',
+          error: 'Failed Saved GEOGloWS Forecast Data',
+        });
+      }
+
       
     }
     else{
 
       console.log("Not Requesting data")
     }
+    return ()=>{
+      setLoading(false);
+     }
 
 	}, [lisForecast]);
 
@@ -928,7 +976,8 @@ const getStyle = (feature) => {
       }
     }
     return () =>{
-      setIsForecastBiasCorrectedDataPlot(false)
+      setIsForecastBiasCorrectedDataPlot(false);
+      setLoading(false);
     }
 
 	}, [isForecastBiasCorrectedDataPlot]);
@@ -949,7 +998,7 @@ const getStyle = (feature) => {
         />
         {/* <JobsMenu /> */}
       <SplitContainer >
-        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} selectedFeature ={selectedFeature} >
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} selectedFeature ={selectedFeature} setIsGeoglowsActive = {setIsGeoglowsActive} setIsBiasCorrectionOn={setIsBiasCorrectionOn} setDataObject = {setDataObject}>
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}
