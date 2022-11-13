@@ -14,6 +14,18 @@ export const ButtonGroup = styled.div`
     #check_forecast_bias{
         display: ${props => (props.isSuccessfulForecastBiasCorrection ? 'inline' : 'none')};
     }
+    #check_hydroweb_fail{
+        display: ${props => (props.isSuccessfulHydroWeb ? 'none' : 'inline')};
+    }
+    #check_historical_sim_fail{
+        display: ${props => (props.isSuccessfulHistoricalSimulation ? 'none' : 'inline')};
+    }
+    #check_historical_bias_fail{
+        display: ${props => (props.isSuccessfulHistoricalBiasCorrection ? 'none' : 'inline')};
+    }
+    #check_forecast_bias_fail{
+        display: ${props => (props.isSuccessfulForecastBiasCorrection ? 'none' : 'inline')};
+    }
 
     .multi-button {
 

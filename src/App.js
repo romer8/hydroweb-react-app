@@ -218,15 +218,15 @@ const App = () => {
   const executeGeoglows = () => {
     // setIsGeoglowsActive(!isGeoglowsActive);
     // console.log(isGeoglowsActive);
-    var new_job = `${selectedFeature}-->${selectedGeoglows}`;
-    console.log(new_job)
-    var found = listGeoglowsApiCalls.some(p => p = new_job)
-    console.log(found)
-    if(!found){
-      setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
-      // setIsGeoglowsActive(!isGeoglowsActive);
+    // var new_job = `${selectedFeature}-->${selectedGeoglows}`;
+    // console.log(new_job)
+    // var found = listGeoglowsApiCalls.some(p => p = new_job)
+    // console.log(found)
+    // if(!found){
+    //   setListGeoglowsApiCalls(listGeoglowsApiCalls => [...listGeoglowsApiCalls, new_job]);
+    //   // setIsGeoglowsActive(!isGeoglowsActive);
 
-    }
+    // }
 
     setIsGeoglowsActive(true);
     setIsForecastOn(false)
@@ -239,15 +239,15 @@ const App = () => {
 
   const executeBiasCorrection = () => {
     console.log(isBiasCorrectionOn);
-    var new_job = `${selectedFeature}-->${selectedGeoglows}`;
-    console.log(new_job)
-    var found = listBiasCorrection.some(p => p === new_job)
-    console.log(found)
-    if(!found){
-      setListBiasCorrection(listBiasCorrection => [...listBiasCorrection, new_job]);
-      // setIsGeoglowsActive(!isGeoglowsActive);
+    // var new_job = `${selectedFeature}-->${selectedGeoglows}`;
+    // console.log(new_job)
+    // var found = listBiasCorrection.some(p => p === new_job)
+    // console.log(found)
+    // if(!found){
+    //   setListBiasCorrection(listBiasCorrection => [...listBiasCorrection, new_job]);
+    //   // setIsGeoglowsActive(!isGeoglowsActive);
 
-    }
+    // }
   
     // setIsBiasCorrectionOn(true);
     setIsBiasCorrectionOn(true);
@@ -269,16 +269,16 @@ const App = () => {
     // }
   };
   const executeForecast = () => {
-    console.log(isForecastOn);
-    var new_job = `${selectedFeature}-->${selectedGeoglows}`;
-    console.log(new_job)
-    var found = lisForecast.some(p => p === new_job)
-    console.log(found)
-    if(!found){
-      setListForecast(lisForecast => [...lisForecast, new_job]);
-      // setIsGeoglowsActive(!isGeoglowsActive);
+    // console.log(isForecastOn);
+    // var new_job = `${selectedFeature}-->${selectedGeoglows}`;
+    // console.log(new_job)
+    // var found = lisForecast.some(p => p === new_job)
+    // console.log(found)
+    // if(!found){
+    //   setListForecast(lisForecast => [...lisForecast, new_job]);
+    //   // setIsGeoglowsActive(!isGeoglowsActive);
 
-    }
+    // }
   
     // setIsBiasCorrectionOn(true);
     setIsForecastOn(true)
@@ -410,7 +410,8 @@ const getStyle = (feature) => {
       if(command === "Plot_Forecast_Ensemble_Bias_Data_Downloaded"){
         setIsForecastBiasCorrectedDataPlot(false);
         // var found = dataObject.some(p => p.dataKey === 'Mean Ensemble');
-        var found = dataObject.filter(p => p.dataKey === 'Mean Ensemble').length > 0 ? true : false;
+        // var found = dataObject.filter(p => p.dataKey === 'Mean Ensemble').length > 0 ? true : false;
+        var found = dataObject.filter(p => p.dataKey.includes('Forecast')).length > 0 ? true : false;
 
         console.log(found)
         if(!found){
@@ -639,8 +640,17 @@ const getStyle = (feature) => {
     const service_link = 'http://127.0.0.1:8000/apps/hydroweb/getVirtualStationData/';
     const fetchData= async () =>{
 
+      // const id = toast.loading("Loading Hydroweb Water Level Data ...")
+
       try {
-          const {data: response} = await axios.post(service_link,Mydata,config);
+          const {data: response} =  await axios.post(service_link,Mydata,config)
+          
+          
+          // toast.promise(response,{
+          //   pending: 'Loading Hydroweb Water Level Data ...',
+          //   success: { render: 'Successfully Loaded Hydroweb Water Level Data 👌', delay: 1000 },
+          //   error: { render: 'Failed to Retrieve Hydroweb Water Level Data', delay: 100 },
+          // });
 
           console.log(response)
 
@@ -709,25 +719,32 @@ const getStyle = (feature) => {
           setIsSuccessfulHistoricalSimulation(false);
           setIsSuccessfulHistoricalBiasCorrection(false);
           setIsSuccessfulForecastBiasCorrection(false);
+          
+          // toast.update(id, { render: "Successfully Loaded Hydroweb Water Level Data 👌", type: "success", isLoading: false,autoClose: 1000, delay: 2000 });
+          // toast.dismiss(id); 
+
 
 
       } catch (error) {
         console.error(error.message);
         setLoading(false);
         setIsSuccessfulHydroWeb(false);
+        // toast.update(id, { render: "Failed to Retrieve Hydroweb Water Level Data", type: "error", isLoading: false,autoClose: 1000, delay: 2000 });
+        // toast.dismiss(id); 
 
       }
-      
+
     }
     if(selectedFeature !== "" && isHydroDataOn){
 
       // var found = dataObject.filter(p => p.dataKey === "Water Level Mean Value").length > 0  ? true : false;
       if(dataObject.length < 4){
-        toast.promise(fetchData, {
-          pending: 'Loading Hydroweb Water Level Data ...',
-          success: 'Successfully Loaded Hydroweb Water Level Data 👌',
-          error: 'Failed to Retrieve Hydroweb Water Level Data',
-        });
+        // fetchData()
+          toast.promise(fetchData,{
+            success: { render: 'Successfully Loaded Hydroweb Water Level Data 👌'},
+            error: { render: 'Failed to Retrieve Hydroweb Water Level Data'},
+          });
+
       }
 
       // else{
@@ -735,22 +752,25 @@ const getStyle = (feature) => {
 
       // }
         // fetchData()
+        // setLoading(false);
 
     }
     else{
       setLoading(false);
+      // toast.update(id, { render: "All is good", type: "success", isLoading: false,autoClose: 1000 });
 
     }
   
     return () => {
-      setLoading(false);
+      // setLoading(false);
+      // toast.update(id, { render: "All is good", type: "success", isLoading: false,autoClose: 1000 });
 
       // setIsHydroDataOn(false);
     }
+
 	}, [selectedFeature, isHydroDataOn]);
 
   useEffect(() => {
-    setLoading(true);
 
     console.log("Historical Simulation data Save activated",selectedGeoglows)
     const Mydata = {
@@ -770,6 +790,8 @@ const getStyle = (feature) => {
 
     const fetchData= async () =>{
       try {
+          setLoading(true);
+
           const {data: response} = await axios.post(service_link,Mydata,config);
           // setIsHydroDataOn(false);
           // setIsBiasCorrectionOn(false);
@@ -790,7 +812,7 @@ const getStyle = (feature) => {
       if (!found){
       // fetchData();
         toast.promise(fetchData, {
-          pending: 'Loading GEOGloWS Historical Simulation Data ...',
+          // pending: 'Loading GEOGloWS Historical Simulation Data ...',
           success: 'Successfully Loaded GEOGloWS Historical Simulation Data 👌',
           error: 'Failed to Retrieve GEOGloWS Historical Simulation Data',
         });
@@ -801,15 +823,17 @@ const getStyle = (feature) => {
 
       
     }
-     return ()=>{
+    else{
       setLoading(false);
-     }
+      // toast.update(id, { render: "All is good", type: "success", isLoading: false,autoClose: 1000 });
+
+    }
+
 
 	}, [selectedFeature, selectedGeoglows, isGeoglowsActive ]);
   // listGeoglowsApiCalls
 
   useEffect(() => {
-    setLoading(true);
     console.log("Bias Correction data Save activated",selectedGeoglows,selectedFeature)
 
     // console.log(selectedGeoglows)
@@ -830,6 +854,8 @@ const getStyle = (feature) => {
 
     const fetchData= async () =>{
       try {
+          setLoading(true);
+
           const {data: response} = await axios.post(service_link,Mydata,config);
           // setIsBiasCorrectionOn(true);
           // setIsHydroDataOn(false);
@@ -848,19 +874,23 @@ const getStyle = (feature) => {
 
       if(!found){      
         toast.promise(fetchData, {
-          pending: 'Loading GEOGloWS Historical Simulation Bias Corrected Data ...',
+          // pending: 'Loading GEOGloWS Historical Simulation Bias Corrected Data ...',
           success: 'Successfully Loaded GEOGloWS Historical Simulation Bias Corrected Data 👌',
           error: 'Failed to Retrieve GEOGloWS Historical Simulation Bias Corrected Data',
         });
       }
       // else{
-      //   setLoading(false);
+        // setLoading(false);
 
       // }
       
     }
-    return ()=>{
+    else{
       setLoading(false);
+
+    }
+    return ()=>{
+      // setLoading(false);
      }
 
 
@@ -868,7 +898,6 @@ const getStyle = (feature) => {
   // listBiasCorrection
 
   useEffect(() => {
-    setLoading(true);
     console.log("Forecast data Save activated",selectedGeoglows,selectedFeature)
 
     // console.log(selectedGeoglows)
@@ -889,6 +918,8 @@ const getStyle = (feature) => {
 
     const fetchData= async () =>{
       try {
+        setLoading(true);
+
           const {data: response} = await axios.post(service_link,Mydata,config);
           // setIsBiasCorrectionOn(true);
           // setIsHydroDataOn(false);
@@ -909,7 +940,7 @@ const getStyle = (feature) => {
       if(!found_records){
         
         toast.promise(fetchData, {
-          pending: 'Saving GEOGloWS Forecast Data ...',
+          // pending: 'Saving GEOGloWS Forecast Data ...',
           success: 'Successfully Saved GEOGloWS Forecast Data 👌',
           error: 'Failed Saved GEOGloWS Forecast Data',
         });
@@ -922,10 +953,10 @@ const getStyle = (feature) => {
       console.log("Not Requesting data")
     }
     return ()=>{
-      setLoading(false);
+      // setLoading(false);
      }
 
-	}, [lisForecast]);
+	}, [selectedFeature,selectedGeoglows, isForecastOn]);
 
 
 
@@ -964,7 +995,7 @@ const getStyle = (feature) => {
       if(selectedFeature !== ""){
         // fetchData();
         toast.promise(fetchData, {
-          pending: 'Executing Bias Correction to GEOGloWS Forecast Data ...',
+          // pending: 'Executing Bias Correction to GEOGloWS Forecast Data ...',
           success: 'Successfully Retrieved Bias Corrected GEOGloWS Forecast Data 👌',
           error: 'Failed to Retrieve Bias Corrected GEOGloWS Forecast Data',
         });
@@ -977,7 +1008,7 @@ const getStyle = (feature) => {
     }
     return () =>{
       setIsForecastBiasCorrectedDataPlot(false);
-      setLoading(false);
+      // setLoading(false);
     }
 
 	}, [isForecastBiasCorrectedDataPlot]);
