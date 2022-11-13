@@ -1029,7 +1029,7 @@ const getStyle = (feature) => {
         />
         {/* <JobsMenu /> */}
       <SplitContainer >
-        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} selectedFeature ={selectedFeature} setIsGeoglowsActive = {setIsGeoglowsActive} setIsBiasCorrectionOn={setIsBiasCorrectionOn} setDataObject = {setDataObject}>
+        <Map center={fromLonLat(center)} zoom={zoom} setSelectedFeature ={setSelectedFeature} isFullMap={isFullMap} setSelectedGeoglows={setSelectedGeoglows} setIsHydroDataOn={setIsHydroDataOn} selectedFeature ={selectedFeature} setIsGeoglowsActive = {setIsGeoglowsActive} setIsBiasCorrectionOn={setIsBiasCorrectionOn} setDataObject = {setDataObject} setIsForecastOn = {setIsForecastOn}>
           <Layers>
             <TileLayer 
               layerClass={"base_layer"}
